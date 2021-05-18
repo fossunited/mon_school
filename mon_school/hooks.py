@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version
+from .install import APP_LOGO_URL
 
-app_name = "monschool"
+app_name = "mon_school"
 app_title = "Mon School"
 app_publisher = "FOSS United"
 app_description = "Frappe App for Mon School branding"
@@ -11,19 +12,21 @@ app_color = "grey"
 app_email = "anand@fossunited.org"
 app_license = "MIT"
 
+app_logo_url = APP_LOGO_URL
+
 # Includes in <head>
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/monschool/css/monschool.css"
-# app_include_js = "/assets/monschool/js/monschool.js"
+# app_include_css = "/assets/mon_school/css/mon_school.css"
+# app_include_js = "/assets/mon_school/js/mon_school.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/monschool/css/monschool.css"
-# web_include_js = "/assets/monschool/js/monschool.js"
+# web_include_css = "/assets/mon_school/css/mon_school.css"
+# web_include_js = "/assets/mon_school/js/mon_school.js"
 
 # include custom scss in every website theme (without file extension ".scss")
-# website_theme_scss = "monschool/public/scss/website"
+# website_theme_scss = "mon_school/public/scss/website"
 
 # include js, css files in header of web form
 # webform_include_js = {"doctype": "public/js/doctype.js"}
@@ -58,14 +61,14 @@ app_license = "MIT"
 # Installation
 # ------------
 
-# before_install = "monschool.install.before_install"
-# after_install = "monschool.install.after_install"
+# before_install = "mon_school.install.before_install"
+after_install = "mon_school.install.after_install"
 
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
 
-# notification_config = "monschool.notifications.get_notification_config"
+# notification_config = "mon_school.notifications.get_notification_config"
 
 # Permissions
 # -----------
@@ -104,39 +107,39 @@ app_license = "MIT"
 
 # scheduler_events = {
 # 	"all": [
-# 		"monschool.tasks.all"
+# 		"mon_school.tasks.all"
 # 	],
 # 	"daily": [
-# 		"monschool.tasks.daily"
+# 		"mon_school.tasks.daily"
 # 	],
 # 	"hourly": [
-# 		"monschool.tasks.hourly"
+# 		"mon_school.tasks.hourly"
 # 	],
 # 	"weekly": [
-# 		"monschool.tasks.weekly"
+# 		"mon_school.tasks.weekly"
 # 	]
 # 	"monthly": [
-# 		"monschool.tasks.monthly"
+# 		"mon_school.tasks.monthly"
 # 	]
 # }
 
 # Testing
 # -------
 
-# before_tests = "monschool.install.before_tests"
+# before_tests = "mon_school.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "monschool.event.get_events"
+# 	"frappe.desk.doctype.event.event.get_events": "mon_school.event.get_events"
 # }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 # override_doctype_dashboards = {
-# 	"Task": "monschool.task.get_dashboard_data"
+# 	"Task": "mon_school.task.get_dashboard_data"
 # }
 
 # exempt linked doctypes from being automatically cancelled
