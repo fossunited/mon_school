@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include monschool *.css
+recursive-include monschool *.csv
+recursive-include monschool *.html
+recursive-include monschool *.ico
+recursive-include monschool *.js
+recursive-include monschool *.json
+recursive-include monschool *.md
+recursive-include monschool *.png
+recursive-include monschool *.py
+recursive-include monschool *.svg
+recursive-include monschool *.txt
+recursive-exclude monschool *.pyc
