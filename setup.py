@@ -5,10 +5,10 @@ with open('requirements.txt') as f:
 	install_requires = f.read().strip().split('\n')
 
 # get version from __version__ variable in monschool/__init__.py
-from monschool import __version__ as version
+from mon_school import __version__ as version
 
 setup(
-	name='monschool',
+	name='mon_school',
 	version=version,
 	description='Frappe App for Mon School branding',
 	author='FOSS United',
