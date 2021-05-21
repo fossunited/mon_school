@@ -3,4 +3,5 @@
 *.egg-info
 *.swp
 tags
-monschool/docs/current
+mon_school/docs/current
+mon_school/public/dist
