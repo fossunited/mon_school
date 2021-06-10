@@ -171,3 +171,8 @@ user_data_fields = [
 	}
 ]
 
+# Profile Tabs
+profile_tabs = [
+	"mon_school.mon_school.plugins.SketchesTab"
+]
+
