@@ -35,3 +35,16 @@ class LiveCodeExtension(PageExtension):
             "templates/livecode/extension_footer.html",
             context)
 
+def exercise_renderer(argument):
+    return f"<h2>Exercise: {argument}</h2>"
+
+def youtube_video_renderer(video_id):
+    return f"""
+    <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/{video_id}"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    """

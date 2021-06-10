@@ -179,3 +179,8 @@ profile_tabs = [
 community_lesson_page_extensions = [
 	"mon_school.mon_school.plugins.LiveCodeExtension"
 ]
+
+community_markdown_macro_renderers = {
+	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
+	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
+}
