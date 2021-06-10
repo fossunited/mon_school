@@ -1,0 +1,99 @@
+<script type="text/javascript" src="/assets/frappe/node_modules/moment/min/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="/assets/frappe/node_modules/moment-timezone/builds/moment-timezone-with-data.min.js"></script>
+<script type="text/javascript" src="/assets/frappe/js/frappe/utils/datetime.js"></script>
+
+<script type="text/javascript">
+    // comment_when is failing because of this
+    if (!frappe.sys_defaults) {
+      frappe.sys_defaults = {}
+    }
+</script>
+
+<script type="text/javascript" src="{{ livecode_url }}/static/livecode.js"></script>
+
+<script type="text/javascript" src="/assets/mon_school/js/livecode-files.js"></script>
+
+<template id="livecode-template">
+  <div class="livecode-editor livecode-editor-inline">
+    <div class="row">
+      <div class="col-lg-8 col-md-6">
+        <div class="controls">
+          <button class="run">Run</button>
+        </div>
+      </div>
+    </div>
+    <div class="code-editor">
+      <div class="row">
+        <div class="col-lg-8 col-md-6">
+          <div class="code-wrapper">
+            <textarea class="code"></textarea>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 canvas-wrapper">
+            <div class="svg-image" width="300" height="300"></div>
+            <pre class="output"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<script type="text/javascript">
+  function getLiveCodeOptions() {
+    return {
+      base_url: "{{ livecode_url }}",
+      runtime: "python",
+      files: LIVECODE_FILES, // loaded from livecode-files.js
+      command: ["python", "start.py"],
+      codemirror: true,
+      onMessage: {
+        image: function(editor, msg) {
+          const element = editor.parent.querySelector(".svg-image");
+          element.innerHTML = msg.image;
+        }
+      }
+    }
+  }
+
+  $(function() {
+    var editorLookup = {};
+
+    $("pre.example").each((i, e) => {
+      var code = $(e).text();
+
+      var template = document.querySelector('#livecode-template');
+      var clone = template.content.cloneNode(true);
+
+      $(e)
+      .wrap('<div></div>')
+      .hide()
+      .parent()
+      .append(clone)
+      .find("textarea.code")
+      .val(code);
+
+      var editor = new LiveCodeEditor(e.parentElement, {
+        ...getLiveCodeOptions(),
+        codemirror: true,
+        onMessage: {
+          image: function(editor, msg) {
+            console.log(msg);
+            const canvasElement = editor.parent.querySelector("div.svg-image");
+            canvasElement.innerHTML = msg.image;
+          }
+        }
+      });
+    });
+  });
+</script>
+
+<style type="text/css">
+  .svg-image {
+    border: 5px solid #ddd;
+    position: relative;
+    z-index: 0;
+    width: 300px;
+    height: 300px;
+  }
+</style>

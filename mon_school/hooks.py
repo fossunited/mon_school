@@ -176,3 +176,6 @@ profile_tabs = [
 	"mon_school.mon_school.plugins.SketchesTab"
 ]
 
+community_lesson_page_extensions = [
+	"mon_school.mon_school.plugins.LiveCodeExtension"
+]
