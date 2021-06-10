@@ -7,6 +7,7 @@ APP_LOGO_URL = "/assets/mon_school/images/mon-logo.png"
 
 def after_install():
     set_app_name()
+    set_app_logo()
     disable_signup()
     add_header_items()
     add_footer_items()
@@ -14,6 +15,9 @@ def after_install():
 def set_app_name():
     app_name = "Mon School"
     frappe.db.set_value('System Settings', None, 'app_name', app_name)
+
+def set_app_logo():
+    frappe.db.set_value('Website Settings', None, 'banner_image', APP_LOGO_URL)
 
 def disable_signup():
     frappe.db.set_value("Website Settings", None, "disable_signup", 1)
