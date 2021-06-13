@@ -91,9 +91,9 @@ after_install = "mon_school.install.after_install"
 # }
 
 override_doctype_class = {
-	"LMS Sketch": "mon_school.mon_school.overrides.Sketch"
+	"LMS Sketch": "mon_school.mon_school.overrides.Sketch",
+	"Exercise": "mon_school.mon_school.overrides.Exercise"
 }
-
 
 # Document Events
 # ---------------

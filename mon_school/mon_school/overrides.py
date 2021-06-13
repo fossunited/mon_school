@@ -1,8 +1,10 @@
 import frappe
 import hashlib
 from community.lms.doctype.lms_sketch.lms_sketch import LMSSketch, DEFAULT_IMAGE
+from community.lms.doctype.exercise.exercise import Exercise as _Exercise
 import websocket
 import json
+from urllib.parse import urlparse
 from ..joy.build import get_livecode_files
 
 class Sketch(LMSSketch):
@@ -21,12 +23,26 @@ class Sketch(LMSSketch):
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
 
-def livecode_to_svg(livecode_ws_url, code, *, timeout=3, is_sketch=False):
+class Exercise(_Exercise):
+    def before_save(self):
+        self.image = livecode_to_svg(self.answer)
+
+def get_livecode_url():
+    doc = frappe.get_cached_doc("LMS Settings")
+    return doc.livecode_url
+
+def get_livecode_ws_url():
+    url = urlparse(get_livecode_url())
+    protocol = "wss" if url.scheme == "https" else "ws"
+    return protocol + "://" + url.netloc + "/livecode"
+
+def livecode_to_svg(code, *, timeout=3, is_sketch=False):
     """Renders the code as svg.
     """
     try:
         ws = websocket.WebSocket()
         ws.settimeout(timeout)
+        livecode_ws_url = get_livecode_ws_url()
         ws.connect(livecode_ws_url)
 
         env = {}
@@ -59,7 +75,6 @@ def _read_messages(ws):
             msg = ws.recv()
             if not msg:
                 break
-            print("MSG", msg)
             messages.append(json.loads(msg))
     except websocket.WebSocketTimeoutException as e:
         print("Error:", e)

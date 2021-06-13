@@ -19,6 +19,11 @@
       <div class="col-lg-8 col-md-6">
         <div class="controls">
           <button class="run">Run</button>
+
+          <div class="exercise-controls pull-right">
+            <span style="padding-right: 10px;"><span class="last-submitted human-time" data-timestamp=""></span></span>
+            <button class="submit btn-primary">Submit</button>
+          </div>
         </div>
       </div>
     </div>
@@ -59,7 +64,7 @@
   $(function() {
     var editorLookup = {};
 
-    $("pre.example").each((i, e) => {
+    $("pre.example, pre.exercise").each((i, e) => {
       var code = $(e).text();
 
       var template = document.querySelector('#livecode-template');
@@ -73,17 +78,48 @@
       .find("textarea.code")
       .val(code);
 
+      if ($(e).hasClass("exercise")) {
+        var last_submitted = $(e).data("last-submitted");
+        $(e).parent().find(".last-submitted")
+          .data("timestamp", last_submitted)
+          .html(__("Submitted {0}", [comment_when(last_submitted)]));
+      }
+      else {
+        $(e).parent().find(".exercise-controls").remove();
+      }
+
       var editor = new LiveCodeEditor(e.parentElement, {
         ...getLiveCodeOptions(),
         codemirror: true,
         onMessage: {
           image: function(editor, msg) {
-            console.log(msg);
             const canvasElement = editor.parent.querySelector("div.svg-image");
             canvasElement.innerHTML = msg.image;
           }
         }
       });
+
+      $(e).parent().find(".submit").on('click', function() {
+        var name = $(e).data("name");
+        let code = editor.codemirror.doc.getValue();
+
+        frappe.call("community.lms.api.submit_solution", {
+          "exercise": name,
+          "code": code
+        }).then(r => {
+          if (r.message.name) {
+            frappe.msgprint("Submitted successfully!");
+
+            let d = r.message.creation;
+            $(e).parent().find(".human-time").html(__("Submitted {0}", [comment_when(d)]));
+          }
+        });
+      });
+    });
+
+    $(".exercise-image").each((i, e) => {
+      var svg = JSON.parse($(e).data("image"));
+      $(e).html(svg);
     });
   });
 </script>
