@@ -1,5 +1,5 @@
 
-{% macro LiveCodeEditorLarge(name, code, runtime="joy") %}
+{% macro LiveCodeEditorLarge(name, code, runtime="joy", image=None) %}
   <div class="livecode-editor livecode-editor-large" id="editor-{{name}}"
       data-runtime="{{ runtime }}">
     <div class="row">
@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 canvas-wrapper">
-            <div class="svg-image" width="300" height="300"></div>
+            <div class="svg-image" width="300" height="300">{{ image or "" }} </div>
             <pre class="output"></pre>
         </div>
       </div>
@@ -26,12 +26,12 @@
 </div>
 {% endmacro %}
 
-{% macro LiveCodeEditor(name, code, reset_code, is_exercise=False, last_submitted=None) %}
+{% macro LiveCodeEditor(name, code, reset_code, is_exercise=False, last_submitted=None, image=None) %}
 <div class="livecode-editor livecode-editor-inline" id="editor-{{name}}">
   <div class="row">
     <div class="col-lg-8 col-md-6">
       <div class="controls">
-        <button class="run">Run 2</button>
+        <button class="run">Run</button>
         <button class="reset">Reset</button>
         {% if is_exercise %}
           <button class="submit pull-right btn-primary">Submit</button>
@@ -52,18 +52,9 @@
           <textarea class="code">{{code}}</textarea>
         </div>
       </div>
-      <div class="col-lg-4 col-md-6">
-        <div class="canvas-wrapper">
-          <canvas width="300" height="300"></canvas>
-          <pre class="output"></pre>
-        </div>
-        <div class="debug-tools form form-inline">
-          <div class="form-group">
-            <label for="x" style="padding-right:10px;">x</label>
-            <input type="text" id="x" value="100">
-            <input type="range" id="x_slider" value="100" min="0" max="200">
-          </div>
-        </div>
+      <div class="col-lg-4 col-md-6 canvas-wrapper">
+        <div class="svg-image svg-image-small">{{ image or "" }}</div>
+        <pre class="output"></pre>
       </div>
     </div>
   </div>
@@ -124,6 +115,17 @@
   }
   .livecode-editor {
     margin-bottom: 30px;
+  }
+  .svg-image-small {
+    border: 5px solid #ddd;
+    position: relative;
+    z-index: 0;
+    width: 160px;
+    height: 160px;
+  }
+  .svg-image-small svg {
+    width: 150px;
+    height: 150px
   }
 </style>
 

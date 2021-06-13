@@ -58,7 +58,7 @@
   {% endif %}
 
   <div class="sketch-editor">
-    {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime=sketch.runtime) }}
+    {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime=sketch.runtime, image=sketch.svg) }}
   </div>
 {% endblock %}
 

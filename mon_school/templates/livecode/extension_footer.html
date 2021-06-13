@@ -80,9 +80,11 @@
 
       if ($(e).hasClass("exercise")) {
         var last_submitted = $(e).data("last-submitted");
-        $(e).parent().find(".last-submitted")
-          .data("timestamp", last_submitted)
-          .html(__("Submitted {0}", [comment_when(last_submitted)]));
+        if (last_submitted) {
+          $(e).parent().find(".last-submitted")
+            .data("timestamp", last_submitted)
+            .html(__("Submitted {0}", [comment_when(last_submitted)]));
+        }
       }
       else {
         $(e).parent().find(".exercise-controls").remove();
@@ -121,6 +123,12 @@
       var svg = JSON.parse($(e).data("image"));
       $(e).html(svg);
     });
+
+    $("pre.exercise").each((i, e) => {
+      var svg = JSON.parse($(e).data("image"));
+      $(e).parent().find(".svg-image").html(svg);
+    });
+
   });
 </script>
 

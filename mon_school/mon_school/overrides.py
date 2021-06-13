@@ -2,13 +2,25 @@ import frappe
 import hashlib
 from community.lms.doctype.lms_sketch.lms_sketch import LMSSketch, DEFAULT_IMAGE
 from community.lms.doctype.exercise.exercise import Exercise as _Exercise
+from community.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
+
 import websocket
 import json
 from urllib.parse import urlparse
 from ..joy.build import get_livecode_files
 
 class Sketch(LMSSketch):
+    def before_save(self):
+        try:
+            is_sketch = self.runtime == "sketch" # old version
+            self.svg = livecode_to_svg(self.code, is_sketch=is_sketch)
+        except Exception:
+            frappe.log_error(f"Failed to save svg for sketch {self.name}")
+
     def render_svg(self):
+        if self.svg:
+            return self.svg
+
         h = hashlib.md5(self.code.encode('utf-8')).hexdigest()
         cache = frappe.cache()
         key = "sketch-" + h
@@ -25,6 +37,10 @@ class Sketch(LMSSketch):
 class Exercise(_Exercise):
     def before_save(self):
         self.image = livecode_to_svg(self.answer)
+
+class ExerciseSubmission(_ExerciseSubmission):
+    def before_save(self):
+        self.image = livecode_to_svg(self.solution)
 
 def get_livecode_url():
     doc = frappe.get_cached_doc("LMS Settings")
