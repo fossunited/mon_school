@@ -16,9 +16,8 @@ class Sketch(LMSSketch):
         if value:
             value = value.decode('utf-8')
         else:
-            ws_url = self.get_livecode_ws_url()
             is_sketch = self.runtime == "sketch" # old version
-            value = livecode_to_svg(ws_url, self.code, is_sketch=is_sketch)
+            value = livecode_to_svg(self.code, is_sketch=is_sketch)
             if value:
                 cache.set(key, value)
         return value or DEFAULT_IMAGE

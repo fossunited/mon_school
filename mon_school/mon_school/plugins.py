@@ -36,7 +36,9 @@ class LiveCodeExtension(PageExtension):
             context)
 
 def exercise_renderer(argument):
-    return f"<h2>Exercise: {argument}</h2>"
+    exercise = frappe.get_doc("Exercise", argument)
+    context = dict(exercise=exercise)
+    return frappe.render_template("templates/exercise.html", context)
 
 def youtube_video_renderer(video_id):
     return f"""
