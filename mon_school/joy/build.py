@@ -16,6 +16,11 @@ def write_file(filename, contents):
     print("writing", filename, "...")
     return Path(__file__).parent.joinpath(filename).write_text(contents)
 
+def get_livecode_files():
+    filenames = ["start.py", "joy.py"]
+    return [{"filename": f, "contents": read_file(f)} for f in filenames]
+
+
 JS = """
 export const LIVECODE_FILES = [
     {filename: "start.py", contents: START},
@@ -24,8 +29,7 @@ export const LIVECODE_FILES = [
 """
 
 def main():
-    filenames = ["start.py", "joy.py"]
-    livecode_files = [{"filename": f, "contents": read_file(f)} for f in filenames]
+    livecode_files = get_livecode_files()
     livecode_json = json.dumps(livecode_files)
 
     js = f"const LIVECODE_FILES = {livecode_json};"

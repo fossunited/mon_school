@@ -90,6 +90,11 @@ after_install = "mon_school.install.after_install"
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
+override_doctype_class = {
+	"LMS Sketch": "mon_school.mon_school.overrides.Sketch"
+}
+
+
 # Document Events
 # ---------------
 # Hook on document methods and events
