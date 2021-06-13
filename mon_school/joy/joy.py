@@ -109,7 +109,7 @@ represented as SVG image by jupyter.
 """
 import html
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__ = "Anand Chitipothu <anand@fossunited.org>"
 
 SQRT2 = 2**0.5
@@ -228,8 +228,10 @@ class SVG:
             xmlns="http://www.w3.org/2000/svg") + "\n"
         svg_footer = "</svg>\n"
 
-        nodes = "".join(node._svg(indent="  ") for node in self.nodes)
-        return svg_header + nodes + svg_footer
+        # flip the y axis so that y grows upwards
+        node = Group(self.nodes) | Scale(sx=1, sy=-1)
+
+        return svg_header + node._svg() + svg_footer
 
     def _repr_svg_(self):
         return self.render()
@@ -747,7 +749,10 @@ def show(*shapes):
         Line(start=Point(x=-150, y=0), end=Point(x=150, y=0), stroke="#ddd"),
         Line(start=Point(x=0, y=-150), end=Point(x=0, y=150), stroke="#ddd")
     ]
-    shapes = markers + list(shapes)
+    for s in shapes:
+        if not isinstance(s, Shape):
+            print(f"Error: unable to show {s} as it is not a shape.")
+    shapes = markers + [s for s in shapes if isinstance(s, Shape)]
     img = SVG(shapes)
 
     from IPython.display import display
