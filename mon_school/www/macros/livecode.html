@@ -1,6 +1,7 @@
 
-{% macro LiveCodeEditorLarge(name, code) %}
-  <div class="livecode-editor livecode-editor-large" id="editor-{{name}}">
+{% macro LiveCodeEditorLarge(name, code, runtime="joy") %}
+  <div class="livecode-editor livecode-editor-large" id="editor-{{name}}"
+      data-runtime="{{ runtime }}">
     <div class="row">
       <div class="col-lg-8 col-md-6">
         <div class="controls">
@@ -99,7 +100,14 @@
   $(function() {
     $(".livecode-editor").each((i, e) => {
       var name = e.id.replace("editor-", "");
-      var editor = new LiveCodeEditor(e, getLiveCodeOptions());
+      var is_sketch = $(e).data("runtime") == "sketch";
+      var env = {
+        "SKETCH": is_sketch ? "yes": ""
+      }
+      var editor = new LiveCodeEditor(e, {
+        ...getLiveCodeOptions(env),
+        env: env
+      });
       livecodeEditors.push(editor);
       livecodeEditorsMap[e.id] = editor;
     });
