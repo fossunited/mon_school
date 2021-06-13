@@ -16,10 +16,15 @@ def write_file(filename, contents):
     print("writing", filename, "...")
     return Path(__file__).parent.joinpath(filename).write_text(contents)
 
-def get_livecode_files():
-    filenames = ["start.py", "joy.py", "sketch.py"]
-    return [{"filename": f, "contents": read_file(f)} for f in filenames]
+LIVECODE_FILES = None
 
+def get_livecode_files():
+    global LIVECODE_FILES
+    if LIVECODE_FILES is None:
+        filenames = ["start.py", "joy.py", "sketch.py"]
+        LIVECODE_FILES = [{"filename": f, "contents": read_file(f)} for f in filenames]
+
+    return LIVECODE_FILES
 
 def main():
     livecode_files = get_livecode_files()

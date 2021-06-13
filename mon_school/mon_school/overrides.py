@@ -15,12 +15,13 @@ class Sketch(LMSSketch):
             value = value.decode('utf-8')
         else:
             ws_url = self.get_livecode_ws_url()
-            value = livecode_to_svg(ws_url, self.code)
+            is_sketch = self.runtime == "sketch" # old version
+            value = livecode_to_svg(ws_url, self.code, is_sketch=is_sketch)
             if value:
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
 
-def livecode_to_svg(livecode_ws_url, code, *, timeout=3):
+def livecode_to_svg(livecode_ws_url, code, *, timeout=3, is_sketch=False):
     """Renders the code as svg.
     """
     try:
@@ -28,10 +29,15 @@ def livecode_to_svg(livecode_ws_url, code, *, timeout=3):
         ws.settimeout(timeout)
         ws.connect(livecode_ws_url)
 
+        env = {}
+        if is_sketch:
+            env['SKETCH'] = "yes"
+
         msg = {
             "msgtype": "exec",
             "runtime": "python",
             "code": code,
+            "env": env,
             "files": get_livecode_files(),
             "command": ["python", "start.py"]
         }
