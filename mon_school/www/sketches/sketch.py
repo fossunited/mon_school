@@ -35,7 +35,7 @@ def get_sketch(sketch_id):
         sketch = frappe.new_doc('LMS Sketch')
         sketch.name = "new"
         sketch.title = "New Sketch"
-        sketch.code = "c = Circle()\nshow(c)"
+        sketch.code = "c = circle()\nshow(c)"
         return sketch
 
     try:
