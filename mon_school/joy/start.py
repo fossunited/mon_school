@@ -7,7 +7,11 @@ def show(*shapes):
         Line(start=Point(x=-150, y=0), end=Point(x=150, y=0), stroke="#ddd"),
         Line(start=Point(x=0, y=-150), end=Point(x=0, y=150), stroke="#ddd")
     ]
-    shapes = markers + list(shapes)
+    for s in shapes:
+        if not isinstance(s, Shape):
+            print(f"Error: unable to show {s} as it is not a shape.")
+    shapes = markers + [s for s in shapes if isinstance(s, Shape)]
+
     img = SVG(shapes)
     sendmsg("image", image=img.render())
 
