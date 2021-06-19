@@ -188,5 +188,6 @@ community_lesson_page_extensions = [
 
 community_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
+	"Image": "mon_school.mon_school.plugins.image_renderer",
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
 }

@@ -40,6 +40,25 @@ def exercise_renderer(argument):
     context = dict(exercise=exercise)
     return frappe.render_template("templates/exercise.html", context)
 
+def image_renderer(argument):
+    """Markdown macro for Image.
+
+    Rendered the image of an exercise.
+
+    This is a hack to extend the already exiting exercise infrastrcture
+    to use for showing images. To distinguish between real exercises and
+    the exercises used for showing images, the latter ones are prefixed
+    with `image-`.
+
+    usage:
+
+        {{ Image("image-flag-of-germany") }}
+    """
+    exercise = frappe.get_doc("Exercise", argument)
+    context = dict(exercise=exercise)
+    return frappe.render_template("templates/image.html", context)
+
+
 def youtube_video_renderer(video_id):
     return f"""
     <iframe width="560" height="315"
