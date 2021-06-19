@@ -48,7 +48,7 @@
 {% set course = frappe.get_doc("LMS Course", batch.course) %}
 <div class="course-teaser">
   <div class="course-body">
-    <h3 class="course-title"><a href="/courses/{{ course.name }}/{batch.name}/home">{{ course.title }}</a></h3>
+    <h3 class="course-title"><a href="/courses/{{ course.name }}/{{batch.name}}/home">{{ course.title }}</a></h3>
     <h4 class="course-subtitle">{{ batch.title }}</h4>
     <div class="course-intro">
       {{ course.short_introduction or "" }}
