@@ -2,16 +2,23 @@
 from joy import *
 
 def show(*shapes):
+    def hline(y, **kwargs):
+        return line(x1=-150, y1=y, x2=150, y2=y, stroke="#ddd", **kwargs)
+
+    def vline(x, **kwargs):
+        return line(x1=x, y1=-150, x2=x, y2=150, stroke="#ddd", **kwargs)
+
     markers = [
-        Rectangle(width=300, height=300, stroke="#ddd"),
-        Line(start=Point(x=-150, y=0), end=Point(x=150, y=0), stroke="#ddd"),
-        Line(start=Point(x=0, y=-150), end=Point(x=0, y=150), stroke="#ddd")
+        hline(50), hline(100), hline(150),
+        hline(-50), hline(-100), hline(-150),
+        vline(50), vline(100), vline(150),
+        vline(-50), vline(-100), vline(-150),
+        hline(0, stroke_width=2), vline(0, stroke_width=2)
     ]
     for s in shapes:
         if not isinstance(s, Shape):
-            print(f"Error: unable to show {s} as it is not a shape.")
+            print(f"show: {s} is not a shape")
     shapes = markers + [s for s in shapes if isinstance(s, Shape)]
-
     img = SVG(shapes)
     sendmsg("image", image=img.render())
 
