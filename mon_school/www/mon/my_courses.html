@@ -1,0 +1,62 @@
+{% extends "templates/base.html" %}
+
+{% block title %}My Courses - Mon School{% endblock %}
+
+{% block head_include %}
+	<meta name="description" content="My Courses" />
+	<meta name="keywords" content="courses mon school" />
+  <link rel="stylesheet" href="/assets/css/lms.css">
+  <style type="text/css">
+    h4.course-subtitle {
+      font-size: 1.0em;
+      color: #888;
+    }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+<section class="top-section" style="padding: 1rem 0rem;">
+  <div class='container pb-5'>
+	<h1>My Courses</h1>
+    {% if not user %}
+      <div class="alert alert-warning">
+        <p>Please Login to access your courses.</p>
+        <p><a class="btn btn-primary" href="/login?next=my-courses">Login Now</a></p>
+      </div>
+    {% elif not batches %}
+    <div class="alert alert-warning">
+      <p>You have not joined any courses yet.</p>
+
+      <p><a class="btn btn-primary" href="/">Explore Courses</a></p>
+    </div>
+    {% else %}
+      <div class="row">
+        {% for batch in batches %}
+          <div class="col-md-4">
+            {{ BatchTeaser(batch)}}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+
+{% macro BatchTeaser(batch) %}
+{% set course = frappe.get_doc("LMS Course", batch.course) %}
+<div class="course-teaser">
+  <div class="course-body">
+    <h3 class="course-title"><a href="/courses/{{ course.name }}/{batch.name}/home">{{ course.title }}</a></h3>
+    <h4 class="course-subtitle">{{ batch.name }}</h4>
+    <div class="course-intro">
+      {{ course.short_introduction or "" }}
+    </div>
+  </div>
+  <div class="course-footer">
+    <a class="btn btn-secondary" href="/courses/{{course.name}}/{{batch.name}}/learn">Resume Course</a>
+  </div>
+</div>
+{% endmacro %}
+
