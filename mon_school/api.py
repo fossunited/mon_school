@@ -6,7 +6,7 @@ DOCTYPE_FIELDS = {
         "fields_to_skip_on_new": ["body"]
     },
     "Exercise": {
-        "fields": ["title", "description", "code", "answer"],
+        "fields": ["title", "description", "code", "answer", "course"],
     }
 }
 
