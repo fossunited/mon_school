@@ -3,6 +3,7 @@ import hashlib
 from community.lms.doctype.lms_sketch.lms_sketch import LMSSketch, DEFAULT_IMAGE
 from community.lms.doctype.exercise.exercise import Exercise as _Exercise
 from community.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
+from community.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
 
 import websocket
 import json
@@ -41,6 +42,13 @@ class Exercise(_Exercise):
 class ExerciseSubmission(_ExerciseSubmission):
     def before_save(self):
         self.image = livecode_to_svg(self.solution)
+
+class LMSBatchMembership(_LMSBatchMembership):
+    def validate_membership_in_different_batch_same_course(self):
+        if self.member_type == "Mentor":
+            return
+        else:
+            return super().validate_membership_in_different_batch_same_course()
 
 def get_livecode_url():
     doc = frappe.get_cached_doc("LMS Settings")
