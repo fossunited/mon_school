@@ -45,12 +45,12 @@
                 <div class="progress">
                   <div class="progress-bar"
                     role="progressbar"
-                    style="width: {{p.percent}}%;"
+                    style="width: {{p.percent | round(1) }}%;"
                     aria-valuenow="{{p.value}}"
                     aria-valuemin="0"
                     aria-valuemax="{{p.count}}"></div>
                 </div>
-                <div class="text-muted">{{p.value}} of {{p.count}} students ({{p.percent}}%) completed all the exercises.</div>
+                <div class="text-muted">{{p.value}} of {{p.count}} students ({{p.percent | round(1) }}%) completed all the exercises.</div>
               </li>
             {% endfor %}
           </ul>
@@ -60,7 +60,7 @@
             {% for p in report.get_progress_by_student() %}
               <li class="list-group-item">
                 <h4>{{p.student.full_name}}</h4>
-                <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent}}%).</div>
+                <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
               </li>
             {% endfor %}
           </ul>
