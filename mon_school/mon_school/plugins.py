@@ -8,13 +8,19 @@ The plugins provided by this module are:
 """
 import frappe
 from community.plugins import PageExtension, ProfileTab
+from community.widgets import Widgets
+from .overrides import Sketch
 
 class SketchesTab(ProfileTab):
     def get_title(self):
         return "Sketches"
 
     def render(self):
-        return "Coming Soon!"
+        sketches = Sketch.get_recent_sketches(owner=self.user, limit=16)
+        context = dict(sketches=sketches, widgets=Widgets())
+        return frappe.render_template(
+            "templates/profile/sketches.html",
+            context)
 
 class LiveCodeExtension(PageExtension):
     def render_header(self):
