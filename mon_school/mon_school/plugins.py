@@ -16,7 +16,7 @@ class SketchesTab(ProfileTab):
         return "Sketches"
 
     def render(self):
-        sketches = Sketch.get_recent_sketches(owner=self.user, limit=16)
+        sketches = Sketch.get_recent_sketches(owner=self.user.name, limit=16)
         context = dict(sketches=sketches, widgets=Widgets())
         return frappe.render_template(
             "templates/profile/sketches.html",
