@@ -27,7 +27,7 @@ def execute(code: str, is_sketch=False) -> LiveCodeResult:
     """
     livecode_url = frappe.get_cached_doc("LMS Settings").livecode_url
     livecode = LiveCode(livecode_url)
-    result = livecode.execute(code, is_sketch=False)
+    result = livecode.execute(code, is_sketch=is_sketch)
     return result.as_dict()
 
 class LiveCodeResult:
@@ -93,7 +93,6 @@ class LiveCode:
         try:
             ws.send(json.dumps(msg))
             messages = self._read_messages(ws)
-            print("messages:", messages)
 
             for m in messages:
                 if m['msgtype'] == 'write':

@@ -34,6 +34,7 @@ class LiveCodeEditor {
     this.elementCode = this.parent.querySelector(".code");
     this.elementOutput = this.parent.querySelector(".output");
     this.elementRun = this.parent.querySelector(".run");
+    this.elementRunStatus = this.parent.querySelector(".run-status");
     this.elementClear = this.parent.querySelector(".clear");
     this.elementReset = this.parent.querySelector(".reset");
     this.elementSVG = this.parent.querySelector(".svg-image svg");
@@ -48,28 +49,72 @@ class LiveCodeEditor {
   run() {
     this.triggerEvent("beforeRun");
     this.reset();
-    this.runCode(this.getCode())
-      .then((response) => {
-        //console.log(response)
-      });
+    this.runCode(this.getCode());
   }
   runCode(code) {
     this.clearOutput();
     this.clearImage();
 
-    return frappe.call({
-      method: "mon_school.mon_school.livecode.execute",
-      args: {
-        code: code,
-        is_sketch: false
+    this.showRunMessage("Running...");
+    var data = {
+      code: code,
+      is_sketch: this.runtime == "sketch"
+    }
+    fetch("/api/method/mon_school.mon_school.livecode.execute", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        "X-Frappe-CSRF-Token": frappe.csrf_token
       },
-      success: ((data) => {
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(data => {
+      this.showRunMessage("");
+      if (data._server_messages) {
+        this.showServerMessages(data);
+      }
+      if (data.message) {
         const msg = data.message;
         this.writeOutput(msg.output.join(""));
         this.drawShapes(msg.shapes);
-      })
-    });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      window.err = err;
+      if (this.isNetworkError(err)) {
+        this.showRunMessage("Unable to run the code due to network error.");
+      }
+      else {
+        this.showRunMessage("Error: " + err.message);
+      }
+    })
   }
+  showRunMessage(msg) {
+    this.elementRunStatus.innerHTML = msg;
+  }
+  isNetworkError(err) {
+    return (err instanceof TypeError)  && err.message.includes("NetworkError")
+  }
+  showServerMessages(data) {
+    if (data._server_messages) {
+      var server_messages = JSON.parse(data._server_messages || '[]');
+
+      server_messages = server_messages.map((msg) => {
+        // temp fix for messages sent as dict
+        try {
+          var d = JSON.parse(msg);
+          return (typeof d === 'object' && d.message) ? d.message: d;
+        } catch (e) {
+          return msg;
+        }
+      }).join('<br>');
+
+      this.showRunMessage(server_messages);
+    }
+  }
+
   triggerEvent(name) {
       var events = this.options.events;
       if (events && events[name]) {

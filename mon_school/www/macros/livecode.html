@@ -6,6 +6,7 @@
       <div class="col-lg-8 col-md-6">
         <div class="controls">
           <button class="run">Run</button>
+          <span class="run-status"></span>
         </div>
       </div>
     </div>
@@ -40,6 +41,7 @@
       <div class="controls">
         <button class="run">Run</button>
         <button class="reset">Reset</button>
+        <span class="run-status"></span>
         {% if is_exercise %}
           <button class="submit pull-right btn-primary">Submit</button>
           {% if last_submitted %}
@@ -88,13 +90,10 @@
   $(function() {
     $(".livecode-editor").each((i, e) => {
       var name = e.id.replace("editor-", "");
-      var is_sketch = $(e).data("runtime") == "sketch";
-      var env = {
-        "SKETCH": is_sketch ? "yes": ""
-      }
+
       var editor = new LiveCodeEditor(e, {
         codemirror: true,
-        env: env
+        runtime: $(e).data("runtime")
       });
       livecodeEditors.push(editor);
       livecodeEditorsMap[e.id] = editor;
