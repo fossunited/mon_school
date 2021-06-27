@@ -16,7 +16,7 @@ def show_bg():
         hline(0, stroke_width=2), vline(0, stroke_width=2)
     ]
     shape = Group(markers)
-    sendmsg("shape", shape=shape._svg())
+    sendmsg("shape", shape=shape.as_dict())
 
 BG_SHOWN = False
 
@@ -32,7 +32,7 @@ def show(*shapes):
 
     shapes = [s for s in shapes if isinstance(s, Shape)]
     shape = Group(shapes) | Scale(sx=1, sy=-1)
-    sendmsg("shape", shape=shape._svg())
+    sendmsg("shape", shape=shape.as_dict())
 
 env = dict(globals())
 

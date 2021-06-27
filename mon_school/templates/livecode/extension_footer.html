@@ -9,9 +9,7 @@
     }
 </script>
 
-<script type="text/javascript" src="{{ livecode_url }}/static/livecode.js"></script>
-
-<script type="text/javascript" src="/assets/mon_school/js/livecode-files.js"></script>
+<script type="text/javascript" src="/assets/mon_school/js/livecode.js"></script>
 
 <template id="livecode-template">
   <div class="livecode-editor livecode-editor-inline">
@@ -48,22 +46,6 @@
 
 
 <script type="text/javascript">
-  function getLiveCodeOptions() {
-    return {
-      base_url: "{{ livecode_url }}",
-      runtime: "python",
-      files: LIVECODE_FILES, // loaded from livecode-files.js
-      command: ["python", "start.py"],
-      codemirror: true,
-      onMessage: {
-        image: function(editor, msg) {
-          const element = editor.parent.querySelector(".svg-image");
-          element.innerHTML = msg.image;
-        }
-      }
-    }
-  }
-
   $(function() {
     var editorLookup = {};
 
@@ -94,24 +76,7 @@
       }
 
       var editor = new LiveCodeEditor(e.parentElement, {
-        ...getLiveCodeOptions(),
         codemirror: true,
-        onMessage: {
-          image: function(editor, msg) {
-            const canvasElement = editor.parent.querySelector("div.svg-image");
-            canvasElement.innerHTML = msg.image;
-          },
-          shape: function(editor, msg) {
-            const svgElement = editor.parent.querySelector("div.svg-image svg");
-            svgElement.innerHTML = svgElement.innerHTML + msg.shape;
-          }
-        },
-        events: {
-          beforeRun: function(e) {
-            var el = editor.parent.querySelector(".svg-image svg");
-            el.innerHTML = "";
-          }
-        }
       });
 
       $(e).parent().find(".submit").on('click', function() {

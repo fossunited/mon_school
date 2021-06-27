@@ -79,39 +79,11 @@
 
 {% macro LiveCodeEditorJS(name, code) %}
 
-<script type="text/javascript" src="{{ livecode_url }}/static/livecode.js"></script>
-<script type="text/javascript" src="/assets/mon_school/js/livecode-files.js"></script>
+<script type="text/javascript" src="/assets/mon_school/js/livecode.js"></script>
 
 <script type="text/javascript">
   var livecodeEditors = [];
   var livecodeEditorsMap = {};
-
-  function getLiveCodeOptions() {
-    return {
-      base_url: "{{ livecode_url }}",
-      runtime: "python",
-      files: LIVECODE_FILES, // loaded from livecode-files.js
-      command: ["python", "start.py"],
-      codemirror: true,
-      onMessage: {
-        image: function(editor, msg) {
-          const element = editor.parent.querySelector(".svg-image");
-          element.innerHTML = msg.image;
-        },
-        shape: function(editor, msg) {
-          const svgElement = editor.parent.querySelector("div.svg-image svg");
-          svgElement.innerHTML = svgElement.innerHTML + msg.shape;
-        }
-      },
-      events: {
-        beforeRun: function(editor) {
-          console.log("before Run", editor, editor.parent)
-          var el = editor.parent.querySelector(".svg-image svg");
-          el.innerHTML = "";
-        }
-      }
-    }
-  }
 
   $(function() {
     $(".livecode-editor").each((i, e) => {
@@ -121,7 +93,7 @@
         "SKETCH": is_sketch ? "yes": ""
       }
       var editor = new LiveCodeEditor(e, {
-        ...getLiveCodeOptions(env),
+        codemirror: true,
         env: env
       });
       livecodeEditors.push(editor);
