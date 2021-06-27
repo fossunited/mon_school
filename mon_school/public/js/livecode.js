@@ -60,8 +60,9 @@ class LiveCodeEditor {
       code: code,
       is_sketch: this.runtime == "sketch"
     }
-    fetch("/api/method/mon_school.mon_school.livecode.execute", {
+    fetchWithTimeout("/api/method/mon_school.mon_school.livecode.execute", {
       method: "POST",
+      timeout: 3000,
       headers: {
         "Content-type": "application/json",
         "X-Frappe-CSRF-Token": frappe.csrf_token
@@ -81,13 +82,15 @@ class LiveCodeEditor {
       }
     })
     .catch(err => {
-      console.log(err);
       window.err = err;
       if (this.isNetworkError(err)) {
-        this.showRunMessage("Unable to run the code due to network error.");
+        this.showRunMessage("Error: network connection failed.");
+      }
+      else if (this.isTimeoutError(err)) {
+        this.showRunMessage("Error: network connection timed out.")
       }
       else {
-        this.showRunMessage("Error: " + err.message);
+        this.showRunMessage("Error: " + err);
       }
     })
   }
@@ -96,6 +99,9 @@ class LiveCodeEditor {
   }
   isNetworkError(err) {
     return (err instanceof TypeError)  && err.message.includes("NetworkError")
+  }
+  isTimeoutError(err) {
+    return (err instanceof DOMException)  && err.name == "AbortError"
   }
   showServerMessages(data) {
     if (data._server_messages) {
@@ -216,4 +222,24 @@ class LiveCodeEditor {
     }
     return svg;
   }
+}
+
+async function fetchWithTimeout(url, options) {
+  // see https://developer.mozilla.org/en-US/docs/Web/API/AbortController
+  var controller = new AbortController();
+
+  var timeout = options.timeout;
+  console.log("fetchWithTimeout", timeout);
+  var timeoutObj = setTimeout(() => {
+    console.log("aborting...");
+    controller.abort()
+  }, timeout);
+
+  var response = await fetch(url, {
+    ...options,
+    signal: controller.signal
+  })
+  clearTimeout(timeoutObj);
+  console.log("clearTimeout");
+  return response;
 }
