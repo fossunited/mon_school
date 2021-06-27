@@ -35,7 +35,10 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 canvas-wrapper">
-            <div class="svg-image" width="300" height="300"></div>
+            <div class="svg-image" width="300" height="300">
+              <svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
+              </svg>
+            </div>
             <pre class="output"></pre>
         </div>
       </div>
@@ -97,6 +100,16 @@
           image: function(editor, msg) {
             const canvasElement = editor.parent.querySelector("div.svg-image");
             canvasElement.innerHTML = msg.image;
+          },
+          shape: function(editor, msg) {
+            const svgElement = editor.parent.querySelector("div.svg-image svg");
+            svgElement.innerHTML = svgElement.innerHTML + msg.shape;
+          }
+        },
+        events: {
+          beforeRun: function(e) {
+            var el = editor.parent.querySelector(".svg-image svg");
+            el.innerHTML = "";
           }
         }
       });

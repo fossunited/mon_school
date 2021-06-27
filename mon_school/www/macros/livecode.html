@@ -17,7 +17,14 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-6 canvas-wrapper">
-            <div class="svg-image" width="300" height="300">{{ image or "" }} </div>
+            <div class="svg-image" width="300" height="300">
+              {% if image %}
+                {{ image }}
+              {% else %}
+                <svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
+                </svg>
+              {% endif %}
+            </div>
             <pre class="output"></pre>
         </div>
       </div>
@@ -53,7 +60,14 @@
         </div>
       </div>
       <div class="col-lg-4 col-md-6 canvas-wrapper">
-        <div class="svg-image svg-image-small">{{ image or "" }}</div>
+        <div class="svg-image svg-image-small">
+          {% if image %}
+            {{ image }}
+          {% else %}
+            <svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
+            </svg>
+          {% endif %}
+        </div>
         <pre class="output"></pre>
       </div>
     </div>
@@ -83,6 +97,17 @@
         image: function(editor, msg) {
           const element = editor.parent.querySelector(".svg-image");
           element.innerHTML = msg.image;
+        },
+        shape: function(editor, msg) {
+          const svgElement = editor.parent.querySelector("div.svg-image svg");
+          svgElement.innerHTML = svgElement.innerHTML + msg.shape;
+        }
+      },
+      events: {
+        beforeRun: function(editor) {
+          console.log("before Run", editor, editor.parent)
+          var el = editor.parent.querySelector(".svg-image svg");
+          el.innerHTML = "";
         }
       }
     }

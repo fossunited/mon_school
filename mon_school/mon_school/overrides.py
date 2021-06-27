@@ -83,11 +83,12 @@ def livecode_to_svg(code, *, timeout=3, is_sketch=False):
         ws.send(json.dumps(msg))
 
         messages = _read_messages(ws)
-        commands = [m for m in messages if m['msgtype'] == 'image']
-        if commands:
-            return commands[0]['image']
-        else:
-            return ""
+        commands = [m for m in messages if m['msgtype'] == 'sketch']
+        return (
+            '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
+            + "\n".join(m['sketch'] for m in commands)
+            + '\n'
+            + '</svg>\n')
     except websocket.WebSocketException as e:
         frappe.log_error(frappe.get_traceback(), 'livecode_to_svg failed')
 

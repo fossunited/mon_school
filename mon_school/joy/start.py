@@ -1,7 +1,7 @@
 
 from joy import *
 
-def show(*shapes):
+def show_bg():
     def hline(y, **kwargs):
         return line(x1=-150, y1=y, x2=150, y2=y, stroke="#ddd", **kwargs)
 
@@ -15,12 +15,24 @@ def show(*shapes):
         vline(-50), vline(-100), vline(-150),
         hline(0, stroke_width=2), vline(0, stroke_width=2)
     ]
+    shape = Group(markers)
+    sendmsg("shape", shape=shape._svg())
+
+BG_SHOWN = False
+
+def show(*shapes):
+    global BG_SHOWN
+    if not BG_SHOWN:
+        show_bg()
+        BG_SHOWN = True
+
     for s in shapes:
         if not isinstance(s, Shape):
             print(f"show: {s} is not a shape")
-    shapes = markers + [s for s in shapes if isinstance(s, Shape)]
-    img = SVG(shapes)
-    sendmsg("image", image=img.render())
+
+    shapes = [s for s in shapes if isinstance(s, Shape)]
+    shape = Group(shapes) | Scale(sx=1, sy=-1)
+    sendmsg("shape", shape=shape._svg())
 
 env = dict(globals())
 
