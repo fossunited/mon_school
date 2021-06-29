@@ -105,7 +105,19 @@
 
     $("pre.exercise").each((i, e) => {
       var svg = JSON.parse($(e).data("image"));
-      $(e).parent().find(".svg-image").html(svg);
+      if (svg) {
+        // We need to add the svg without removing the svg element from DOM
+        // as the <svg> element is already cached in the LiveCodeEditor.
+        //
+        // We are adding the svg to a temporary div and taking the innerHTML
+        // of the svg element and copying that to the svg element already
+        // present in the DOM.
+        var div = document.createElement("div");
+        div.innerHTML = svg;
+
+        var innerSVG = $(div).find("svg").html();
+        $(e).parent().find(".svg-image svg").html(innerSVG);
+      }
     });
 
   });
