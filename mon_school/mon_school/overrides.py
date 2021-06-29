@@ -9,6 +9,7 @@ import websocket
 import json
 from urllib.parse import urlparse
 from ..joy.build import get_livecode_files
+from . import livecode
 
 class Sketch(LMSSketch):
     def before_save(self):
@@ -50,57 +51,28 @@ class LMSBatchMembership(_LMSBatchMembership):
         else:
             return super().validate_membership_in_different_batch_same_course()
 
-def get_livecode_url():
-    doc = frappe.get_cached_doc("LMS Settings")
-    return doc.livecode_url
-
-def get_livecode_ws_url():
-    url = urlparse(get_livecode_url())
-    protocol = "wss" if url.scheme == "https" else "ws"
-    return protocol + "://" + url.netloc + "/livecode"
-
-def livecode_to_svg(code, *, timeout=3, is_sketch=False):
+def livecode_to_svg(code):
     """Renders the code as svg.
     """
-    try:
-        ws = websocket.WebSocket()
-        ws.settimeout(timeout)
-        livecode_ws_url = get_livecode_ws_url()
-        ws.connect(livecode_ws_url)
+    result = livecode.execute(code)
+    if result.get('status') != 'success':
+        return None
 
-        env = {}
-        if is_sketch:
-            env['SKETCH'] = "yes"
+    return (
+        '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
+        + "\n".join(_render_shape(s) for s in result['shapes'])
+        + '\n'
+        + '</svg>\n')
 
-        msg = {
-            "msgtype": "exec",
-            "runtime": "python",
-            "code": code,
-            "env": env,
-            "files": get_livecode_files(),
-            "command": ["python", "start.py"]
-        }
-        ws.send(json.dumps(msg))
+def _render_shape(node):
+    tag = node.pop("tag")
+    children = node.pop("children", None)
+    attrs = " ".join(f'{name}="{value}"' for name, value in node.items())
 
-        messages = _read_messages(ws)
-        commands = [m for m in messages if m['msgtype'] == 'sketch']
-        return (
-            '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
-            + "\n".join(m['sketch'] for m in commands)
-            + '\n'
-            + '</svg>\n')
-    except websocket.WebSocketException as e:
-        frappe.log_error(frappe.get_traceback(), 'livecode_to_svg failed')
+    if children:
+        children_svg = "\n".join(_render_shape(c) for c in children)
+        return f"<{tag} {attrs}>{children_svg}</{tag}>"
+    else:
+        return f"<{tag} {attrs} />"
 
-def _read_messages(ws):
-    messages = []
-    try:
-        while True:
-            msg = ws.recv()
-            if not msg:
-                break
-            messages.append(json.loads(msg))
-    except websocket.WebSocketTimeoutException as e:
-        print("Error:", e)
-        pass
-    return messages
+
