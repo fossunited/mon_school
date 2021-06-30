@@ -51,10 +51,10 @@ class LMSBatchMembership(_LMSBatchMembership):
         else:
             return super().validate_membership_in_different_batch_same_course()
 
-def livecode_to_svg(code):
+def livecode_to_svg(code, is_sketch=False):
     """Renders the code as svg.
     """
-    result = livecode.execute(code)
+    result = livecode.execute(code, is_sketch=is_sketch)
     if result.get('status') != 'success':
         return None
 
