@@ -74,7 +74,7 @@ class LiveCode:
         result = LiveCodeResult()
         try:
             ws = self.get_websocket()
-        except IOError:
+        except (IOError, websocket.WebSocketException):
             result.mark_failed("connection-failed")
             return result
 
@@ -99,7 +99,7 @@ class LiveCode:
                     result.add_output(m['data'])
                 elif m['msgtype'] == 'shape':
                     result.add_shape(m['shape'])
-        except IOError:
+        except (IOError, websocket.WebSocketException):
             result.mark_failed('connection-reset')
 
         return result
