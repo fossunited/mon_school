@@ -10,7 +10,7 @@ An example of using joy:
 
     >>> from joy import *
     >>>
-    >>> c = Circle(center=Point(x=100, y=100), radius=50)
+    >>> c = circle(x=100, y=100, radius=50)
     >>> show(c)
 
 The `cicle` function creates a new circle and the `show` function
@@ -36,71 +36,59 @@ By default the size of the canvas is (300, 300).
 
 BASIC SHAPES
 
-Joy supports `Circle`, `Rect` and `Line` as basic shapes.
+Joy supports `circle`, `rectangle` and `line` as basic shapes.
 
-    >>> c = Circle(center=Point(x=100, y=100), radius=50)
-    >>> r = Rectangle(center=Point(0, 0), width=200, height=200)
+    >>> c = circle(x=100, y=100, r=50)
+    >>> r = rectangle(x=0, y=0, w=200, h=200)
     >>> show(c, r)
 
 All basic shapes have default values of all the arguments, making it
 easier to start using them.
 
-    >>> c = Circle()
-    >>> r = Rectangle()
-    >>> z = Line()
+    >>> c = circle()
+    >>> r = rectangle()
+    >>> z = line()
     >>> show(c, r, z)
 
 COMBINING SHAPES
 
-The `combine` function is used to combine multiple shapes into a
+The `+` operator is used to combine multiple shapes into a
 single shape.
 
-    >>> shape = combine(Circle(), Rect())
+    >>> shape = circle() + rectangle()
     >>> show(shape)
 
 TRANSFORMATIONS
 
-Joy supports `Translate`, `Rotate` and `Scale` transformations.
+Joy supports `translate`, `rotate` and `scale` transformations.
 
-The `Translate` transformation moves the given shape by `x` and `y`.
+The `translate` transformation moves the given shape by `x` and `y`.
 
-    >>> c1 = Circle(radius=50)
-    >>> c2 = c1 | Translate(x=100, y=0)
+    >>> c1 = circle(r=50)
+    >>> c2 = c1 | translate(x=100, y=0)
     >>> show(c1, c2)
 
 As you've seen the above example, transformations are applied using
 the `|` operator.
 
-The `Rotate` transformation rotates a shape clockwise by the specified
+The `Rotate` transformation rotates a shape anti-clockwise by the specified
 angle.
 
-    >>> shape = Rectangle() | Rotate(angle=45)
-    >>> show(shape)
-
-By default the `rotate` function rotates the shape around the origin.
-However, it is also possible to specify the anchor point for rotation.
-
-    >>> shape = Rectangle() | Rotate(angle=45, anchor=Point(x=100, y=100))
+    >>> shape = rectangle() | rotate(angle=45)
     >>> show(shape)
 
 The `Scale` transformation scales a shape.
 
-    >>> shape = Circle() | Scale(sx=1, sy=0.5)
+    >>> shape = circle() | scale(x=1, y=0.5)
     >>> show(shape)
 
 HIGER ORDER TRANSFORMATIONS
 
-Joy supports a transorm called `Cycle` to rotate a shape multiple times
-with angle from 0 to 360 degrees and combining all the resulting shapes.
+Joy supports a transorm called `repeat` to apply a transformation multiple times
+and combining all the resulting shapes.
 
-    >>> flower = Rectangle() | Cycle()
+    >>> flower = rectangle() | repeat(18, rotate(10))
     >>> show(flower)
-
-By default, `Cycle` repeats the rotation for `18` times, however that can be
-customizing by specifying the parameter `n`.
-
-    >>> shape = rect() | Cycle(n=3)
-    >>> show(shape)
 
 JUPYTER LAB INTEGRATION
 
@@ -659,11 +647,14 @@ class Repeat(Transformation):
         self.transformation = transformation
 
     def apply(self, shape):
-        shapes = [shape]
-        for i in range(self.n-1):
-            shape = self.transformation.apply(shape)
-            shapes.append(shape)
-        return Group(shapes)
+        return self._apply(shape, self.transformation, self.n)
+
+    def _apply(self, shape, tf, n):
+        if n == 1:
+            return shape
+        else:
+            result = self._apply(shape, tf, n-1) | tf
+            return shape + result
 
 class Cycle(Transformation):
     """
@@ -851,6 +842,25 @@ def line(x1=None, y1=None, x2=None, y2=None, **kwargs):
             raise Exception("missing arguments for line: ", ", ".join(missing))
 
     return Line(start=Point(x1, y1), end=Point(x2, y2), **kwargs)
+
+def point(x, y):
+    """Creates a Point with x and y coordinates.
+    """
+    return Point(x, y)
+
+def polygon(points, **kwargs):
+    """Creates a polygon with given list points.
+
+    Example:
+
+        p1 = point(x=0, y=0)
+        p2 = point(x=100, y=0)
+        p3 = point(x=0, y=100)
+        triangle = polygon([p1, p2, p3])
+        show(triangle)
+    """
+    points_str = " ".join(f"{p.x},{p.y}" for p in points)
+    return Shape(tag="polygon", points=points_str, **kwargs)
 
 def translate(x=0, y=0):
     """Translates a shape.
