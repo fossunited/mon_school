@@ -18,6 +18,11 @@ def get_context(context):
     context.livecode_url = get_livecode_url()
     context.editable = is_editable(context.sketch, frappe.session.user)
 
+    context.page_context = {
+        "source_type": "sketch",
+        "sketch": sketch.name
+    }
+
 def is_editable(sketch, user):
     if sketch.is_new():
         # new sketches can be editable by any logged in user

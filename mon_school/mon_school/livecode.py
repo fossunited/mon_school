@@ -8,7 +8,7 @@ import websocket
 from ..joy.build import get_livecode_files
 
 @frappe.whitelist(allow_guest=True)
-def execute(code: str, is_sketch=False) -> LiveCodeResult:
+def execute(code: str, is_sketch=False, context=None) -> LiveCodeResult:
     """Executes the code and returns the output.
 
     The return value will be of the following format:
@@ -28,19 +28,42 @@ def execute(code: str, is_sketch=False) -> LiveCodeResult:
     livecode_url = frappe.get_cached_doc("LMS Settings").livecode_url
     livecode = LiveCode(livecode_url)
     result = livecode.execute(code, is_sketch=is_sketch)
-    record_code_run(code, result)
+    record_code_run(code, result, context)
     return result.as_dict()
 
-def record_code_run(code, result):
+def record_code_run(code, result, context=None):
     """Records the code execution.
     """
+    context = context or {}
+
+    course = context.get("course")
+    lesson = context.get("lesson")
+    batch = context.get("batch")
+    sketch = context.get("sketch")
+    exercise = context.get("exercise")
+    example = context.get("example")
+
+    if sketch is not None:
+        source_type = "Sketch"
+    elif exercise is not None:
+        source_type = "Exercise"
+    else:
+        source_type = "Example"
+
     try:
         doc = frappe.get_doc({
             "doctype": "Code Run",
             "code": code,
             "result": json.dumps(result.as_dict(), indent="  "),
             "status": result.status.title(), # status is Success|Failed in the db
-            "error": result.error_code
+            "error": result.error_code,
+            "course": course,
+            "batch": batch,
+            "lesson": lesson,
+            "source_type": source_type,
+            "sketch": sketch,
+            "exercise": exercise,
+            "example": example,
         })
         doc.save(ignore_permissions=True)
         print(f"recorded code run {doc.name}")

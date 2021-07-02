@@ -56,6 +56,10 @@
       var template = document.querySelector('#livecode-template');
       var clone = template.content.cloneNode(true);
 
+      var context = {
+        ...page_context
+      }
+
       $(e)
       .wrap('<div></div>')
       .hide()
@@ -65,6 +69,9 @@
       .val(code);
 
       if ($(e).hasClass("exercise")) {
+        context.source_type = "exercise";
+        context.exercise = $(e).data("name");
+
         var last_submitted = $(e).data("last-submitted");
         if (last_submitted) {
           $(e).parent().find(".last-submitted")
@@ -73,11 +80,15 @@
         }
       }
       else {
+        context.source_type = "example";
+        context.example = $(e).attr("id");
+
         $(e).parent().find(".exercise-controls").remove();
       }
 
       var editor = new LiveCodeEditor(e.parentElement, {
         codemirror: true,
+        context: context
       });
 
       $(e).parent().find(".submit").on('click', function() {

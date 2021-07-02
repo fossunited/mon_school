@@ -31,6 +31,10 @@ class LiveCodeEditor {
     this.env = options.env || {};
     this.command = options.command || null;
 
+    // context contains the fields like course, lesson etc, that are
+    // passed to the livecode API for tracking
+    this.context = this.options.context || {};
+
     this.elementCode = this.parent.querySelector(".code");
     this.elementOutput = this.parent.querySelector(".output");
     this.elementRun = this.parent.querySelector(".run");
@@ -58,7 +62,8 @@ class LiveCodeEditor {
     this.showRunMessage("Running...");
     var data = {
       code: code,
-      is_sketch: this.runtime == "sketch"
+      is_sketch: this.runtime == "sketch",
+      context: this.context
     }
     fetchWithTimeout("/api/method/mon_school.mon_school.livecode.execute", {
       method: "POST",

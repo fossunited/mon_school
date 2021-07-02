@@ -64,6 +64,11 @@
 
 {%- block script %}
   {{ super() }}
+
+  <script type="text/javascript">
+  var page_context = {{ page_context | tojson }};
+  </script>
+
   {{ LiveCodeEditorJS() }}
 
   <script type="text/javascript">
