@@ -50,6 +50,11 @@ def record_code_run(code, result, context=None):
     else:
         source_type = "Example"
 
+    if result.status == "failed":
+        failure_type, error = result.find_exception_details()
+    else:
+        failure_type, error = None, None
+
     try:
         doc = frappe.get_doc({
             "doctype": "Code Run",
@@ -64,6 +69,8 @@ def record_code_run(code, result, context=None):
             "sketch": sketch,
             "exercise": exercise,
             "example": example,
+            "failure_type": failure_type,
+            "error": error
         })
         doc.save(ignore_permissions=True)
         print(f"recorded code run {doc.name}")
@@ -82,6 +89,24 @@ class LiveCodeResult:
     def mark_failed(self, error_code):
         self.status = "failed"
         self.error_code = error_code
+
+    def find_exception_details(self):
+        """Returns the exception type and the exception message.
+        """
+        if self.status != "failed" or not self.output:
+            return None, None
+
+        output = "".join(self.output)
+
+        # not an exception
+        if "Traceback (most recent call last):" not in output:
+            return None, None
+
+
+        if ":" in self.output[-1]:
+            exctype, message = self.output[-1].split(":", 1)
+
+        return exctype.strip(), message.strip()
 
     def add_output(self, output):
         self.output.append(output)
@@ -132,6 +157,7 @@ class LiveCode:
             "files": get_livecode_files(),
             "command": ["python", "start.py"]
         }
+        exit_status = -1
         try:
             ws.send(json.dumps(msg))
             messages = self._read_messages(ws)
@@ -141,9 +167,13 @@ class LiveCode:
                     result.add_output(m['data'])
                 elif m['msgtype'] == 'shape':
                     result.add_shape(m['shape'])
+                elif m['msgtype'] == 'exitstatus':
+                    exit_status = m['exitstatus']
         except (IOError, websocket.WebSocketException):
             result.mark_failed('connection-reset')
 
+        if exit_status != 0:
+            result.status = "failed"
         return result
 
     def get_websocket(self):
