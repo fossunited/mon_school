@@ -28,7 +28,26 @@ def execute(code: str, is_sketch=False) -> LiveCodeResult:
     livecode_url = frappe.get_cached_doc("LMS Settings").livecode_url
     livecode = LiveCode(livecode_url)
     result = livecode.execute(code, is_sketch=is_sketch)
+    record_code_run(code, result)
     return result.as_dict()
+
+def record_code_run(code, result):
+    """Records the code execution.
+    """
+    try:
+        doc = frappe.get_doc({
+            "doctype": "Code Run",
+            "code": code,
+            "result": json.dumps(result.as_dict(), indent="  "),
+            "status": result.status.title(), # status is Success|Failed in the db
+            "error": result.error_code
+        })
+        doc.save(ignore_permissions=True)
+        print(f"recorded code run {doc.name}")
+    except Exception:
+        print("Failed to save code run")
+        import traceback
+        traceback.print_exc()
 
 class LiveCodeResult:
     def __init__(self):
