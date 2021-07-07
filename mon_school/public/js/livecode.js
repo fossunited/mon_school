@@ -170,7 +170,8 @@ class LiveCodeEditor {
   getCode() {
     if (this.codemirror) {
       var code = this.codemirror.doc.getValue()
-      return code.replaceAll("\t", " ".repeat(this.codemirror.options.indentUnit))
+      var indent = " ".repeat(this.codemirror.options.indentUnit);
+      return code.replace(/\t/g, indent);
     }
     else {
       return this.elementCode.value;
