@@ -67,7 +67,7 @@ class LiveCodeEditor {
     }
     fetchWithTimeout("/api/method/mon_school.mon_school.livecode.execute", {
       method: "POST",
-      timeout: 3000,
+      timeout: 10000, // 10 seconds
       headers: {
         "Content-type": "application/json",
         "X-Frappe-CSRF-Token": frappe.csrf_token
