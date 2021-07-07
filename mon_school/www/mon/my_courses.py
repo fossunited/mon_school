@@ -26,7 +26,7 @@ def load_membership(row):
         row.course = batch and batch.course
 
     return {
-        "member_type": row.membership_type,
+        "member_type": row.member_type,
         "batch": batch,
         "course": frappe.get_doc("LMS Course", row.course)
     }
