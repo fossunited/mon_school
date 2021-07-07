@@ -3,18 +3,30 @@ import frappe
 def get_context(context):
     context.no_cache = 1
     context.user = get_user()
-    context.batches = get_batches(context.user)
+    context.memberships = get_memberships(context.user)
 
 def get_user():
     if frappe.session.user != "Guest":
         return frappe.session.user
 
-def get_batches(user):
-    batch_names = frappe.db.get_all(
+def get_memberships(user):
+    memberships = frappe.db.get_all(
         "LMS Batch Membership",
         filters={"member": user},
-        fields=["batch"],
-        pluck="batch"
+        fields=["name", "batch", "course", "member_type"]
     )
-    batches = [frappe.get_doc("LMS Batch", name) for name in batch_names]
-    return batches
+    return [load_membership(row) for row in memberships]
+
+def load_membership(row):
+    batch = row.batch and frappe.get_doc("LMS Batch", row.batch)
+
+    # some legacy records have course as null.
+    # hoping that both the batch and the course will never be None.
+    if row.course == None:
+        row.course = batch and batch.course
+
+    return {
+        "member_type": row.membership_type,
+        "batch": batch,
+        "course": frappe.get_doc("LMS Course", row.course)
+    }

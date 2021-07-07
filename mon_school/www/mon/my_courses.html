@@ -24,7 +24,7 @@
         <p>Please Login to access your courses.</p>
         <p><a class="btn btn-primary" href="/login?next=my-courses">Login Now</a></p>
       </div>
-    {% elif not batches %}
+    {% elif not memberships %}
     <div class="alert alert-warning">
       <p>You have not joined any courses yet.</p>
 
@@ -32,9 +32,9 @@
     </div>
     {% else %}
       <div class="row">
-        {% for batch in batches %}
+        {% for m in memberships %}
           <div class="col-md-4">
-            {{ BatchTeaser(batch)}}
+            {{ CourseTeaser(m.course, m.batch, m.member_type)}}
           </div>
         {% endfor %}
       </div>
@@ -44,22 +44,29 @@
 {% endblock %}
 
 
-{% macro BatchTeaser(batch) %}
-{% set course = frappe.get_doc("LMS Course", batch.course) %}
+{% macro CourseTeaser(course, batch, member_type) %}
+{% if batch and member_type != "student" %}
+  {% set query = {"batch" : batch.name} %}
+{% else %}
+  {% set query = {} %}
+{% endif %}
+
 <div class="course-teaser">
   <div class="course-body">
-    <h3 class="course-title"><a href="/courses/{{ course.name }}/home?batch={{batch.name}}">{{ course.title }}</a></h3>
-    <h4 class="course-subtitle">{{ batch.title }}</h4>
+    <h3 class="course-title"><a href="/courses/{{ course.name }}/home?{{ query | urlencode }}">{{ course.title }}</a></h3>
+    {% if batch %}
+      <h4 class="course-subtitle">{{ batch.title }}</h4>
+    {% endif %}
     <div class="course-intro">
       {{ course.short_introduction or "" }}
     </div>
   </div>
   <div class="course-footer">
-    {% if batch.is_member(frappe.session.user, member_type="Mentor") %}
-      <a class="btn btn-secondary pull-right" href="/mon/progress?batch={{batch.name}}">Progress</a>
+    {% if member_type == "Mentor" %}
+      <a class="btn btn-secondary pull-right" href="/mon/progress?{{ query | urlencode }}">Progress</a>
     {% endif %}
 
-    <a class="btn btn-secondary" href="/courses/{{course.name}}/learn?batch={{batch.name}}">Resume Course</a>
+    <a class="btn btn-secondary" href="/courses/{{course.name}}/learn?batch={{ query | urlencode }}">Resume Course</a>
   </div>
 </div>
 {% endmacro %}
