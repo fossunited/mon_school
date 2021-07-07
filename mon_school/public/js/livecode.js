@@ -141,8 +141,9 @@ class LiveCodeEditor {
 	    this.elementReset.onclick = () => this.triggerEvent("reset");
     }
 
+    var options;
     if (this.options.codemirror) {
-      const options = {
+      options = {
         ...LIVECODE_CODEMIRROR_OPTIONS,
       }
       if (this.options.codemirror instanceof Object) {
@@ -249,3 +250,5 @@ async function fetchWithTimeout(url, options) {
   console.log("clearTimeout");
   return response;
 }
+
+window.LiveCodeEditor = LiveCodeEditor;
