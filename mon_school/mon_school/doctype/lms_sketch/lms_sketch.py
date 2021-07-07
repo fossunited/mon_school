@@ -102,4 +102,5 @@ def save_sketch(name, title, code):
         "ok": True,
         "status": status,
         "name": doc.name,
+        "id": doc.name.replace("SKETCH-", "")
     }

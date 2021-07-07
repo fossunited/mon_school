@@ -38,7 +38,7 @@ def get_livecode_url():
 def get_sketch(sketch_id):
     if sketch_id == 'new':
         sketch = frappe.new_doc('LMS Sketch')
-        sketch.name = "new"
+        sketch.name = ""
         sketch.title = "New Sketch"
         sketch.code = "c = circle()\nshow(c)"
         return sketch

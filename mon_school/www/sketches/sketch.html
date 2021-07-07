@@ -77,7 +77,8 @@
     function saveSketch() {
       var title = $("#sketch-title").val()
       var code = livecodeEditors[0].codemirror.doc.getValue()
-      frappe.call('community.lms.doctype.lms_sketch.lms_sketch.save_sketch', {
+
+      frappe.call('mon_school.mon_school.doctype.lms_sketch.lms_sketch.save_sketch', {
         name: sketch_name,
         title: title,
         code: code
@@ -93,7 +94,7 @@
           });
         }
         else if (msg.status == "created") {
-          var path = "/sketches/sketch?sketch=" + msg.name;
+          var path = "/sketches/" + msg.id;
           var url = window.location.protocol + "//" + window.location.host + path
           window.history.pushState({path: url}, '', url);
           sketch_name = name;
