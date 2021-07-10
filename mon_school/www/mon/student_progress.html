@@ -1,0 +1,152 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Course Progress - Mon School{% endblock %}
+
+{% block head_include %}
+  <meta name="description" content="Course Progress - Mon School" />
+  <meta name="keywords" content="mon shool the joy of programming" />
+  <link rel="stylesheet" href="/assets/css/lms.css">
+  <style type="text/css">
+    h4.course-subtitle {
+      font-size: 1.0em;
+      color: #888;
+    }
+    .progress {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .exercise-report {
+      margin-bottom: 20px;
+    }
+    .exercise-status {
+      margin: 10px 0px;
+    }
+    .progress-list li {
+      padding: 20px;
+    }
+    .exercise-details {
+      background: #eee;
+      margin: 0px -20px -20px -20px;
+      padding: 20px;
+    }
+    .exercise-details-body {
+      background: white;
+      padding: 20px;
+    }
+    .exercise-image svg {
+      width: 150px;
+      height: 150px;
+    }
+    .exercise-submission svg {
+      width: 150px;
+      height: 150px;
+      border: 5px #eee;
+    }
+    pre {
+      background: #ffe;
+      padding: 10px;
+      border: 1px solid #eed;
+    }
+    .current-user {
+      background: #ffe;
+    }
+    .list-group-item.active a {
+      color: white;
+    }
+    .list-group-item.active .text-muted {
+      color: white !important;
+    }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+<section class="top-section" style="padding: 1rem 0rem;">
+  <div class='container pb-5'>
+      {% if batch %}
+        <h4 class="course-subtitle"><a href="/mon/progress?batch={{batch.name}}">{{ batch.title }}</a></h4>
+      {% endif %}
+      <h1>{{user.full_name}}</h1>
+      <br><br>
+
+      <div class="row">
+        <div class="col-md-8">
+      <ul class="list-group progress-list">
+        {% for lesson in report.lessons %}
+          <li class="list-group-item">
+            <h4>{{lesson.index_label}} {{ lesson.title }}</h4>
+
+            {% set p = report.get_progress_by_lesson(lesson.name) %}
+            <div>
+              <small class="text-muted text-small">Solved {{p.value}} of {{p.count}} exercises ({{p.percent | round(1) }}%).</small>
+            </div>
+            <div class="exercise-status">
+              {% for status in report.get_status_of_exercises(lesson.name) %}
+              <button
+                type="button"
+                class="btn btn-exercise btn-sm {{ 'btn-success' if status.submission else 'btn-light'}}"
+                data-target="#exercise-{{status.exercise.name}}"
+              >
+                E{{status.exercise.index_label}}
+              </button>
+              {% endfor %}
+            </div>
+            {% for status in report.get_status_of_exercises(lesson.name) %}
+              {% set e = status.exercise %}
+              {% set submission = status.submission %}
+
+              <div class="exercise-details hidden" id="exercise-{{e.name}}">
+                <div class="exercise-details-body">
+                  <h3>Exercise {{e.index_label}}: {{ e.title }}</h3>
+                  <div class="exercise-description">{{frappe.utils.md_to_html(e.description)}}</div>
+                  {% if e.image %}
+                    <div class="exercise-image">{{e.image}}</div>
+                  {% endif %}
+
+                  {% if submission %}
+                  <div class="exercise-submission">
+                    <h5>Submitted Answer</h5>
+                    <pre>{{submission.solution}}</pre>
+                    <div>
+                      {{submission.image}}
+                    </div>
+                  </div>
+                  {% else %}
+                    <div class="alert alert-warning">Not solved yet!</div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
+      </div>
+
+      <div class="col-md-4">
+        <ul class="list-group">
+          {% for p in report.get_progress_by_student() %}
+            <li class="list-group-item {{ 'active' if p.student.name == user.name }}">
+              <h4><a href="/mon/student_progress?student={{p.student.name}}">{{p.student.full_name}}</a></h4>
+              <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{%- block script %}
+{{ super() }}
+<script type="text/javascript">
+  $(function() {
+    $("button.btn-exercise").click(function() {
+      var data = $(this).data();
+      console.log(data);
+      $(".exercise-details").addClass("hidden");
+      $(data.target).removeClass("hidden");
+    })
+  });
+</script>
+{%- endblock %}

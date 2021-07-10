@@ -83,8 +83,6 @@ class BatchReport:
         total = len(self.exercises)
         counts = Counter(s.owner.email for s in self.submissions)
 
-        print("counts", counts)
-
         def progress(student):
             count = counts.get(student.email, 0)
             return {
