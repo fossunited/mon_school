@@ -59,7 +59,7 @@
           <ul class="list-group">
             {% for p in report.get_progress_by_student() %}
               <li class="list-group-item">
-                <h4>{{p.student.full_name}}</h4>
+                <h4><a href="/mon/student_progress?student={{p.student.name}}&batch={{batch.name}}">{{p.student.full_name}}</a></h4>
                 <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
               </li>
             {% endfor %}

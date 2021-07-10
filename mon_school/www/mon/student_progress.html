@@ -26,7 +26,7 @@
     }
     .exercise-details {
       background: #eee;
-      margin: 0px -20px;
+      margin: 0px -20px -20px -20px;
       padding: 20px;
     }
     .exercise-details-body {
@@ -53,19 +53,19 @@
     .list-group-item.active a {
       color: white;
     }
+    .list-group-item.active .text-muted {
+      color: white !important;
+    }
+
   </style>
 {% endblock %}
 
 {% block content %}
 <section class="top-section" style="padding: 1rem 0rem;">
   <div class='container pb-5'>
-    {% if not batch %}
-      <div class="alert alert-warning">
-        <p>This page accessible only to the batch mentors.</p>
-        <p><a class="btn btn-primary" href="/my-courses">Back to Courses</a></p>
-      </div>
-    {% else %}
-      <h4 class="course-subtitle"><a href="/mon/progress?batch={{batch.name}}">{{ batch.title }}</a></h4>
+      {% if batch %}
+        <h4 class="course-subtitle"><a href="/mon/progress?batch={{batch.name}}">{{ batch.title }}</a></h4>
+      {% endif %}
       <h1>{{user.full_name}}</h1>
       <br><br>
 
@@ -105,7 +105,7 @@
 
                   {% if submission %}
                   <div class="exercise-submission">
-                    <h4>Submitted Answer</h4>
+                    <h5>Submitted Answer</h5>
                     <pre>{{submission.solution}}</pre>
                     <div>
                       {{submission.image}}
@@ -124,16 +124,15 @@
 
       <div class="col-md-4">
         <ul class="list-group">
-          {% for student in report.students %}
-            <li class="list-group-item {{ 'active' if student.name == user.name }}">
-              <h4><a href="/mon/student_progress?student={{student.name}}&batch={{batch.name}}">{{student.full_name}}</a></h4>
+          {% for p in report.get_progress_by_student() %}
+            <li class="list-group-item {{ 'active' if p.student.name == user.name }}">
+              <h4><a href="/mon/student_progress?student={{p.student.name}}">{{p.student.full_name}}</a></h4>
+              <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
             </li>
           {% endfor %}
         </ul>
       </div>
     </div>
-
-    {% endif %}
   </div>
 </section>
 {% endblock %}

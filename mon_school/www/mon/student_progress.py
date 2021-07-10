@@ -6,15 +6,32 @@ from mon_school.mon_school.plugins import LiveCodeExtension
 def get_context(context):
     context.no_cache = 1
     user = frappe.form_dict.get("student")
+    course_name = frappe.form_dict.get("course")
 
     context.livecode_extension = LiveCodeExtension()
 
     context.user = frappe.get_doc("User", user)
+    context.course = get_course(course_name)
     context.batch = get_batch(context.user)
+
+    allowed = (
+        context.batch and context.batch.is_member(frappe.session.user, member_type="Mentor")
+        or "System Manager" in frappe.get_roles())
+
+    if not allowed:
+        frappe.throw('Not Permitted', frappe.PermissionError)
 
     if context.batch:
         course = frappe.get_doc("LMS Course", context.batch.course)
-        context.report = StudentBatchReport(context.user, course, context.batch)
+    else:
+        course = get_course(course_name)
+    context.report = StudentBatchReport(context.user, course, context.batch)
+
+def get_course(course_name):
+    if not course_name:
+        return frappe.get_last_doc("LMS Course", filters={"is_published": 1})
+    else:
+        return frappe.get_doc("LMS Course", course_name)
 
 def get_batch(user):
     batch_name = frappe.db.get_value(
@@ -28,8 +45,7 @@ class StudentBatchReport:
         self.user = user
         self.course = course
         self.batch = batch
-        self.students = course.get_students(batch.name)
-        self.submissions = get_submissions(user.name, course, batch)
+        self.submissions = get_submissions(course, owner=user.name)
         self.exercises = self.get_exercises(course.name)
 
         self.exercises_dict = {e.name: e for e in self.get_exercises(course.name)}
@@ -40,7 +56,11 @@ class StudentBatchReport:
             self.exercises_by_lesson[e.lesson].append(e)
 
     def get_exercises(self, course_name):
-        return frappe.get_all("Exercise", {"course": course_name, "lesson": ["!=", ""]}, ["name", "title", "description", "image", "lesson", "index_label"], order_by="index_label")
+        return frappe.get_all("Exercise", {
+            "course": course_name,
+            "lesson": ["!=", ""]},
+            ["name", "title", "description", "image", "lesson", "index_label"],
+            order_by="index_")
 
     def get_status_of_exercises(self, lesson_name):
         d = []
@@ -74,10 +94,11 @@ class StudentBatchReport:
             return value/count*100
 
     def get_progress_by_student(self):
+        if not self.batch:
+            return []
         total = len(self.exercises)
-        counts = Counter(s.owner.email for s in self.submissions)
-
-        print("counts", counts)
+        counts = get_submission_counts(self.course, self.batch)
+        students = self.course.get_students(self.batch.name)
 
         def progress(student):
             count = counts.get(student.email, 0)
@@ -88,10 +109,11 @@ class StudentBatchReport:
                 "percent": self.percent(count, total)
             }
 
-        return sorted([progress(s) for s in self.students], key=lambda p: p['count'], reverse=True)
+        return sorted([progress(s) for s in students], key=lambda p: p['count'], reverse=True)
 
-def get_submissions(user, course, batch):
-    values = {"batch": batch.name, "owner": user}
+def get_submissions(course, owner):
+    values = {"owner": owner}
+
     sql = """
     select owner, exercise, lesson, batch, name, solution, creation, image
     from (
@@ -99,7 +121,22 @@ def get_submissions(user, course, batch):
             row_number() over (partition by owner, exercise order by creation desc) as ix
         from `tabExercise Submission`
         where owner=%(owner)s) as t
-    where t.ix=1 and t.batch = %(batch)s
+    where t.ix=1
     """
 
     return frappe.db.sql(sql, values=values, as_dict=True)
+
+def get_submission_counts(course, batch):
+    values = {"batch": batch.name}
+
+    sql = f"""
+    select owner, count(*) as count
+    from (
+        select owner, exercise, batch,
+            row_number() over (partition by owner, exercise order by creation desc) as ix
+        from `tabExercise Submission`
+        where batch = %(batch)s) as t
+    where t.ix=1
+    group by owner
+    """
+    return {row.owner: row.count for row in frappe.db.sql(sql, values=values, as_dict=True)}
