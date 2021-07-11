@@ -45,10 +45,13 @@
   </div>
 </template>
 
-
 <script type="text/javascript">
   $(function() {
     var editorLookup = {};
+
+    if ('is_member' in page_context && !page_context.is_member) {
+      $("pre.exercise").replaceWith('<div class="alert alert-warning">Please join the course to submit exercises.</div>')
+    }
 
     $("pre.example, pre.exercise").each((i, e) => {
       var code = $(e).text();
