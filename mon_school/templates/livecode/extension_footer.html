@@ -12,33 +12,34 @@
 {{ include_script("livecode.bundle.js") }}
 
 <template id="livecode-template">
-  <div class="livecode-editor livecode-editor-inline">
-    <div class="row">
-      <div class="col-lg-8 col-md-6">
-        <div class="controls">
-          <button class="run">Run</button>
-          <span class="run-status"></span>
 
-          <div class="exercise-controls pull-right">
-            <span style="padding-right: 10px;"><span class="last-submitted human-time" data-timestamp=""></span></span>
-            <button class="submit btn-primary">Submit</button>
-          </div>
-        </div>
+  <div class="livecode-editor livecode-editor-inline">
+    <div class="code-editor">
+      <div class="code-wrapper">
+        <textarea class="code"></textarea>
       </div>
     </div>
-    <div class="code-editor">
-      <div class="row">
-        <div class="col-lg-8 col-md-6">
-          <div class="code-wrapper">
-            <textarea class="code"></textarea>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 canvas-wrapper">
-            <div class="svg-image" width="300" height="300">
-              <svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
-              </svg>
-            </div>
-            <pre class="output"></pre>
+    <div class="controls">
+      <div class="exercise-controls">
+        <button class="submit button btn-primary">Submit Solution</button>
+        <!-- <div style="padding-right: 10px;"><span class="last-submitted human-time" data-timestamp=""></span></div> -->
+      </div>
+      <div class="run-wrapper" style="display: inline;">
+        <button class="run button">Run Code</button>
+        <span class="run-status"></span>
+      </div>
+    </div>
+
+    <div class="output-bar">
+      <button class="collapse-button button tiny-button pull-right expanded">- Collapse</button>
+      <span class="output-label">Output</span>
+    </div>
+    <div class="output-wrapper">
+      <pre class="output"></pre>
+      <div class="canvas-wrapper">
+        <div class="svg-image" width="300" height="300">
+          <svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">
+          </svg>
         </div>
       </div>
     </div>
@@ -54,7 +55,7 @@
     }
 
     $("pre.example, pre.exercise").each((i, e) => {
-      var code = $(e).text();
+      var code = $(e).text().trimEnd();
 
       var template = document.querySelector('#livecode-template');
       var clone = template.content.cloneNode(true);
@@ -64,7 +65,7 @@
       }
 
       $(e)
-      .wrap('<div></div>')
+      .wrap('<div style="width: 100%;"></div>')
       .hide()
       .parent()
       .append(clone)
@@ -91,7 +92,12 @@
 
       var editor = new LiveCodeEditor(e.parentElement, {
         codemirror: true,
-        context: context
+        context: context,
+        events: {
+          beforeRun: function() {
+            expandOutput(editor.parent);
+          }
+        }
       });
 
       $(e).parent().find(".submit").on('click', function() {
@@ -117,6 +123,11 @@
       $(e).html(svg);
     });
 
+    $("pre.example").each((i, e) => {
+      collapseOutput($(e).parent());
+      $(e).parent().find(".output-bar").hide();
+    });
+
     $("pre.exercise").each((i, e) => {
       var svg = JSON.parse($(e).data("image"));
       if (svg) {
@@ -131,9 +142,43 @@
 
         var innerSVG = $(div).find("svg").html();
         $(e).parent().find(".svg-image svg").html(innerSVG);
+        expandOutput($(e).parent());
+      }
+
+      // XXX: The livecode editor wasn't showing full width for exercises
+      // This is a hack to fix it
+      $(e).closest("div.exercise").parent().attr("style", "width: 100%;")
+    });
+
+    $(".collapse-button").on('click', function() {
+      const e = $(this).closest(".livecode-editor");
+
+      if ($(this).hasClass("collapsed")) {
+        expandOutput(e);
+      }
+      else {
+        collapseOutput(e);
       }
     });
 
+    function expandOutput(livecode_element) {
+      $(livecode_element)
+        .find(".collapse-button")
+        .text("- Collapse")
+        .removeClass("collapsed");
+
+      $(livecode_element).find(".output-bar").show();
+      $(livecode_element).find(".output-wrapper").show();
+    }
+
+    function collapseOutput(livecode_element) {
+      $(livecode_element)
+        .find(".collapse-button")
+        .text("+ Expand")
+        .addClass("collapsed");
+
+      $(livecode_element).find(".output-wrapper").hide();
+    }
   });
 </script>
 
@@ -146,16 +191,10 @@
     height: 310px;
   }
   .livecode-editor {
-    margin-bottom: 30px;
+    margin: 24px -25px;
+    background: var(--gray-50);
   }
 
-  .livecode-editor-small .svg-image {
-    border: 5px solid #ddd;
-    position: relative;
-    z-index: 0;
-    width: 210px;
-    height: 210px;
-  }
 
   /* work-in-progress styles for showing admonition */
   .admonition {
@@ -171,4 +210,67 @@
     font-weight: bold;
     padding-top:
   }
+
+  .livecode-editor .controls {
+    padding: 16px 4px;
+    display: flex;
+    align-items: right;
+    justify-content: right;
+    background: var(--gray-50);
+  }
+
+  .livecode-editor .controls button.button {
+    margin: 0px 12px;
+  }
+
+  .livecode-editor .CodeMirror {
+    border: none;
+    background: var(--gray-50);
+    color: var(--gray-900);
+  }
+
+  .livecode-editor .CodeMirror {
+    padding: 16px 0px;
+    height: auto;
+  }
+
+  .CodeMirror pre.CodeMirror-line, .CodeMirror pre.CodeMirror-line-like {
+    padding: 0px 16px;
+  }
+
+  .CodeMirror-linenumber {
+    padding: 0px 16px 0px 8px;
+    background: var(--gray-400);
+    color: #192734;
+  }
+
+  .CodeMirror-gutter {
+    background: var(--gray-400);
+  }
+
+  .canvas-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-50);
+    padding: 24px 0px;
+  }
+  .output-bar {
+    padding: 16px;
+    background: var(--yellow-100);
+    color: var(--gray-900);
+  }
+  .livecode-editor pre.output {
+    position: relative;
+    width: auto;
+  }
+
+  span.output-label {
+    font-weight: bold;
+  }
+  .tiny-button {
+    padding: 4px 8px;
+    margin-top: -2px;
+  }
+}
 </style>
