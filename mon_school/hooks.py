@@ -183,9 +183,9 @@ profile_tabs = [
 	"mon_school.mon_school.plugins.SketchesTab"
 ]
 
-community_lesson_page_extensions = [
-	"mon_school.mon_school.plugins.LiveCodeExtension"
-]
+# community_lesson_page_extensions = [
+# 	"mon_school.mon_school.plugins.LiveCodeExtension"
+# ]
 
 community_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
