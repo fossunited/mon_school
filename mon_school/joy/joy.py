@@ -96,6 +96,7 @@ Joy integrates very well with Jupyter notebooks and every shape is
 represented as SVG image by jupyter.
 """
 import html
+import random as random_module
 
 __version__ = "0.2.3"
 __author__ = "Anand Chitipothu <anand@fossunited.org>"
@@ -489,15 +490,6 @@ def render_tag(tag, *, close=False, **attrs):
         return f"<{tag} {attrs_text}{end}"
     else:
         return f"<{tag}{end}"
-
-def combine(*shapes):
-    """Combines multiple shapes in to a single shape by overlaying all
-    the shapes.
-
-        >>> shape = combine(circle(), rect())
-        >>> show(shape)
-    """
-    return Group(shapes)
 
 class Transformation:
     def apply(self, shape):
@@ -928,3 +920,55 @@ def repeat(n, transformation):
         shape = line() | repeat(9, rotate(10))
     """
     return Repeat(n, transformation)
+
+def combine(shapes):
+    """The combine function combines a list of shapes into a single shape.
+
+    Example:
+        >>> shapes = [circle(r=50), circle(r=100), circle(r=150)]
+        >>> shape = combine(shapes)
+        >>> show(shape)
+    """
+    return Group(shapes)
+
+def color(r, g, b, a=None):
+    """Creates a color with given r g b values.
+
+    Parameters:
+
+    r - the red component of the color, allowed range is 0-255.
+    g - the green component of the color, allowed range is 0-255.
+    b - the blue component of the color, allowed range is 0-255.
+    a - optional argument to indicate the transparency or the
+        alpha value. The allowed range is 0-1.
+    """
+    if a is None:
+        return f"rgb({r}, {g}, {b})"
+    else:
+        return f"rgb({r}, {g}, {b}, {a})"
+
+def random(a=None, b=None):
+    """Creates a random number.
+
+    The random function can be used in three ways:
+
+        random() # returns a random number between 0 and 1
+        random(n) # returns a random number between 0 and n
+        random(n1, n2) # returns a random number between n1 and n2
+
+    Examples:
+
+        >>> random()
+        0.4336206360591218
+        >>> random(10)
+        1.436301598755494
+        >>> random(5, 10)
+        7.471950621969087
+    """
+    if a is None and b is None:
+        return random_module.random()
+    elif a is not None and b is None:
+        return a * random_module.random()
+    else:
+        delta = b - a
+        return a + delta * random_module.random()
