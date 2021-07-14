@@ -2,19 +2,25 @@ import frappe
 
 DOCTYPE_FIELDS = {
     "Lesson": {
-        "fields": ["title", "body", "chapter", "include_in_preview"],
+        "fields": ["title", "body", "chapter", "include_in_preview", "index_"],
         "fields_to_skip_on_new": ["body"]
     },
     "Chapter": {
-        "fields": ["title", "description"],
+        "fields": ["title", "description", "index_"],
     },
     "Exercise": {
-        "fields": ["title", "description", "code", "answer", "course"],
+        "fields": ["title", "description", "code", "answer", "course", "index_", "index_label"],
     }
 }
 
+def ensure_admin():
+    if "System Manager" not in frappe.get_roles():
+        frappe.throw("Not permitted", frappe.PermissionError)
+
 @frappe.whitelist()
 def save_document(doctype, name, doc):
+    ensure_admin()
+
     if doctype not in DOCTYPE_FIELDS:
         return {"ok": False, "error": f"Unsupport doctype: {doctype}"}
 
@@ -42,11 +48,13 @@ def save_document(doctype, name, doc):
         else:
             new_doc = frappe.get_doc(dict(doc, doctype=doctype))
             new_doc.insert()
-            frappe.rename_doc(doctype, new_doc.name, name)
+            frappe.rename_doc(doctype, new_doc.name, name, force=True)
         return {"ok": True, "status": "created"}
 
 @frappe.whitelist()
 def reindex_course(course_name):
+    ensure_admin()
+
     course = frappe.get_doc("LMS Course", course_name)
     course.reindex_lessons()
     course.reindex_exercises()
