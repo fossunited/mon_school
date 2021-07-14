@@ -2,8 +2,11 @@ import frappe
 
 DOCTYPE_FIELDS = {
     "Lesson": {
-        "fields": ["title", "body", "chapter"],
+        "fields": ["title", "body", "chapter", "include_in_preview"],
         "fields_to_skip_on_new": ["body"]
+    },
+    "Chapter": {
+        "fields": ["title", "description"],
     },
     "Exercise": {
         "fields": ["title", "description", "code", "answer", "course"],
