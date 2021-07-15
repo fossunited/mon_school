@@ -55,7 +55,14 @@
     }
 
     $("pre.example, pre.exercise").each((i, e) => {
-      var code = $(e).text().trimEnd();
+      var code;
+
+      if ($(e).hasClass("exercise")) {
+        code = JSON.parse($(e).data("code")).trimEnd();
+      }
+      else {
+        code = $(e).text().trimEnd();
+      }
 
       var template = document.querySelector('#livecode-template');
       var clone = template.content.cloneNode(true);
