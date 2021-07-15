@@ -5,8 +5,7 @@ from community.lms.doctype.exercise.exercise import Exercise as _Exercise
 from community.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
 from community.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
 
-import websocket
-import json
+import html
 from urllib.parse import urlparse
 from ..joy.build import get_livecode_files
 from . import livecode
@@ -67,7 +66,9 @@ def livecode_to_svg(code, is_sketch=False):
 def _render_shape(node):
     tag = node.pop("tag")
     children = node.pop("children", None)
-    attrs = " ".join(f'{name}="{value}"' for name, value in node.items())
+
+    items = [(k.replace("_", "-"), html.escape(str(v))) for k, v in node.items() if v is not None]
+    attrs = " ".join(f'{name}="{value}"' for name, value in items)
 
     if children:
         children_svg = "\n".join(_render_shape(c) for c in children)
