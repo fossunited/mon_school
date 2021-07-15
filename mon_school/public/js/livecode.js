@@ -49,6 +49,7 @@ class LiveCodeEditor {
   reset() {
     this.clearOutput();
     this.clearImage();
+    $(this.elementSVG).closest(".canvas-wrapper").hide();
   }
   run() {
     this.triggerEvent("beforeRun");
@@ -198,6 +199,10 @@ class LiveCodeEditor {
     }
   }
   drawShapes(shapes) {
+    if (shapes.length == 0) {
+      return;
+    }
+    $(this.elementSVG).closest(".canvas-wrapper").show();
     // const svgElement = editor.parent.querySelector("div.svg-image svg");
     this.elementSVG.innerHTML = "";
     shapes.forEach((s) => {
