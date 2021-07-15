@@ -121,6 +121,11 @@
     $(".exercise-image").each((i, e) => {
       var svg = JSON.parse($(e).data("image"));
       $(e).html(svg);
+
+      // hide the image if it is empty
+      if ($(e).find("svg").children().length == 0) {
+        $(e).hide();
+      }
     });
 
     $("pre.example").each((i, e) => {
