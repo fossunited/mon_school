@@ -1,5 +1,9 @@
 import frappe
 import hashlib
+import re
+from frappe.website.page_renderers.base_renderer import BaseRenderer
+from werkzeug.wrappers import Response
+
 from mon_school.mon_school.doctype.lms_sketch.lms_sketch import LMSSketch, DEFAULT_IMAGE
 from community.lms.doctype.exercise.exercise import Exercise as _Exercise
 from community.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
@@ -57,9 +61,12 @@ def livecode_to_svg(code, is_sketch=False):
     if result.get('status') != 'success':
         return None
 
+    return _render_svg(result['shapes'])
+
+def _render_svg(shapes):
     return (
         '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
-        + "\n".join(_render_shape(s) for s in result['shapes'])
+        + "\n".join(_render_shape(s) for s in shapes)
         + '\n'
         + '</svg>\n')
 
@@ -76,4 +83,20 @@ def _render_shape(node):
     else:
         return f"<{tag} {attrs} />"
 
+RE_SKETCH_IMAGE = re.compile(r"s/(\d+).svg$")
 
+class SketchImage(BaseRenderer):
+    def can_render(self):
+        return RE_SKETCH_IMAGE.match(self.path) is not None
+
+    def render(self):
+        m = RE_SKETCH_IMAGE.match(self.path)
+        sketch_id = m.group(1)
+        name = f"SKETCH-{sketch_id}"
+        try:
+            s = frappe.get_doc("LMS Sketch", name)
+            svg = s.svg or _render_svg([])
+            return Response(svg, content_type="image/svg+xml")
+        except frappe.DoesNotExistError:
+            s = None
+            return Response("", status="404 Not Found")

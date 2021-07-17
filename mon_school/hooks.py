@@ -192,3 +192,7 @@ community_markdown_macro_renderers = {
 	"Image": "mon_school.mon_school.plugins.image_renderer",
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
 }
+
+page_renderer = [
+	"mon_school.mon_school.overrides.SketchImage"
+]
