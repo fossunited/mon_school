@@ -53,7 +53,7 @@
 
 <div class="course-teaser">
   <div class="course-body">
-    <h3 class="course-title"><a href="/courses/{{ course.name }}/home?{{ query | urlencode }}">{{ course.title }}</a></h3>
+    <h3 class="course-title"><a href="/courses/{{ course.name }}?{{ query | urlencode }}">{{ course.title }}</a></h3>
     {% if batch %}
       <h4 class="course-subtitle">{{ batch.title }}</h4>
     {% endif %}
