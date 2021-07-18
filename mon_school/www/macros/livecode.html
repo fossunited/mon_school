@@ -94,7 +94,8 @@
       var editor = new LiveCodeEditor(e, {
         codemirror: true,
         runtime: $(e).data("runtime"),
-        context: page_context
+        context: page_context,
+        hideImageOnRun: false
       });
       livecodeEditors.push(editor);
       livecodeEditorsMap[e.id] = editor;

@@ -49,7 +49,9 @@ class LiveCodeEditor {
   reset() {
     this.clearOutput();
     this.clearImage();
-    $(this.elementSVG).closest(".canvas-wrapper").hide();
+    if (!('hideImageOnRun' in this.options) || this.options.hideImageOnRun) {
+      $(this.elementSVG).closest(".canvas-wrapper").hide();
+    }
   }
   run() {
     this.triggerEvent("beforeRun");
