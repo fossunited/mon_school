@@ -1,3 +1,28 @@
 :root {
 	--primary-color: #08B74F !important;
 }
+
+.sketch-teaser {
+	background: white;
+	border-radius: 9px;
+	border: 1px solid #C4C4C4;
+	width: 220px;
+	margin-bottom: 30px;
+	margin-top: 30px;
+}
+
+.sketch-teaser svg {
+	width: 200px;
+	height: 200px;
+}
+
+.sketch-image {
+	padding: 10px;
+}
+
+.sketch-footer {
+	border-top: 1px solid#C4C4C4;
+	padding: 10px;
+	background: #F6F6F6;
+	border-radius: 0px 0px 10px 10px;
+}
