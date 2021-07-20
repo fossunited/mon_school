@@ -23,6 +23,18 @@ def get_context(context):
         "sketch": sketch.name
     }
 
+    context.metatags = get_metatags(sketch)
+
+def get_metatags(sketch):
+    image = f"{frappe.request.host_url}s/{sketch.sketch_id}.png"
+    url = f"{frappe.request.host_url}sketches/{sketch.sketch_id}"
+    return {
+        "title": sketch.title,
+        "description": sketch.code,
+        "image": image,
+        "url": url
+    }
+
 def is_editable(sketch, user):
     if sketch.is_new():
         # new sketches can be editable by any logged in user
