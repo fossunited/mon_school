@@ -3,6 +3,7 @@ import hashlib
 import re
 from frappe.website.page_renderers.base_renderer import BaseRenderer
 from werkzeug.wrappers import Response
+import cairosvg
 
 from mon_school.mon_school.doctype.lms_sketch.lms_sketch import LMSSketch, DEFAULT_IMAGE
 from community.lms.doctype.exercise.exercise import Exercise as _Exercise
@@ -87,7 +88,7 @@ def _render_shape(node):
     else:
         return f"<{tag} {attrs} />"
 
-RE_SKETCH_IMAGE = re.compile(r"s/(\d+).svg$")
+RE_SKETCH_IMAGE = re.compile(r"s/(\d+).(svg|png)$")
 
 class SketchImage(BaseRenderer):
     def can_render(self):
@@ -96,11 +97,27 @@ class SketchImage(BaseRenderer):
     def render(self):
         m = RE_SKETCH_IMAGE.match(self.path)
         sketch_id = m.group(1)
+        format = m.group(2)
         name = f"SKETCH-{sketch_id}"
         try:
             s = frappe.get_doc("LMS Sketch", name)
-            svg = s.svg or _render_svg([])
-            return Response(svg, content_type="image/svg+xml")
         except frappe.DoesNotExistError:
             s = None
             return Response("", status="404 Not Found")
+
+        if format == "svg":
+            return self.render_svg(s)
+        elif format == "png":
+            return self.render_png(s)
+        else:
+            return Response("", status="404 Not Found")
+
+    def render_svg(self, sketch):
+        svg = sketch.svg or _render_svg([])
+        return Response(svg, content_type="image/svg+xml")
+
+    def render_png(self, sketch):
+        svg = sketch.svg or _render_svg([])
+        png = cairosvg.svg2png(svg, output_width=550, output_height=300)
+        return Response(png, content_type="image/png")
+
