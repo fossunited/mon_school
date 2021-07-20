@@ -3,7 +3,7 @@
 import os
 import frappe
 
-APP_LOGO_URL = "/assets/mon_school/images/mon-logo.png"
+APP_LOGO_URL = "/assets/mon_school/images/mon-school-logo.png"
 
 def after_install():
     set_app_name()
