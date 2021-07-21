@@ -34,7 +34,11 @@ class Sketch(LMSSketch):
             value = value.decode('utf-8')
         else:
             is_sketch = self.runtime == "sketch" # old version
-            value = livecode_to_svg(self.code, is_sketch=is_sketch)
+            try:
+                value = livecode_to_svg(self.code, is_sketch=is_sketch)
+            except Exception as e:
+                print(f"Failed to render {self.name} as svg: {e}")
+                pass
             if value:
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
