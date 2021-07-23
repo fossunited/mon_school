@@ -51,9 +51,9 @@
   {% set query = {} %}
 {% endif %}
 
-<div class="course-teaser">
-  <div class="course-body">
-    <h3 class="course-title"><a href="/courses/{{ course.name }}?{{ query | urlencode }}">{{ course.title }}</a></h3>
+<div class="course-teaser card">
+  <div class="course-body card-body">
+    <h3 class="course-title card-title"><a href="/courses/{{ course.name }}?{{ query | urlencode }}">{{ course.title }}</a></h3>
     {% if batch %}
       <h4 class="course-subtitle">{{ batch.title }}</h4>
     {% endif %}
@@ -61,7 +61,7 @@
       {{ course.short_introduction or "" }}
     </div>
   </div>
-  <div class="course-footer">
+  <div class="course-footer card-footer">
     {% if member_type == "Mentor" %}
       <a class="btn btn-secondary pull-right" href="/mon/progress?{{ query | urlencode }}">Progress</a>
     {% endif %}
@@ -69,5 +69,11 @@
     <a class="btn btn-secondary" href="/courses/{{course.name}}/learn?{{ query | urlencode }}">Resume Course</a>
   </div>
 </div>
+
+<style type="text/css">
+  .course-teaser {
+    margin: 20px 0px;
+  }
+</style>
 {% endmacro %}
 
