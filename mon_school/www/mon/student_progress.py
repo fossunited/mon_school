@@ -10,7 +10,12 @@ def get_context(context):
 
     context.livecode_extension = LiveCodeExtension()
 
-    context.student = frappe.get_doc("User", user)
+    try:
+        context.student = frappe.get_doc("User", user)
+    except frappe.exceptions.DoesNotExistError:
+        context.template = "www/404.html"
+        return
+
     context.course = get_course(course_name)
     context.batch = get_batch(context.student)
 
