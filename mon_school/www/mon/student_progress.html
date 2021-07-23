@@ -66,7 +66,7 @@
       {% if batch %}
         <h4 class="course-subtitle"><a href="/mon/progress?batch={{batch.name}}">{{ batch.title }}</a></h4>
       {% endif %}
-      <h1>{{user.full_name}}</h1>
+      <h1>{{student.full_name}}</h1>
       <br><br>
 
       <div class="row">
@@ -125,7 +125,7 @@
       <div class="col-md-4">
         <ul class="list-group">
           {% for p in report.get_progress_by_student() %}
-            <li class="list-group-item {{ 'active' if p.student.name == user.name }}">
+            <li class="list-group-item {{ 'active' if p.student.name == student.name }}">
               <h4><a href="/mon/student_progress?student={{p.student.name}}">{{p.student.full_name}}</a></h4>
               <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
             </li>

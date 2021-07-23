@@ -10,9 +10,9 @@ def get_context(context):
 
     context.livecode_extension = LiveCodeExtension()
 
-    context.user = frappe.get_doc("User", user)
+    context.student = frappe.get_doc("User", user)
     context.course = get_course(course_name)
-    context.batch = get_batch(context.user)
+    context.batch = get_batch(context.student)
 
     allowed = (
         context.batch and context.batch.is_member(frappe.session.user, member_type="Mentor")
@@ -25,7 +25,7 @@ def get_context(context):
         course = frappe.get_doc("LMS Course", context.batch.course)
     else:
         course = get_course(course_name)
-    context.report = StudentBatchReport(context.user, course, context.batch)
+    context.report = StudentBatchReport(context.student, course, context.batch)
 
 def get_course(course_name):
     if not course_name:
