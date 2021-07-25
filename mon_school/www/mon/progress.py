@@ -9,6 +9,7 @@ def get_context(context):
 
     context.batches = get_batches(context.user)
     context.batch = select_batch(context.batches, batch_name)
+    context.mentors = get_mentors(context.batch.course, context.batch.name)
 
     if context.batch:
         course = frappe.get_doc("LMS Course", context.batch.course)
@@ -34,6 +35,20 @@ def select_batch(batches, batch_name):
     d = {b.name: b for b in batches}
     return d.get(batch_name)
 
+def get_mentors(course_name, batch_name):
+    """Returns (email, full_name, username) of all the students of this batch as a list of dict.
+    """
+    filters = {
+        "course": course_name,
+        "batch": batch_name,
+        "member_type": "Mentor"
+    }
+    mentor_emails = frappe.get_all(
+                "LMS Batch Membership",
+                filters,
+                ["member"],
+                pluck="member")
+    return [frappe.get_doc('User', email) for email in mentor_emails]
 
 class BatchReport:
     def __init__(self, course, batch):

@@ -33,10 +33,22 @@
       </div>
     {% else %}
       <h4 class="course-subtitle">{{ batch.title }}</h4>
-      <br><br>
+
+      <div class="course-mentors" style="margin: 20px 0px;">
+        <h2>Mentors</h2>
+
+        {% for m in mentors %}
+          <div class="course-mentor">
+            <h3><a href="/{{m.username}}">{{m.full_name}}</a></h3>
+          </div>
+        {% endfor %}
+      </div>
+
+
 
       <div class="row">
         <div class="col-md-8">
+          <h2>Lessons</h2>
           <ul class="list-group progress-list">
             {% for lesson in report.lessons %}
               {% set p = report.get_progress_by_lesson(lesson.name) %}
@@ -55,11 +67,13 @@
             {% endfor %}
           </ul>
         </div>
+
         <div class="col-md-4">
+          <h2>Students</h2>
           <ul class="list-group">
             {% for p in report.get_progress_by_student() %}
               <li class="list-group-item">
-                <h4><a href="/mon/student_progress?student={{p.student.name}}&batch={{batch.name}}">{{p.student.full_name}}</a></h4>
+                <h3><a href="/mon/student_progress?student={{p.student.name}}&batch={{batch.name}}">{{p.student.full_name}}</a></h3>
                 <div class="text-muted">Completed {{p.count}} of {{p.total}} exercises ({{p.percent | round(1)}}%).</div>
               </li>
             {% endfor %}
