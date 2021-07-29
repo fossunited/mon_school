@@ -1,0 +1,54 @@
+{% extends "templates/base.html" %}
+{% block title %}{{ note.title }}{% endblock %}
+
+{% block head_include %}
+<meta name="description" content="{{note.title}}" />
+<meta name="keywords" content="{{note.title}}" />
+<style>
+</style>
+
+<link rel="stylesheet" href="/assets/frappe/css/font-awesome.css">
+<link rel="stylesheet" href="/assets/css/lms.css">
+<link rel="stylesheet" href="/assets/frappe/css/hljs-night-owl.css">
+
+{% include "templates/livecode/extension_header.html" %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="common-page-style">
+  <div class="container course-details-page">
+    <div class="course-content-parent">
+      <div class="course-details-outline">
+      </div>
+      <div class="lesson-pagination-parent">
+        {{ NoteContent(note) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% macro NoteContent(note) %}
+<div class="lesson-content">
+  <div class="course-home-headings title" data-lesson="{{ note.name }}"
+    data-course="{{ note.name }}">
+    {{ note.title }}
+  </div>
+
+  <div class="common-card-style lesson-content-card from-markdown">{{ note.render_html() }}</div>
+</div>
+{% endmacro %}
+
+
+{%- block script %}
+{{ super() }}
+
+<script type="text/javascript">
+  var page_context = {};
+</script>
+
+{% include "templates/livecode/extension_footer.html" %}
+
+{%- endblock %}
