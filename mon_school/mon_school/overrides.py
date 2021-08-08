@@ -70,7 +70,7 @@ def livecode_to_svg(code, is_sketch=False):
 
 def _render_svg(shapes):
     return (
-        '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
+        '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
         + "\n".join(_render_shape(s) for s in shapes)
         + '\n'
         + '</svg>\n')

@@ -122,7 +122,7 @@ class LiveCodeResult:
 
     def as_svg(self):
         return (
-            '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg">\n'
+            '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
             + "\n".join(self._render_shape(s) for s in self.shapes)
             + '\n'
             + '</svg>\n')
