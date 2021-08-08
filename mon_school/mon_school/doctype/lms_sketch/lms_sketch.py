@@ -23,6 +23,15 @@ class LMSSketch(Document):
         """
         return self.name.replace("SKETCH-", "")
 
+    def get_hash(self):
+        """Returns the md5 hash of the code to use for caching.
+        """
+        return hashlib.md5(self.code.encode("utf-8")).hexdigest()
+
+    def get_image_url(self):
+        hash_ = self.get_hash()
+        return f"/s/{self.sketch_id}-{hash_}.png"
+
     def get_owner(self):
         """Returns the owner of this sketch as a document.
         """

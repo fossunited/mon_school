@@ -194,5 +194,6 @@ community_markdown_macro_renderers = {
 }
 
 page_renderer = [
-	"mon_school.mon_school.overrides.SketchImage"
+	"mon_school.mon_school.overrides.SketchImage",
+	"mon_school.mon_school.overrides.SketchSquareImage"
 ]
