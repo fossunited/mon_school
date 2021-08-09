@@ -3,6 +3,7 @@
 from __future__ import annotations
 import frappe
 import json
+import html
 from urllib.parse import urlparse
 import websocket
 from ..joy.build import get_livecode_files
@@ -78,6 +79,35 @@ def record_code_run(code, result, context=None):
         print("Failed to save code run")
         import traceback
         traceback.print_exc()
+
+def livecode_to_svg(code, is_sketch=False):
+    """Renders the code as svg.
+    """
+    result = livecode.execute(code, is_sketch=is_sketch)
+    if result.get('status') != 'success':
+        return None
+
+    return _render_svg(result['shapes'])
+
+def _render_svg(shapes):
+    return (
+        '<svg width="300" height="300" viewBox="-150 -150 300 300" fill="none" stroke="black" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
+        + "\n".join(_render_shape(s) for s in shapes)
+        + '\n'
+        + '</svg>\n')
+
+def _render_shape(node):
+    tag = node.pop("tag")
+    children = node.pop("children", None)
+
+    items = [(k.replace("_", "-"), html.escape(str(v))) for k, v in node.items() if v is not None]
+    attrs = " ".join(f'{name}="{value}"' for name, value in items)
+
+    if children:
+        children_svg = "\n".join(_render_shape(c) for c in children)
+        return f"<{tag} {attrs}>{children_svg}</{tag}>"
+    else:
+        return f"<{tag} {attrs} />"
 
 class LiveCodeResult:
     def __init__(self):
