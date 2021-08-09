@@ -55,7 +55,7 @@ class StudentBatchReport:
 
         self.exercises_dict = {e.name: e for e in self.get_exercises(course.name)}
         self.solutions = {s.exercise: s for s in self.submissions}
-        self.lessons = self.get_lessons()
+        self.lessons = self.course.get_lessons()
         self.exercises_by_lesson = defaultdict(list)
         for e in self.exercises:
             self.exercises_by_lesson[e.lesson].append(e)
@@ -75,11 +75,6 @@ class StudentBatchReport:
 
     def get_submissions_of_exercise(self, exercise_name):
         return self.submissions_by_exercise[exercise_name]
-
-    def get_lessons(self):
-        return [lesson
-                for c in self.course.get_chapters()
-                for lesson in c.get_lessons()]
 
     def get_progress_by_lesson(self, lesson_name):
         count = sum(1 for e in self.exercises if e.lesson == lesson_name)

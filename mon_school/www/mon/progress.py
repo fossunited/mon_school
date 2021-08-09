@@ -63,18 +63,13 @@ class BatchReport:
         self.students = course.get_students(batch.name)
         self.students_map = {s.email: s for s in self.students}
 
-        self.lessons = self.get_lessons()
+        self.lessons = self.course.get_lessons()
 
     def get_exercises(self, course_name):
         return frappe.get_all("Exercise", {"course": course_name, "lesson": ["!=", ""]}, ["name", "title", "lesson", "index_label"], order_by="index_label")
 
     def get_submissions_of_exercise(self, exercise_name):
         return self.submissions_by_exercise[exercise_name]
-
-    def get_lessons(self):
-        return [lesson
-                for c in self.course.get_chapters()
-                for lesson in c.get_lessons()]
 
     def get_progress_by_lesson(self, lesson_name):
         count = sum(1 for e in self.exercises if e.lesson == lesson_name)
