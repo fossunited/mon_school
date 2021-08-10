@@ -6,28 +6,31 @@
  "engine": "InnoDB",
  "field_order": [
   "contest",
-  "member"
+  "participant"
  ],
  "fields": [
   {
    "fieldname": "contest",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Contest",
    "options": "Contest"
   },
   {
-   "fieldname": "member",
+   "fieldname": "participant",
    "fieldtype": "Link",
-   "label": "Member",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Participant",
    "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-10 07:08:27.507361",
+ "modified": "2021-08-10 09:04:47.309693",
  "modified_by": "Administrator",
  "module": "Mon School",
- "name": "Contest Membership",
+ "name": "Contest Participant",
  "owner": "Administrator",
  "permissions": [
   {

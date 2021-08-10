@@ -8,7 +8,6 @@
  "field_order": [
   "title",
   "subtitle",
-  "template",
   "start_date",
   "end_date"
  ],
@@ -24,12 +23,6 @@
    "label": "Subtitle"
   },
   {
-   "description": "Web template to render this page",
-   "fieldname": "template",
-   "fieldtype": "Data",
-   "label": "Template"
-  },
-  {
    "fieldname": "start_date",
    "fieldtype": "Date",
    "label": "Start Date"
@@ -41,8 +34,13 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2021-08-09 22:24:54.999908",
+ "links": [
+  {
+   "link_doctype": "Contest Participant",
+   "link_fieldname": "contest"
+  }
+ ],
+ "modified": "2021-08-10 09:06:03.359317",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Contest",
