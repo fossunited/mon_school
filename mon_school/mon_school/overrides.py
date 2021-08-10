@@ -126,9 +126,9 @@ class SketchImage(BaseRenderer):
         return Response(png, content_type="image/png")
 
 
-RE_SKETCH_SQUARE_IMAGE = re.compile(r"s/(\d+)-([0-9a-f]+).png$")
+RE_SKETCH_SQUARE_IMAGE = re.compile(r"s/(\d+)-([0-9a-f]+)-(s|w).png$")
 
-class SketchSquareImage(BaseRenderer):
+class SketchPNG(BaseRenderer):
     """Class to render Sketch images as PNG. 
 
     These images are for displaying the sketch in Recent Sketches page. 
@@ -136,8 +136,17 @@ class SketchSquareImage(BaseRenderer):
     it to be cached forever. Whenever the code of the sketch is changed,
     the url of of the image changes.
 
-    This renders the sketch as a 300x300 PNG image.
+    This provides two versions of the image.
+    1. square - with size 300x300
+    2. wide - with size 550x300
+
+    The square image is used to display images in recent sketches page
+    and the wide image is used as preview image used in the meta tag.
     """
+    IMAGE_SIZES_BY_MODE = {
+        "s": (300, 300),
+        "w": (550, 300)
+    }
     def can_render(self):
         return RE_SKETCH_SQUARE_IMAGE.match(self.path) is not None
 
@@ -145,9 +154,10 @@ class SketchSquareImage(BaseRenderer):
         m = RE_SKETCH_SQUARE_IMAGE.match(self.path)
         sketch_id = m.group(1)
         hash_ = m.group(2)
+        mode = m.group(3)
         name = f"SKETCH-{sketch_id}"
 
-        filename = f"{sketch_id}-{hash_}.png"
+        filename = f"{sketch_id}-{hash_}-{mode}.png"
 
         try:
             s = frappe.get_doc("LMS Sketch", name)
@@ -157,12 +167,12 @@ class SketchSquareImage(BaseRenderer):
 
         sketch_hash = s.get_hash()
         if sketch_hash != hash_:
-            headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}.png"}
+            headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}-{mode}.png"}
             return Response("", status="302 Found", headers=headers)
 
-        return self.render_png(s, filename)
+        return self.render_png(s, filename, mode)
 
-    def to_png(self, sketch, filename):
+    def to_png(self, sketch, filename, mode):
         cache_dir = Path(frappe.local.site_path) / "sketch-cache" 
         cache_dir.mkdir(exist_ok=True)
         path = cache_dir / filename
@@ -170,12 +180,13 @@ class SketchSquareImage(BaseRenderer):
             return path.read_bytes()
 
         svg = sketch.svg or _render_svg([])
-        png = cairosvg.svg2png(svg, output_width=300, output_height=300)
+        w, h = self.IMAGE_SIZES_BY_MODE[mode]
+        png = cairosvg.svg2png(svg, output_width=w, output_height=h)
         path.write_bytes(png)
         return png
 
-    def render_png(self, sketch, filename):
-        png = self.to_png(sketch, filename)
+    def render_png(self, sketch, filename, mode):
+        png = self.to_png(sketch, filename, mode)
 
         # cache forever
         headers = {
