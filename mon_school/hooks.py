@@ -91,7 +91,6 @@ after_install = "mon_school.install.after_install"
 # }
 
 override_doctype_class = {
-	"LMS Sketch": "mon_school.mon_school.overrides.Sketch",
 	"Exercise": "mon_school.mon_school.overrides.Exercise",
 	"Exercise Submission": "mon_school.mon_school.overrides.ExerciseSubmission",
 	"LMS Batch Membership": "mon_school.mon_school.overrides.LMSBatchMembership"
@@ -194,5 +193,6 @@ community_markdown_macro_renderers = {
 }
 
 page_renderer = [
-	"mon_school.mon_school.overrides.SketchImage"
+	"mon_school.mon_school.overrides.SketchImage",
+	"mon_school.mon_school.overrides.SketchPNG"
 ]

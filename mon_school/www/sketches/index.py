@@ -3,5 +3,5 @@ from mon_school.mon_school.doctype.lms_sketch.lms_sketch import LMSSketch as Ske
 
 def get_context(context):
     context.no_cache = 1
-    context.sketches = Sketch.get_recent_sketches()
+    context.sketches = Sketch.get_recent_sketches(limit=48)
 

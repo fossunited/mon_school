@@ -27,7 +27,7 @@ def get_context(context):
 
 def get_metatags(sketch):
     title = f"{sketch.title}  by {sketch.get_owner_name()}"
-    image = f"{frappe.request.host_url}s/{sketch.sketch_id}.png"
+    image = sketch.get_image_url(mode="w")
     url = f"{frappe.request.host_url}sketches/{sketch.sketch_id}"
     return {
         "title": title,
