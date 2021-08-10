@@ -1,9 +1,5 @@
-<div class='container'>
-  <div class="row">
-    {% for sketch in sketches %}
-      <div class="col-md-3">
-        {{ widgets.SketchTeaser(sketch=sketch) }}
-      </div>
-    {% endfor %}
-  </div>
+<div class="sketch-list">
+  {% for sketch in sketches %}
+  {{ widgets.SketchCard(sketch=sketch, show_likes=False) }}
+  {% endfor %}
 </div>
