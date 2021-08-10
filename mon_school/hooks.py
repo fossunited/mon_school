@@ -192,7 +192,6 @@ community_markdown_macro_renderers = {
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
 }
 
-page_renderer = [
-	"mon_school.mon_school.overrides.SketchImage",
-	"mon_school.mon_school.overrides.SketchPNG"
-]
+# Install custom page renderers
+from mon_school.mon_school.page_renderers import page_renderer as _page_renderer
+page_renderer = _page_renderer
