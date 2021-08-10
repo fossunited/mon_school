@@ -9,7 +9,7 @@ The plugins provided by this module are:
 import frappe
 from community.plugins import PageExtension, ProfileTab
 from community.widgets import Widgets
-from .overrides import Sketch
+from .doctype.lms_sketch.lms_sketch import LMSSketch as Sketch
 
 class SketchesTab(ProfileTab):
     def get_title(self):
