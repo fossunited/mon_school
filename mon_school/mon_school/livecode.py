@@ -83,7 +83,7 @@ def record_code_run(code, result, context=None):
 def livecode_to_svg(code, is_sketch=False):
     """Renders the code as svg.
     """
-    result = livecode.execute(code, is_sketch=is_sketch)
+    result = execute(code, is_sketch=is_sketch)
     if result.get('status') != 'success':
         return None
 
