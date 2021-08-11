@@ -15,6 +15,34 @@ DEFAULT_IMAGE = """
 """
 
 class LMSSketch(Document):
+    def before_save(self):
+        try:
+            is_sketch = self.runtime == "sketch" # old version
+            self.svg = livecode_to_svg(self.code, is_sketch=is_sketch)
+        except Exception:
+            frappe.log_error(f"Failed to save svg for sketch {self.name}")
+
+    def render_svg(self):
+        if self.svg:
+            return self.svg
+
+        h = hashlib.md5(self.code.encode('utf-8')).hexdigest()
+        cache = frappe.cache()
+        key = "sketch-" + h
+        value = cache.get(key)
+        if value:
+            value = value.decode('utf-8')
+        else:
+            is_sketch = self.runtime == "sketch" # old version
+            try:
+                value = livecode_to_svg(self.code, is_sketch=is_sketch)
+            except Exception as e:
+                print(f"Failed to render {self.name} as svg: {e}")
+                pass
+            if value:
+                cache.set(key, value)
+        return value or DEFAULT_IMAGE
+
     @property
     def sketch_id(self):
         """Returns the numeric part of the name.
