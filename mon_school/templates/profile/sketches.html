@@ -1,5 +1,6 @@
+{% from "www/macros/sketch_card.html" import sketch_card %}
 <div class="sketch-list">
   {% for sketch in sketches %}
-  {{ widgets.SketchCard(sketch=sketch, show_likes=False) }}
+  {{ sketch_card(sketch, False, widgets) }}
   {% endfor %}
 </div>

@@ -1,5 +1,6 @@
 {% extends "templates/base.html" %}
 {% from "www/macros/livecode.html" import LiveCodeEditor, LiveCodeEditorJS %}
+{% from "www/macros/sketch_card.html" import sketch_card %}
 
 {% block title %}Sketches{% endblock %}
 {% block head_include %}
@@ -18,7 +19,7 @@
     <div class="card-divider-dark"></div>
     <div class="sketch-list">
       {% for sketch in sketches %}
-        {{ widgets.SketchCard(sketch=sketch, show_likes=False) }}
+      {{ sketch_card(sketch, False, widgets) }}
       {% endfor %}
     </div>
   </div>
