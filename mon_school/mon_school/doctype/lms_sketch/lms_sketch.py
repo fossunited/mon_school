@@ -7,7 +7,7 @@ import hashlib
 from urllib.parse import urlparse
 import frappe
 from frappe.model.document import Document
-from . import livecode
+from ... import livecode
 
 DEFAULT_IMAGE = """
 <svg viewBox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg">
@@ -18,7 +18,7 @@ class LMSSketch(Document):
     def before_save(self):
         try:
             is_sketch = self.runtime == "sketch" # old version
-            self.svg = livecode_to_svg(self.code, is_sketch=is_sketch)
+            self.svg = livecode.livecode_to_svg(self.code, is_sketch=is_sketch)
         except Exception:
             frappe.log_error(f"Failed to save svg for sketch {self.name}")
 
@@ -35,7 +35,7 @@ class LMSSketch(Document):
         else:
             is_sketch = self.runtime == "sketch" # old version
             try:
-                value = livecode_to_svg(self.code, is_sketch=is_sketch)
+                value = livecode.livecode_to_svg(self.code, is_sketch=is_sketch)
             except Exception as e:
                 print(f"Failed to render {self.name} as svg: {e}")
                 pass
@@ -93,8 +93,7 @@ class LMSSketch(Document):
         if value:
             value = value.decode('utf-8')
         else:
-            ws_url = self.get_livecode_ws_url()
-            value = livecode.livecode_to_svg(ws_url, self.code)
+            value = livecode.livecode_to_svg(self.code)
             if value:
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
