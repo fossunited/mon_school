@@ -97,7 +97,7 @@
           var path = "/sketches/" + msg.id;
           var url = window.location.protocol + "//" + window.location.host + path
           window.history.pushState({path: url}, '', url);
-          sketch_name = name;
+          sketch_name = msg.name;
 
           frappe.msgprint({
             "title": "Notification",
