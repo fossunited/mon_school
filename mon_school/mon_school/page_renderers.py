@@ -57,7 +57,7 @@ class SketchImage(BaseRenderer):
         headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}-{mode}.png"}
         return Response("", status="302 Found", headers=headers)
 
-RE_SKETCH_SQUARE_IMAGE = re.compile(r"s/(\d+)-([0-9a-f]+)-(s|w).png$")
+RE_SKETCH_SQUARE_IMAGE = re.compile(r"s/(.+)-([0-9a-f]+)-([smw]).png$")
 
 class SketchPNG(BaseRenderer):
     """Class to render Sketch images as PNG.
@@ -76,10 +76,24 @@ class SketchPNG(BaseRenderer):
     """
     IMAGE_SIZES_BY_MODE = {
         "s": (300, 300),
+        "m": (600, 600),
         "w": (550, 300)
     }
     def can_render(self):
         return RE_SKETCH_SQUARE_IMAGE.match(self.path) is not None
+
+    def get_sketch(self, sketch_id):
+        if sketch_id.startswith("x"):
+            doctype = "Contest Sketch"
+            name = sketch_id.replace("x-", "")
+        else:
+            doctype = "LMS Sketch"
+            name = "SKETCH-" + sketch_id
+        try:
+            print("doctype", doctype, name)
+            return frappe.get_doc(doctype, name)
+        except frappe.DoesNotExistError:
+            pass
 
     def render(self):
         m = RE_SKETCH_SQUARE_IMAGE.match(self.path)
@@ -90,18 +104,16 @@ class SketchPNG(BaseRenderer):
 
         filename = f"{sketch_id}-{hash_}-{mode}.png"
 
-        try:
-            s = frappe.get_doc("LMS Sketch", name)
-        except frappe.DoesNotExistError:
-            s = None
+        sketch = self.get_sketch(sketch_id)
+        if not sketch:
             return Response("", status="404 Not Found")
 
-        sketch_hash = s.get_hash()
+        sketch_hash = sketch.get_hash()
         if sketch_hash != hash_:
             headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}-{mode}.png"}
             return Response("", status="302 Found", headers=headers)
 
-        return self.render_png(s, filename, mode)
+        return self.render_png(sketch, filename, mode)
 
     def to_png(self, sketch, filename, mode):
         cache_dir = Path(frappe.local.site_path) / "sketch-cache"

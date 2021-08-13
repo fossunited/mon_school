@@ -1,0 +1,104 @@
+{% extends "templates/base.html" %}
+{% from "www/macros/livecode.html" import LiveCodeEditorLarge, LiveCodeEditorJS with context %}
+
+{% block title %}{{ sketch.title if not error else "Pookkalam" }}{% endblock %}
+{% block head_include %}
+
+  {% if not error %}
+	<meta name="description" content="Pookklam by {{sketch.get_owner_name() }}" />
+	<meta name="keywords" content="code-a-pookkalam" />
+  {% endif %}
+
+<link rel="stylesheet" href="/assets/mon_school/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="/assets/css/lms.css">
+
+<script src="/assets/mon_school/codemirror/lib/codemirror.js"></script>
+<script src="/assets/mon_school/codemirror/mode/python/python.js"></script>
+<script src="/assets/mon_school/codemirror/keymap/sublime.js"></script>
+
+<script src="/assets/mon_school/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/assets/mon_school/codemirror/addon/comment/comment.js"></script>
+{% endblock %}
+
+{% block content %}
+
+{% if error == "not-logged-in" %}
+  <script type="text/javascript">
+    window.location.href = `/login?redirect-to=${window.location.pathname}`
+  </script>
+{% else %}
+
+<section class="top-section" style="padding: 1rem 0rem;">
+	<div class='container pb-5'>
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item" aria-current="page"><a href="/code-a-pookklam">Code-a-pookkalam</a></li>
+			</ol>
+		</nav>
+
+    <div class="sketch-header">
+      <div class="form-row">
+        <div class="col-lg-8 col-md-6">
+          <h1 class="sketch-title">Your Pookkalam</h1>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <button type="submit" id="sketch-save" class="btn-save btn btn-primary">Save Draft</button>
+        </div>
+      </div>
+    </div>
+
+  <div class="sketch-editor">
+    {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime="joy", image=sketch.svg) }}
+  </div>
+  {% endif %}
+  {% endblock %}
+
+{%- block script %}
+  {{ super() }}
+
+  {% if not error %}
+  <script type="text/javascript">
+  var page_context = {{ page_context | tojson }};
+  </script>
+
+  {{ LiveCodeEditorJS() }}
+
+  <script type="text/javascript">
+    var sketch_name = {{ sketch.name | tojson }};
+
+    function saveSketch() {
+      var title = $("#sketch-title").val()
+      var code = livecodeEditors[0].codemirror.doc.getValue()
+
+      frappe.call('mon_school.mon_school.doctype.contest.contest.save_submission', {
+        contest: "{{contest.name}}",
+        code: code
+      })
+      .then(r => {
+        var msg = r.message;
+        if (!msg.ok) {
+          var error = msg.error || "Save failed."
+          frappe.msgprint({
+            "title": "Error",
+            "indicator": "red",
+            "message": error
+          });
+        }
+        else {
+          frappe.msgprint({
+            "title": "Notification",
+            "indicator": "green",
+            "message": "Your Pookalam has been saved as draft!"
+          });
+        }
+      })
+    }
+
+    $(function() {
+      $("#sketch-save").click(function() {
+        saveSketch();
+      });
+    })
+  </script>
+  {% endif %}
+{%- endblock %}

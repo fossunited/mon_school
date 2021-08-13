@@ -114,8 +114,8 @@ class LMSSketch(Document):
         )
         return [frappe.get_doc(doctype='LMS Sketch', **doc) for doc in sketches]
 
-    def __repr__(self):
-        return f"<LMSSketch {self.name}>"
+    # def __repr__(self):
+    #     return f"<LMSSketch {self.name}>"
 
 @frappe.whitelist()
 def save_sketch(name, title, code):
