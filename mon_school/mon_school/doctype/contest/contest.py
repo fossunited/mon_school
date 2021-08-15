@@ -34,7 +34,7 @@ class Contest(Document):
         """Returns the submission of the current user.
         """
         try:
-            return frappe.get_doc("Contest Sketch", {"contest": self.name, "owner": frappe.session.user})
+            return frappe.get_doc("Contest Entry", {"contest": self.name, "owner": frappe.session.user})
         except frappe.DoesNotExistError:
             return None
 
@@ -42,16 +42,16 @@ class Contest(Document):
         """Returns the submission of the current user.
         """
         try:
-            return frappe.get_doc("Contest Sketch", {"contest": self.name, "name": name})
+            return frappe.get_doc("Contest Entry", {"contest": self.name, "name": name})
         except frappe.DoesNotExistError:
             return None
 
     def get_submitted_entries(self):
         names = frappe.db.get_all(
-            "Contest Sketch",
+            "Contest Entry",
             filters={"contest": self.name, "is_submitted": True},
             pluck='name')
-        return [frappe.get_doc("Contest Sketch", name) for name in names]
+        return [frappe.get_doc("Contest Entry", name) for name in names]
 
     def get_participant_status(self):
         """Returns the status of the current user for this contest.
@@ -129,7 +129,7 @@ def _success(sketch):
 
 def _new_entry(contest_name):
     return frappe.get_doc({
-        "doctype": "Contest Sketch",
+        "doctype": "Contest Entry",
         "name": "new",
         "contest": contest_name,
         "code": "",

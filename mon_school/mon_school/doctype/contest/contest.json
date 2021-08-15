@@ -38,9 +38,13 @@
   {
    "link_doctype": "Contest Participant",
    "link_fieldname": "contest"
+  },
+  {
+   "link_doctype": "Contest Entry",
+   "link_fieldname": "contest"
   }
  ],
- "modified": "2021-08-10 09:06:03.359317",
+ "modified": "2021-08-16 05:04:58.193990",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Contest",

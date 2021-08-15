@@ -40,7 +40,7 @@ def get_context(context):
     sketch = contest.get_user_submission()
     if not sketch:
         sketch = frappe.get_doc({
-            "doctype": "Contest Sketch",
+            "doctype": "Contest Entry",
             "name": "new",
             "contest": contest_name,
             "code": DEFAULT_CODE,
