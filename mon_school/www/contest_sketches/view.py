@@ -20,11 +20,14 @@ def get_context(context):
     try:
         contest = frappe.get_doc("Contest", contest_name)
     except frappe.DoesNotExistError:
-        return render_template("www/404.html")
+        context.template = "www/404.html"
+        return
 
     sketch = contest.get_submission(sketch_name)
+
     if not sketch:
-        return render_template("www/404.html")
+        context.template = "www/404.html"
+        return
 
     context.contest = contest
     context.sketch = sketch
