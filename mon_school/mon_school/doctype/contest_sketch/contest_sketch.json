@@ -14,6 +14,7 @@
   {
    "fieldname": "contest",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Contest",
    "options": "Contest"
   },
@@ -31,12 +32,13 @@
    "default": "0",
    "fieldname": "is_submitted",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Is Submitted"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-15 17:05:25.677587",
+ "modified": "2021-08-15 19:23:25.143039",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Contest Sketch",

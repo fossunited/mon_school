@@ -82,7 +82,7 @@ def _update_sketch(contest, code, action):
         return _error("Please login")
 
     contest_doc = frappe.get_doc("Contest", contest)
-    sketch = contest_doc.get_user_submission() or _new_sketch()
+    sketch = contest_doc.get_user_submission() or _new_entry(contest)
 
     if action == "withdraw":
         if sketch.name is None:
@@ -97,14 +97,21 @@ def _update_sketch(contest, code, action):
             return _error("Can't edit your entry after submission")
         sketch.code = code
         sketch.is_submitted = True
-        sketch.save()
+        if sketch.is_new():
+            sketch.insert()
+        else:
+            sketch.save()
     elif action == "save_draft":
         if sketch.is_submitted:
             return _error("Can't edit your entry after submission")
         sketch.code = code
         sketch.is_submitted = False
-        sketch.save()
+        if sketch.name == "new":
+            sketch.insert()
+        else:
+            sketch.save()
 
+    frappe.clear_messages()
     return _success(sketch)
 
 def _error(message):
@@ -119,6 +126,17 @@ def _success(sketch):
         "name": sketch.name,
         "id": sketch.sketch_id
     }
+
+def _new_entry(contest_name):
+    return frappe.get_doc({
+        "doctype": "Contest Sketch",
+        "name": "new",
+        "contest": contest_name,
+        "code": "",
+        "owner": frappe.session.user,
+        "is_submitted": False
+    })
+
 
 @frappe.whitelist()
 def save_entry(contest, code):
