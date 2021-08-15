@@ -24,13 +24,17 @@ def get_context(context):
     except frappe.DoesNotExistError:
         return render_template("www/404.html")
 
-
-
     if frappe.session.user == "Guest":
         context.error = "not-logged-in"
+        context.contest = contest
+        context.sketch = None
+        context.page_context = {}
         return
-    elif contest.is_participant(frappe.session.user):
+    elif not contest.is_participant(frappe.session.user):
         context.error = "not-participant"
+        context.contest = contest
+        context.sketch = None
+        context.page_context = {}
         return
 
     sketch = contest.get_user_submission()

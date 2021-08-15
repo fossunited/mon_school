@@ -5,8 +5,8 @@
 {% block head_include %}
 
   {% if not error %}
-	<meta name="description" content="Pookklam by {{sketch.get_owner_name() }}" />
-	<meta name="keywords" content="code-a-pookkalam" />
+  <meta name="description" content="Pookklam by {{sketch.get_owner_name() }}" />
+  <meta name="keywords" content="code-a-pookkalam" />
   {% endif %}
 
 <link rel="stylesheet" href="/assets/mon_school/codemirror/lib/codemirror.css">
@@ -18,33 +18,47 @@
 
 <script src="/assets/mon_school/codemirror/addon/edit/matchbrackets.js"></script>
 <script src="/assets/mon_school/codemirror/addon/comment/comment.js"></script>
+
 {% endblock %}
 
 {% block content %}
+  <section class="top-section" style="padding: 1rem 0rem;">
+    {{ Breadcrumbs() }}
+    {{ Header() }}
+    {{ Body() }}
+  </section>
+{% endblock %}
 
-{% if error == "not-logged-in" %}
-  <script type="text/javascript">
-    window.location.href = `/login?redirect-to=${window.location.pathname}`
-  </script>
-{% else %}
+{% macro Breadcrumbs() %}
+  <div class='container pb-5'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}">{{ contest.title }}</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}/submissions">Submissions</a></li>
+      </ol>
+    </nav>
+{% endmacro %}
 
-<section class="top-section" style="padding: 1rem 0rem;">
-	<div class='container pb-5'>
-		<nav aria-label="breadcrumb">
-			<ol class="breadcrumb">
-				<li class="breadcrumb-item" aria-current="page"><a href="/code-a-pookklam">Code-a-pookkalam</a></li>
-			</ol>
-		</nav>
-
+{% macro Header() %}
+  {% if error == "not-logged-in" %}
+    <script type="text/javascript">
+      window.location.href = `/login?redirect-to=${window.location.pathname}`
+    </script>
+  {% else %}
     <div class="sketch-header pb-5">
-      <h1 class="sketch-title">Your Pookkalam</h1>
-      {% if sketch.is_submitted %}
+      <h1 class="sketch-title">Submit an Entry</h1>
+      {% if not sketch %}
+        <div>
+          <p>You have not joined the {{contest.title}} contest to make a submission. Please visit the contest home to join the contest.
+          </p>
 
-      You have submitted your Pookkalam to the contest.
+          <p>
+            <a class="btn btn-primary" href="/{{contest.name}}">Back to {{contest.title}} &rarr;</a>
+          </p>
+        </div>
+      {% elif sketch.is_submitted %}
 
-      <div style="margin-bottom: 10px;">
-        <button type="submit" id="sketch-withdraw" class="btn-save btn btn-primary">Withdraw</button>
-      </div>
+      You have submitted your Pookkalam to the contest. You can't make any more edits after the submission.
 
       {% else %}
       <div style="margin-bottom: 10px;">
@@ -57,17 +71,21 @@
       </p>
       {% endif %}
     </div>
-
-  <div class="sketch-editor">
-    {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime="joy", image=sketch.svg) }}
-  </div>
   {% endif %}
-  {% endblock %}
+{% endmacro %}
+
+{% macro Body() %}
+{% if sketch %}
+<div class="sketch-editor">
+  {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime="joy", image=sketch.svg) }}
+</div>
+{% endif %}
+{% endmacro %}
 
 {%- block script %}
   {{ super() }}
 
-  {% if not error %}
+  {% if sketch %}
   <script type="text/javascript">
   var page_context = {{ page_context | tojson }};
   </script>
