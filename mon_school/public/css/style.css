@@ -3,12 +3,7 @@
 }
 
 .sketch-teaser {
-	background: white;
-	border-radius: 9px;
-	border: 1px solid #C4C4C4;
-	width: 220px;
-	margin-bottom: 30px;
-	margin-top: 30px;
+	flex-direction: column;
 }
 
 .sketch-teaser svg {
@@ -17,12 +12,37 @@
 }
 
 .sketch-image {
-	padding: 10px;
+	padding: 0.5rem;
+	text-align: center;
 }
 
 .sketch-footer {
-	border-top: 1px solid#C4C4C4;
-	padding: 10px;
-	background: #F6F6F6;
-	border-radius: 0px 0px 10px 10px;
+	margin: 1rem 1.5rem 1rem;
+}
+
+.sketch-page-header {
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+}
+
+.sketch-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+	-moz-column-gap: 2rem;
+	column-gap: 2rem;
+	row-gap: 2rem;
+}
+
+.sketch-link {
+	color: inherit;
+	font-size: 0.75rem;
+	line-height: 135%;
+}
+
+.sketch-link:hover {
+	text-decoration: none;
+}
+
+.sketch-title {
+	margin-bottom: 16px;
 }
