@@ -7,9 +7,8 @@ from frappe.website.doctype.website_settings.website_settings import get_website
 from frappe.website.utils import build_response
 
 DEFAULT_CODE = """\
-# change this to create your own pookkalam
-shape = ellipse(x=50, w=100, h=50) | repeat(6, rotate(60))
-show(shape)
+c = circle()
+show(c)
 """
 def get_context(context):
     context.no_cache = 1
@@ -41,7 +40,8 @@ def get_context(context):
             "name": "new",
             "contest": contest_name,
             "code": DEFAULT_CODE,
-            "owner": frappe.session.user
+            "owner": frappe.session.user,
+            "is_submitted": False
         })
 
     context.contest = contest

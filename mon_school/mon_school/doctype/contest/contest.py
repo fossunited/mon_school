@@ -70,27 +70,65 @@ def join_contest(contest_name):
     else:
         return {"ok": False, "error": "Contest Not Found"}
 
-@frappe.whitelist()
-def save_submission(contest, code):
+def _update_sketch(contest, code, action):
     if frappe.session.user == "Guest":
-        return {"ok": False, "error": "Please login"}
+        return _error("Please login")
 
     contest_doc = frappe.get_doc("Contest", contest)
-    sketch = contest_doc.get_user_submission()
+    sketch = contest_doc.get_user_submission() or _new_sketch()
 
-    if not sketch:
-        sketch = frappe.new_doc("Contest Sketch")
-        sketch.contest = contest
-        sketch.code = code
-        sketch.insert(ignore_permissions=True)
-        print("created new submission for ", frappe.session.user, sketch.name)
-    else:
-        print("updating existing submission for ", frappe.session.user, sketch.name)
-        sketch.code = code
-        sketch.svg = ''
+    if action == "withdraw":
+        if sketch.name is None:
+            return _error("No entry found to withdraw")
+        if not sketch.is_submitted:
+            return _error("You have not submitted an entry yet")
+
+        sketch.is_submitted = False
         sketch.save()
+    elif action == "submit":
+        if sketch.is_submitted:
+            return _error("Can't edit your entry after submission")
+        sketch.code = code
+        sketch.is_submitted = True
+        sketch.save()
+    elif action == "save_draft":
+        if sketch.is_submitted:
+            return _error("Can't edit your entry after submission")
+        sketch.code = code
+        sketch.is_submitted = False
+        sketch.save()
+
+    return _success(sketch)
+
+def _error(message):
+    return {
+        "ok": False,
+        "error": message
+    }
+
+def _success(sketch):
     return {
         "ok": True,
         "name": sketch.name,
         "id": sketch.sketch_id
     }
+
+@frappe.whitelist()
+def save_entry(contest, code):
+    """Save an entry to the submission as a draft.
+    """
+    return _update_sketch(contest, code, action="save_draft")
+
+@frappe.whitelist()
+def submit_entry(contest, code):
+    """submits an entry to the submission.
+    """
+    return _update_sketch(contest, code, action="submit")
+
+@frappe.whitelist()
+def withdraw_entry(contest):
+    """Withdraws a submitted entry from the contest.
+
+    After this step the submitted entry will be seen as a draft.
+    """
+    return _update_sketch(contest, code=None, action="withdraw")

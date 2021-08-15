@@ -11,7 +11,8 @@ class ContestSketch(LMSSketch):
             "name": self.name,
             "code": self.code,
             "svg": self.svg,
-            "image_url": self.get_image_url(mode="s")
+            "image_url": self.get_image_url(mode="s"),
+            "is_submitted": self.is_submitted
         }
 
     @property
