@@ -84,7 +84,7 @@ class SketchPNG(BaseRenderer):
 
     def get_sketch(self, sketch_id):
         if sketch_id.startswith("x"):
-            doctype = "Contest Sketch"
+            doctype = "Contest Entry"
             name = sketch_id.replace("x-", "")
         else:
             doctype = "LMS Sketch"

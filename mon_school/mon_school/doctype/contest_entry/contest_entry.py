@@ -5,7 +5,7 @@
 from frappe.model.document import Document
 from ..lms_sketch.lms_sketch import LMSSketch
 
-class ContestSketch(LMSSketch):
+class ContestEntry(LMSSketch):
     def to_dict(self):
         return {
             "name": self.name,
