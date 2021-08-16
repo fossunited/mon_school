@@ -98,18 +98,18 @@ def _update_sketch(contest, code, action):
         sketch.code = code
         sketch.is_submitted = True
         if sketch.is_new():
-            sketch.insert()
+            sketch.insert(ignore_permissions=True)
         else:
-            sketch.save()
+            sketch.save(ignore_permissions=True)
     elif action == "save_draft":
         if sketch.is_submitted:
             return _error("Can't edit your entry after submission")
         sketch.code = code
         sketch.is_submitted = False
         if sketch.name == "new":
-            sketch.insert()
+            sketch.insert(ignore_permissions=True)
         else:
-            sketch.save()
+            sketch.save(ignore_permission=True)
 
     frappe.clear_messages()
     return _success(sketch)
