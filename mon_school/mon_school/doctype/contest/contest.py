@@ -97,7 +97,7 @@ def _update_sketch(contest, code, action):
             return _error("Can't edit your entry after submission")
         sketch.code = code
         sketch.is_submitted = True
-        if sketch.is_new():
+        if sketch.name == "new":
             sketch.insert(ignore_permissions=True)
         else:
             sketch.save(ignore_permissions=True)

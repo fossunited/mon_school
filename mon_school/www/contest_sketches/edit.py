@@ -22,7 +22,8 @@ def get_context(context):
     try:
         contest = frappe.get_doc("Contest", contest_name)
     except frappe.DoesNotExistError:
-        return render_template("www/404.html")
+        context.template = "www/404.html"
+        return
 
     if frappe.session.user == "Guest":
         context.error = "not-logged-in"
