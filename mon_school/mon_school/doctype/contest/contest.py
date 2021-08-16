@@ -109,7 +109,7 @@ def _update_sketch(contest, code, action):
         if sketch.name == "new":
             sketch.insert(ignore_permissions=True)
         else:
-            sketch.save(ignore_permission=True)
+            sketch.save(ignore_permissions=True)
 
     frappe.clear_messages()
     return _success(sketch)
