@@ -60,7 +60,7 @@ def get_metatags(sketch):
     url = f"{frappe.request.host_url}sketches/{sketch.sketch_id}"
     return {
         "title": title,
-        "description": sketch.code,
+        "description":  title,
         "image": image,
         "url": url
     }
