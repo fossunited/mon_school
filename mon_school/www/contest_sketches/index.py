@@ -14,11 +14,26 @@ def get_context(context):
     try:
         contest = frappe.get_doc("Contest", contest_name)
     except frappe.DoesNotExistError:
-        return render_template("www/404.html")
+        context.template = "www/404.html"
+        return
 
     entries = contest.get_submitted_entries()
 
-    print("submissions", contest_name, len(entries))
     context.contest = contest
     context.entries = entries
     context.page_context = {}
+    context.metatags = get_metatags()
+
+def get_metatags():
+    """Returns the metatags for the current URL as specified in
+    Website Route Meta document with the same route.
+    """
+    route = frappe.request.path[1:]
+    try:
+        doc = frappe.get_doc("Website Route Meta", route)
+    except frappe.DoesNotExistError:
+        return {}
+
+    metatags = {tag.key: tag.value for tag in doc.meta_tags}
+    metatags.setdefault("url", frappe.request.url)
+    return metatags
