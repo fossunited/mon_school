@@ -6,13 +6,18 @@ from frappe.model.document import Document
 from ..lms_sketch.lms_sketch import LMSSketch
 
 class ContestEntry(LMSSketch):
-    def to_dict(self):
+    def to_dict(self, include_author=False):
+        owner = self.get_owner()
         return {
             "name": self.name,
-            "code": self.code,
-            "svg": self.svg,
             "image_url": self.get_image_url(mode="s"),
-            "is_submitted": self.is_submitted
+            "s_image_url": self.get_image_url(mode="s"),
+            "m_image_url": self.get_image_url(mode="m"),
+            "is_submitted": self.is_submitted,
+            "author": {
+                "full_name": owner.full_name,
+                "username": owner.username
+            }
         }
 
     @property

@@ -30,11 +30,14 @@ class Contest(Document):
         if doc:
             doc.delete()
 
-    def get_user_submission(self):
+    def get_user_submission(self, email=None):
         """Returns the submission of the current user.
         """
+        email = email or frappe.session.user
         try:
-            return frappe.get_doc("Contest Entry", {"contest": self.name, "owner": frappe.session.user})
+            return frappe.get_doc(
+                "Contest Entry", 
+                {"contest": self.name, "owner": email})
         except frappe.DoesNotExistError:
             return None
 
