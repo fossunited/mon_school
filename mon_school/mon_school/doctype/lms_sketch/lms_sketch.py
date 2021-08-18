@@ -4,7 +4,10 @@
 
 from __future__ import unicode_literals
 import hashlib
+import json
+from pathlib import Path
 from urllib.parse import urlparse
+import cairosvg
 import frappe
 from frappe.model.document import Document
 from ... import livecode
@@ -13,14 +16,34 @@ DEFAULT_IMAGE = """
 <svg viewBox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg">
 </svg>
 """
+IMAGE_NOT_READY_URL = "/assets/mon_school/images/image-not-ready.png"
 
 class LMSSketch(Document):
+    IMAGE_SIZES_BY_MODE = {
+        "s": (300, 300),
+        "m": (600, 600),
+        "w": (550, 300)
+    }
+
     def before_save(self):
+        if getattr(self, "_skip_before_save", None):
+            return
+        print("before_save", self.name)
+
         try:
             is_sketch = self.runtime == "sketch" # old version
             self.svg = livecode.livecode_to_svg(self.code, is_sketch=is_sketch)
+            self.image_ready = False
         except Exception:
             frappe.log_error(f"Failed to save svg for sketch {self.name}")
+
+    def after_insert(self):
+        self.on_update()
+
+    def on_update(self):
+        if getattr(self, "_skip_before_save", None):
+            return
+        frappe.enqueue_doc(self.doctype, self.name, method="generate_images")
 
     def render_svg(self):
         if self.svg:
@@ -62,6 +85,8 @@ class LMSSketch(Document):
         The mode argument could be one of "s" (for square)
         or "w" (for wide). The s is the default.
         """
+        if not self.image_ready:
+            return IMAGE_NOT_READY_URL
         hash_ = self.get_hash()
         return f"/s/{self.sketch_id}-{hash_}-{mode}.png"
 
@@ -97,6 +122,31 @@ class LMSSketch(Document):
             if value:
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
+
+    def generate_images(self):
+        """Generates PNG images of different sizes.
+        """
+        svg = self.svg or DEFAULT_IMAGE
+        hash_ = self.get_hash()
+        self.to_png(hash_, "s")
+        self.to_png(hash_, "m")
+        self.to_png(hash_, "w")
+        self.image_ready = True
+        self._skip_before_save = True
+        self.save()
+
+    def to_png(self, hash_, mode):
+        cache_dir = Path(frappe.local.site_path) / "sketch-cache"
+        cache_dir.mkdir(exist_ok=True)
+
+        filename = f"{self.sketch_id}-{hash_}-{mode}.png"
+        path = cache_dir / filename
+        print("generating", path)
+
+        svg = self.svg or DEFAULT_IMAGE
+        w, h = self.IMAGE_SIZES_BY_MODE[mode]
+        png = cairosvg.svg2png(svg, output_width=w, output_height=h)
+        path.write_bytes(png)
 
     @staticmethod
     def get_recent_sketches(limit=100, owner=None):
@@ -145,3 +195,11 @@ def save_sketch(name, title, code):
         "name": doc.name,
         "id": doc.name.replace("SKETCH-", "")
     }
+
+@frappe.whitelist()
+def generate_images(doc):
+    print("generate_images", doc)
+    data = json.loads(doc)
+    sketch = frappe.get_doc(data['doctype'], data['name'])
+    sketch.generate_images()
+    frappe.msgprint(f"Successfully generated images for {sketch.doctype} {sketch.name}")

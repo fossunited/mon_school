@@ -90,7 +90,6 @@ class SketchPNG(BaseRenderer):
             doctype = "LMS Sketch"
             name = "SKETCH-" + sketch_id
         try:
-            print("doctype", doctype, name)
             return frappe.get_doc(doctype, name)
         except frappe.DoesNotExistError:
             pass
@@ -121,15 +120,15 @@ class SketchPNG(BaseRenderer):
         path = cache_dir / filename
         if path.exists():
             return path.read_bytes()
-
-        svg = sketch.svg or DEFAULT_IMAGE
-        w, h = self.IMAGE_SIZES_BY_MODE[mode]
-        png = cairosvg.svg2png(svg, output_width=w, output_height=h)
-        path.write_bytes(png)
-        return png
+        else:
+            return
 
     def render_png(self, sketch, filename, mode):
         png = self.to_png(sketch, filename, mode)
+
+        if not png:
+            headers = {"Location": f"{frappe.request.host_url}assets/mon_school/images/image-not-ready.png"}
+            return Response("", status="302 Found", headers=headers)
 
         # cache forever
         headers = {

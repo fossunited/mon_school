@@ -8,7 +8,8 @@
   "contest",
   "code",
   "svg",
-  "is_submitted"
+  "is_submitted",
+  "image_ready"
  ],
  "fields": [
   {
@@ -34,11 +35,16 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Is Submitted"
+  },
+  {
+   "fieldname": "image_ready",
+   "fieldtype": "Data",
+   "label": "Image Ready?"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-15 19:23:25.143039",
+ "modified": "2021-08-18 17:05:14.529654",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Contest Entry",

@@ -1,5 +1,11 @@
 {
- "actions": [],
+ "actions": [
+  {
+   "action": "mon_school.mon_school.doctype.lms_sketch.lms_sketch.generate_images",
+   "action_type": "Server Action",
+   "label": "Generate Images"
+  }
+ ],
  "autoname": "format:SKETCH-{#}",
  "creation": "2021-03-09 16:31:50.523524",
  "doctype": "DocType",
@@ -9,7 +15,8 @@
   "title",
   "runtime",
   "code",
-  "svg"
+  "svg",
+  "image_ready"
  ],
  "fields": [
   {
@@ -32,11 +39,17 @@
    "fieldtype": "Code",
    "label": "SVG",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "image_ready",
+   "fieldtype": "Check",
+   "label": "Image Ready?"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-07-09 15:08:08.024920",
+ "modified": "2021-08-18 16:20:49.902373",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "LMS Sketch",
