@@ -14,13 +14,13 @@
 	<div class='container pb-5'>
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}">{{ contest.title }}</a></li>
+				<li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}">{{ contest.title | e}}</a></li>
 				<li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}/submissions">Submissions</a></li>
 			</ol>
 		</nav>
 
     <div class="sketch-header">
-        <h1 class="sketch-title">Pookkalam by {{sketch.get_owner_name()}}</h1>
+        <h1 class="sketch-title">Pookkalam by {{sketch.get_owner_name() | e}}</h1>
     </div>
 
     <div>
