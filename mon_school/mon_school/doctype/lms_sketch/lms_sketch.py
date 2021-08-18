@@ -138,7 +138,7 @@ class LMSSketch(Document):
         self.to_png(converter, hash_, "w")
         self.image_ready = True
         self._skip_before_save = True
-        self.save()
+        self.save(ignore_permissions=True)
 
     def to_png(self, converter, hash_, mode):
         cache_dir = Path(frappe.local.site_path) / "sketch-cache"
