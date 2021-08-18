@@ -205,6 +205,7 @@ def generate_images(doc):
     print("generate_images", doc)
     data = json.loads(doc)
     sketch = frappe.get_doc(data['doctype'], data['name'])
+    sketch.before_save() # regenerate svg
     sketch.generate_images()
     frappe.msgprint(f"Successfully generated images for {sketch.doctype} {sketch.name}")
 
@@ -213,6 +214,7 @@ def generate_images_with_svgexport(doc):
     print("generate_images", doc)
     data = json.loads(doc)
     sketch = frappe.get_doc(data['doctype'], data['name'])
+    sketch.before_save() # regenerate svg
     sketch.generate_images(converter=SVGExportConverter())
     frappe.msgprint(f"Successfully generated images for {sketch.doctype} {sketch.name}")
 
