@@ -9,6 +9,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 import cairosvg
 import frappe
+import tempfile
+import os
 from frappe.model.document import Document
 from ... import livecode
 
@@ -123,30 +125,32 @@ class LMSSketch(Document):
                 cache.set(key, value)
         return value or DEFAULT_IMAGE
 
-    def generate_images(self):
+    def generate_images(self, converter=None):
         """Generates PNG images of different sizes.
         """
         svg = self.svg or DEFAULT_IMAGE
         hash_ = self.get_hash()
-        self.to_png(hash_, "s")
-        self.to_png(hash_, "m")
-        self.to_png(hash_, "w")
+
+        converter = converter or CairoImageConverter()
+
+        self.to_png(converter, hash_, "s")
+        self.to_png(converter, hash_, "m")
+        self.to_png(converter, hash_, "w")
         self.image_ready = True
         self._skip_before_save = True
         self.save()
 
-    def to_png(self, hash_, mode):
+    def to_png(self, converter, hash_, mode):
         cache_dir = Path(frappe.local.site_path) / "sketch-cache"
         cache_dir.mkdir(exist_ok=True)
 
         filename = f"{self.sketch_id}-{hash_}-{mode}.png"
         path = cache_dir / filename
-        print("generating", path)
 
         svg = self.svg or DEFAULT_IMAGE
         w, h = self.IMAGE_SIZES_BY_MODE[mode]
-        png = cairosvg.svg2png(svg, output_width=w, output_height=h)
-        path.write_bytes(png)
+
+        converter.convert_image(svg, w=w, h=h, output_filename=str(path))
 
     @staticmethod
     def get_recent_sketches(limit=100, owner=None):
@@ -203,3 +207,49 @@ def generate_images(doc):
     sketch = frappe.get_doc(data['doctype'], data['name'])
     sketch.generate_images()
     frappe.msgprint(f"Successfully generated images for {sketch.doctype} {sketch.name}")
+
+@frappe.whitelist()
+def generate_images_with_svgexport(doc):
+    print("generate_images", doc)
+    data = json.loads(doc)
+    sketch = frappe.get_doc(data['doctype'], data['name'])
+    sketch.generate_images(converter=SVGExportConverter())
+    frappe.msgprint(f"Successfully generated images for {sketch.doctype} {sketch.name}")
+
+class ImageConverter:
+    """Base class to convert image from svg to png.
+    """
+    def convert_image(self, svg, w, h, output_filename):
+        raise NotImplementedError()
+
+class CairoImageConverter(ImageConverter):
+    def convert_image(self, svg, w, h, output_filename):
+        print("generating", output_filename, "using cariosvg")
+        png = cairosvg.svg2png(svg, output_width=w, output_height=h)
+        path = Path(output_filename)
+        path.write_bytes(png)
+
+class CLIConverter(ImageConverter):
+    def get_command_pattern(self):
+        raise NotImplementedError()
+
+    def convert_image(self, svg, w, h, output_filename):
+        print("generating", output_filename, "using", self.__class__.__name__)
+        with tempfile.TemporaryDirectory() as tmp:
+            input_path = Path(tmp) / "input.svg"
+            input_path.write_text(svg)
+            input_filename = str(input_path)
+            cmd = self.get_command_pattern().format(**locals())
+            os.system(cmd)
+
+class SVGExportConverter(CLIConverter):
+    def get_command_pattern(self):
+        return "svgexport {input_filename} {output_filename} format png output {w}:{h} viewbox pad"
+
+def create_converter(name):
+    converters = {
+        "cairosvg": CairoImageConverter,
+        "svgexport": SVGExportConverter
+    }
+    cls = converters[name]
+    return cls()

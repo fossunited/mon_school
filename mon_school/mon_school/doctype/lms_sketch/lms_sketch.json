@@ -3,7 +3,14 @@
   {
    "action": "mon_school.mon_school.doctype.lms_sketch.lms_sketch.generate_images",
    "action_type": "Server Action",
-   "label": "Generate Images"
+   "group": "Generate Images",
+   "label": "Using Cairosvg (default)"
+  },
+  {
+   "action": "mon_school.mon_school.doctype.lms_sketch.lms_sketch.generate_images_with_svgexport",
+   "action_type": "Server Action",
+   "group": "Generate Images",
+   "label": "Using svgexport"
   }
  ],
  "autoname": "format:SKETCH-{#}",
@@ -49,7 +56,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-08-18 16:20:49.902373",
+ "modified": "2021-08-18 21:48:41.390504",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "LMS Sketch",
