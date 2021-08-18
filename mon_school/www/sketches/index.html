@@ -27,11 +27,11 @@
             </div>
             <div class="sketch-footer">
               <div class="sketch-title">
-                <a href="/sketches/{{sketch.sketch_id}}">{{sketch.title}}</a>
+                <a href="/sketches/{{sketch.sketch_id}}">{{sketch.title | e}}</a>
               </div>
               <div class="sketch-author">
                 {% set owner = sketch.get_owner() %}
-                by <a href="/{{owner.username}}">{{owner.full_name}}</a>
+                by <a href="/{{owner.username}}">{{owner.full_name | e}}</a>
               </div>
             </div>
           </div>
