@@ -23,7 +23,7 @@ def get_context(context):
     except ValueError:
         page = 1
 
-    page_size = 48
+    page_size = 100
     start = (page-1)*page_size
 
     num_entries = contest.get_submitted_entries_count()
