@@ -49,12 +49,19 @@ class Contest(Document):
         except frappe.DoesNotExistError:
             return None
 
-    def get_submitted_entries(self):
+    def get_submitted_entries(self, page_size=None, start=None):
         names = frappe.db.get_all(
             "Contest Entry",
             filters={"contest": self.name, "is_submitted": True},
-            pluck='name')
+            pluck='name',
+            start=start,
+            page_length=page_size)
         return [frappe.get_doc("Contest Entry", name) for name in names]
+
+    def get_submitted_entries_count(self):
+        return frappe.db.count(
+            "Contest Entry",
+            filters={"contest": self.name, "is_submitted": True})
 
     def get_participant_status(self):
         """Returns the status of the current user for this contest.

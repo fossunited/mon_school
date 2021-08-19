@@ -1,6 +1,7 @@
 """The webpages module provides an easier way to create custom pages using @route decorator.
 """
 import frappe
+import math
 
 def get_context(context):
     context.no_cache = 1
@@ -17,12 +18,23 @@ def get_context(context):
         context.template = "www/404.html"
         return
 
-    entries = contest.get_submitted_entries()
+    try:
+        page = int(frappe.form_dict.get("page", 1))
+    except ValueError:
+        page = 1
+
+    page_size = 48
+    start = (page-1)*page_size
+
+    num_entries = contest.get_submitted_entries_count()
+    entries = contest.get_submitted_entries(start=start, page_size=page_size)
 
     context.contest = contest
     context.entries = entries
     context.page_context = {}
     context.metatags = get_metatags()
+    context.page = page
+    context.num_pages = math.ceil(num_entries/page_size)
 
 def get_metatags():
     """Returns the metatags for the current URL as specified in
