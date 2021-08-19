@@ -44,6 +44,22 @@
     <script type="text/javascript">
       window.location.href = `/login?redirect-to=${window.location.pathname}`
     </script>
+  {% elif not contest.is_active %}
+    <h1 class="sketch-title">Thanks for participating</h1>
+
+    {% if sketch.is_submitted %}
+
+    <p>Your submission is successfully accepted for the contest. Your submission id is {{sketch.name}}.</p>
+
+    <p>View and share your submission with others using the following URL:
+    </p>
+    {% set url = "https://mon.school/{contest.name}/submissions/{sketch.name}".format(contest=contest, sketch=sketch) %}
+    <p><a href="{{url}}">{{url}}</a></p>
+
+    {% else %}
+     <p>Submissions are closed now.</p>
+    {% endif %}
+
   {% else %}
     <div class="sketch-header pb-5">
       {% if not sketch %}
@@ -88,7 +104,7 @@
 {% endmacro %}
 
 {% macro Body() %}
-{% if sketch %}
+{% if sketch and contest.is_active %}
 <div class="sketch-editor">
   {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime="joy", image=sketch.svg) }}
 </div>
