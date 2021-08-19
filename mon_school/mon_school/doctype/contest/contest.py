@@ -94,6 +94,9 @@ def _update_sketch(contest, code, action):
     contest_doc = frappe.get_doc("Contest", contest)
     sketch = contest_doc.get_user_submission() or _new_entry(contest)
 
+    if not contest_doc.is_active:
+        return _error("Submissions are closed")
+
     if action == "withdraw":
         if sketch.name is None:
             return _error("No entry found to withdraw")
