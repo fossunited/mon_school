@@ -75,6 +75,24 @@ class Contest(Document):
             "submission": submission and submission.to_dict()
         }
 
+    def get_bookmarked_entries(self, user=None):
+        user = user or frappe.session.user
+        filters = {"user": user, "contest": self.name}
+        names = frappe.db.get_all(
+            "Contest Bookmark", 
+            filters=filters, 
+            order_by="creation",
+            fields=['entry'],
+            pluck='entry')
+
+        filters = {"name": ["IN", names]}
+        fields = ["name", "contest", "code", "is_submitted", "owner"]
+        rows = frappe.db.get_all(
+            "Contest Entry", 
+            filters=filters,
+            fields=fields)
+        return [frappe.get_doc(dict(row, doctype="Contest Entry")) for row in rows]
+        
 @frappe.whitelist()
 def join_contest(contest_name):
     if frappe.session.user == "Guest":
@@ -170,3 +188,33 @@ def withdraw_entry(contest):
     After this step the submitted entry will be seen as a draft.
     """
     return _update_sketch(contest, code=None, action="withdraw")
+
+@frappe.whitelist()
+def add_bookmark(entry):
+    data = {
+        "doctype": "Contest Bookmark",
+        "entry": entry,
+        "user": frappe.session.user
+    }
+    if not frappe.db.exists(data):
+        print("exists false")
+        status = "created"
+        doc = frappe.get_doc(data)
+        doc.insert()
+    else:
+        status = "aleady-present"
+    return {"ok": True, "status": status}
+
+@frappe.whitelist()
+def delete_bookmark(entry):
+    filters = {
+        "entry": entry,
+        "user": frappe.session.user
+    }
+    name = frappe.db.get_value("Contest Bookmark", filters=filters, fieldname='name')
+    if name:
+        frappe.delete_doc("Contest Bookmark", name)
+        status = "deleted"
+    else:
+        status = "not-found"
+    return {"ok": True, status: status}
