@@ -55,10 +55,70 @@
 
 <div class="p-2">Submission ID: {{entry.name}}</div>
 
-<div>
-<img src="{{entry.get_image_url(mode='m')}}"/>
+<div class="review-entry">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="review-column">
+        {{ PookkalamColumn() }}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="review-column">
+        {{ RatingsColumn() }}
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="review-column">
+        {{ CodeColumn() }}
+      </div>
+    </div>
+  </div>
 </div>
+{% endmacro %}
 
+{% macro PookkalamColumn() %}
+  <h4>The Pookkalam</h4>
+
+  <div>
+    <img src="{{entry.get_image_url(mode='m')}}"/>
+  </div>
+{% endmacro %}
+
+{% macro CodeColumn() %}
+<h4>The Code</h4>
+
+<div>
+  <pre>{{entry.code}}</pre>
+</div>
+{% endmacro %}
+
+{% macro RatingsColumn() %}
+<h4>Ratings</h4>
+<div class="ratings mb-5">
+  <form>
+    {{ Rating("creative-elements", "Creative Elements")}}
+    {{ Rating("aestetic", "Aesthetic")}}
+    {{ Rating("geometric-patterns", "Geometric Patterns")}}
+    {{ Rating("pookkalam-ruless", "Pookkalam Rules")}}
+    <button type="button" class="btn btn-primary" id="save-ratings">Update</button>
+  </form>
+</div>
+{% endmacro %}
+
+{% macro Rating(name, label) %}
+<div class="form-group">
+  <label for="rating-{{name}}" class="">{{label}}</label>
+  <div class="">
+    <select class="form-control" id="rating-{{name}}">
+      <option value="0">☆☆☆☆☆</option>
+      <option value="1">★☆☆☆☆</option>
+      <option value="2">★★☆☆☆</option>
+      <option value="3">★★★☆☆</option>
+      <option value="4">★★★★☆</option>
+      <option value="5">★★★★★</option>
+    </select>
+  </div>
+</div>
 {% endmacro %}
 
 {% macro TabAll() %}
