@@ -110,7 +110,7 @@
     </li>
     {% for i in range(1, num_pages+1) %}
       <li class="page-item {{'disabled' if i==page else ''}}">
-        <a class="page-link" href="/{{contest.name}}/tab=all&review?page={{i}}">{{i}}</a>
+        <a class="page-link" href="/{{contest.name}}/review?tab=all&page={{i}}">{{i}}</a>
       </li>
     {% endfor %}
     <li class="page-item {{'disabled' if page==num_pages else ''}}">
