@@ -55,7 +55,8 @@ class Contest(Document):
             filters={"contest": self.name, "is_submitted": True},
             pluck='name',
             start=start,
-            page_length=page_size)
+            page_length=page_size,
+            order_by="modified desc")
         return [frappe.get_doc("Contest Entry", name) for name in names]
 
     def get_submitted_entries_count(self):

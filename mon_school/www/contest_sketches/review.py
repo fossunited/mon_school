@@ -2,6 +2,7 @@
 """
 import frappe
 import math
+from urllib.parse import urlencode
 
 def get_context(context):
     context.no_cache = 1
@@ -42,6 +43,105 @@ def get_context(context):
     context.num_pages = math.ceil(num_entries/page_size)
     context.bookmarks = contest.get_bookmarked_entries()
     context.likes = {entry.name: True for entry in context.bookmarks}
+    context.changequery = changequery
+
+    context.all_entry_names = frappe.get_all(
+        "Contest Entry",
+        filters={"is_submitted": True},
+        pluck='name',
+        order_by='modified desc')
+
+    if "entry" in frappe.form_dict:
+        entry_name = frappe.form_dict["entry"]
+    else:
+        entry_name = None
+    get_context_for_entry(context, entry_name)
+
+
+def get_context_for_entry(context, entry_name):
+    if entry_name is None:
+        context.entry = None
+        context.next_url = None
+        context.prev_url = None
+        context.index = None
+    else:
+        context.entry = frappe.get_doc("Contest Entry", entry_name)
+
+        if context.tab == "bookmarks":
+            entries = list(context.likes)
+        else:
+            entries = context.all_entry_names
+
+        # XXX-Anand: what if entry_name is not in likes?
+        context.index = entries.index(entry_name)
+        context.count = len(entries)
+
+        context.prev_url = find_prev(entries, context.index, context.count)
+        context.next_url = find_next(entries, context.index, context.count)
+
+def find_prev(entries, index, count):
+    if index-1 >= 0:
+        return changequery(entry=entries[index-1])
+
+def find_next(entries, index, count):
+    if index+1 < count:
+        return changequery(entry=entries[index+1])
+
+
+# def find_next_entry(context):
+#     if context.tab == "bookmarks":
+#         if context.index+1 >= context.count:
+#             return None
+#         else:
+#             return changequery(entry=likes[index+1])
+#     else:
+#         entries = [e.name for e in context.entries]
+#         try:
+#             index = entries.index(context.entry.name)
+#         except ValueError:
+#             return changequery(entry=None)
+
+#         if index+1 >= len(entries):
+#             return changequery(entry=None, page=context.page+1)
+#         else:
+#             return changequery(entry=entries[index+1])
+
+# def find_prev_entry(context):
+#     if context.tab == "bookmarks":
+#         likes = list(context.likes)
+#         try:
+#             index = likes.index(context.entry.name)
+#         except ValueError:
+#             return changequery(entry=None)
+
+#         if index-1 <=0 :
+#             return changequery(entry=None)
+#         else:
+#             return changequery(entry=likes[index-1])
+#     else:
+#         entries = [e.name for e in context.entries]
+#         try:
+#             index = entries.index(context.entry.name)
+#         except ValueError:
+#             return changequery(entry=None)
+
+#         if index+1 >= len(entries):
+#             return changequery(entry=None, page=context.page+1)
+#         else:
+#             return changequery(entry=entries[index+1])
+
+def changequery(**kwargs):
+    """Change the query parameters in the current query.
+    """
+    q = dict(frappe.form_dict)
+    q.update(kwargs)
+
+    # contest is already in the path
+    del q['contest']
+
+    q = {k: v for k, v in q.items() if v is not None} # remove Nones
+    url = frappe.request.path + "?" + urlencode(q)
+    return url
 
 def get_metatags():
     """Returns the metatags for the current URL as specified in

@@ -19,14 +19,16 @@
 
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link {{'active' if tab=='bookmarks' }}" href="/{{contest.name}}/review?tab=bookmarks&page={{page}}">Your Bookmarks <span class="badge badge-primary" id="bookmark-count">{{bookmarks | length}}</span></a>
+          <a class="nav-link {{'active' if tab=='bookmarks' }}" href="{{ changequery(tab='bookmarks', entry=None) }}">Your Bookmarks <span class="badge badge-primary" id="bookmark-count">{{bookmarks | length}}</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{'active' if tab=='all' }}" href="/{{contest.name}}/review?tab=all&page={{page}}">All Submissions</a>
+          <a class="nav-link {{'active' if tab=='all' }}" href="{{ changequery(tab='all', entry=None) }}">All Submissions</a>
         </li>
       </ul>
       <div class='container'>
-      {% if tab == "bookmarks" %}
+      {% if entry %}
+        {{ ShowEntry(entry) }}
+      {% elif tab == "bookmarks" %}
         {{ TabBookmarks() }}
       {% else %}
         {{ TabAll() }}
@@ -37,6 +39,28 @@
 </section>
 {% endblock %}
 
+{% macro ShowEntry(entry) %}
+
+<div class="sketch-header mt-5">
+  <h3 class="sketch-title">
+    {% if prev_url %}
+      <a href="{{ prev_url }}">&larr; Prev</a> |
+    {% endif %}
+    Entry {{index+1}} of {{count}}
+    {% if next_url %}
+      | <a href="{{ next_url }}">Next &rarr;</a>
+    {% endif %}
+  </h3>
+</div>
+
+<div class="p-2">Submission ID: {{entry.name}}</div>
+
+<div>
+<img src="{{entry.get_image_url(mode='m')}}"/>
+</div>
+
+{% endmacro %}
+
 {% macro TabAll() %}
     <div class="mt-5">
       <p>Showing page {{page}} of {{num_pages}}</p>
@@ -46,7 +70,7 @@
         <div class="col-md-3">
           <div class="sketch-teaser">
             <div class="sketch-image">
-              <a href="/{{contest.name}}/submissions/{{sketch.name}}">
+              <a href="{{ changequery(entry=sketch.name) }}">
                 <img src="{{sketch.get_image_url()}}" />
               </a>
             </div>
@@ -76,7 +100,7 @@
         <div class="col-md-3 sketch-container">
           <div class="sketch-teaser">
             <div class="sketch-image">
-              <a href="/{{contest.name}}/submissions/{{sketch.name}}">
+              <a href="{{ changequery(entry=sketch.name)}}">
                 <img src="{{sketch.get_image_url()}}" />
               </a>
             </div>
@@ -103,18 +127,18 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination">
     <li class="page-item {{'disabled' if page==1 else ''}}">
-      <a class="page-link" href="/{{contest.name}}/review?tab=all&page={{page-1}}" aria-label="Previous">
+      <a class="page-link" href="{{ changequery(page=page-1) }}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
     </li>
     {% for i in range(1, num_pages+1) %}
       <li class="page-item {{'disabled' if i==page else ''}}">
-        <a class="page-link" href="/{{contest.name}}/review?tab=all&page={{i}}">{{i}}</a>
+        <a class="page-link" href="{{ changequery(page=i) }}">{{i}}</a>
       </li>
     {% endfor %}
     <li class="page-item {{'disabled' if page==num_pages else ''}}">
-      <a class="page-link" href="/{{contest.name}}/review?tab=all&page={{page+1}}" aria-label="Next">
+      <a class="page-link" href="{{ changequery(page=page+1) }}" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
