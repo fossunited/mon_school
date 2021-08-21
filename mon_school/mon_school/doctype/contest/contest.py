@@ -79,20 +79,20 @@ class Contest(Document):
         user = user or frappe.session.user
         filters = {"user": user, "contest": self.name}
         names = frappe.db.get_all(
-            "Contest Bookmark", 
-            filters=filters, 
+            "Contest Bookmark",
+            filters=filters,
             order_by="creation",
             fields=['entry'],
             pluck='entry')
 
         filters = {"name": ["IN", names]}
-        fields = ["name", "contest", "code", "is_submitted", "owner"]
+        fields = ["name", "contest", "code", "is_submitted", "owner", "image_ready"]
         rows = frappe.db.get_all(
-            "Contest Entry", 
+            "Contest Entry",
             filters=filters,
             fields=fields)
         return [frappe.get_doc(dict(row, doctype="Contest Entry")) for row in rows]
-        
+
 @frappe.whitelist()
 def join_contest(contest_name):
     if frappe.session.user == "Guest":
