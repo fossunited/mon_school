@@ -93,29 +93,36 @@
 {% endmacro %}
 
 {% macro RatingsColumn() %}
+  {% set ratings = entry.get_ratings() %}
 <h4>Ratings</h4>
 <div class="ratings mb-5">
-  <form>
-    {{ Rating("creative-elements", "Creative Elements")}}
-    {{ Rating("aestetic", "Aesthetic")}}
-    {{ Rating("geometric-patterns", "Geometric Patterns")}}
-    {{ Rating("pookkalam-ruless", "Pookkalam Rules")}}
-    <button type="button" class="btn btn-primary" id="save-ratings">Update</button>
+  <form id="ratings-form">
+    {{ Rating("creative-elements", "Creative Elements", ratings) }}
+    {{ Rating("aestetic", "Aesthetic", ratings) }}
+    {{ Rating("geometric-patterns", "Geometric Patterns", ratings) }}
+    {{ Rating("pookkalam-ruless", "Pookkalam Rules", ratings) }}
+    <button
+      type="button"
+      class="btn btn-primary"
+      id="update-ratings"
+      data-entry="{{entry.name}}">Update</button>
+    <span id="update-status"></span>
   </form>
 </div>
 {% endmacro %}
 
-{% macro Rating(name, label) %}
+{% macro Rating(name, label, ratings) %}
+  {% set rating = (ratings and ratings.get(label, 0)) | string %}
 <div class="form-group">
   <label for="rating-{{name}}" class="">{{label}}</label>
-  <div class="">
-    <select class="form-control" id="rating-{{name}}">
-      <option value="0">☆☆☆☆☆</option>
-      <option value="1">★☆☆☆☆</option>
-      <option value="2">★★☆☆☆</option>
-      <option value="3">★★★☆☆</option>
-      <option value="4">★★★★☆</option>
-      <option value="5">★★★★★</option>
+  <div>
+    <select class="form-control" id="rating-{{name}}" name="{{label}}">
+      <option value="0" {{ "selected" if rating=="0"}}>☆☆☆☆☆</option>
+      <option value="1" {{ "selected" if rating=="1"}}>★☆☆☆☆</option>
+      <option value="2" {{ "selected" if rating=="2"}}>★★☆☆☆</option>
+      <option value="3" {{ "selected" if rating=="3"}}>★★★☆☆</option>
+      <option value="4" {{ "selected" if rating=="4"}}>★★★★☆</option>
+      <option value="5" {{ "selected" if rating=="5"}}>★★★★★</option>
     </select>
   </div>
 </div>
@@ -248,7 +255,30 @@
         }
         updateBookmarkCount()
       })
-    })
+    });
+
+    $("#update-ratings").click(function() {
+      var ratings = {};
+      $("form#ratings-form")
+        .serializeArray()
+        .forEach((input) => {ratings[input.name] = input.value;});
+
+      $("#update-status").html("Updating...")
+
+      var entry = $(this).data("entry");
+      var method = "mon_school.mon_school.doctype.contest.contest.update_ratings"
+      frappe.call({
+        method: method,
+        args: {
+          "entry": entry,
+          "ratings": JSON.stringify(ratings)
+        }
+      }).then((data) => {
+        console.log(data);
+        $("#update-status").html("done!")
+        setTimeout(() => $("#update-status").html(""), 5000)
+      });
+    });
   });
 </script>
 {%- endblock %}

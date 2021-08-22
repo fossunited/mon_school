@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "creation": "2021-08-21 21:47:47.044776",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "contest",
+  "entry",
+  "ratings"
+ ],
+ "fields": [
+  {
+   "fieldname": "entry",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Entry",
+   "options": "Contest Entry"
+  },
+  {
+   "fieldname": "ratings",
+   "fieldtype": "Table",
+   "label": "Ratings",
+   "options": "Contest Entry Rating"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fetch_from": "entry.contest",
+   "fieldname": "contest",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Contest",
+   "options": "Contest"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-08-22 00:03:03.325856",
+ "modified_by": "Administrator",
+ "module": "Mon School",
+ "name": "Contest Entry Review",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

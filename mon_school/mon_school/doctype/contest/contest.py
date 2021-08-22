@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+import json
 
 class Contest(Document):
     def is_participant(self, email):
@@ -219,3 +220,16 @@ def delete_bookmark(entry):
     else:
         status = "not-found"
     return {"ok": True, status: status}
+
+@frappe.whitelist()
+def update_ratings(entry, ratings):
+    if isinstance(ratings, str):
+        ratings = json.loads(ratings)
+
+    try:
+        entry_doc = frappe.get_doc("Contest Entry", entry)
+    except frappe.DoesNotExistError:
+        return {"ok": False, "error": "invalid-entry"}
+
+    entry_doc.update_ratings(ratings)
+    return {"ok": True, "status": "updated"}
