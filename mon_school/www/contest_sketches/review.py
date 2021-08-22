@@ -66,6 +66,7 @@ def get_context_for_entry(context, entry_name):
         context.index = None
     else:
         context.entry = frappe.get_doc("Contest Entry", entry_name)
+        context.ratings = get_ratings(context.entry)
 
         if context.tab == "bookmarks":
             entries = list(context.likes)
@@ -78,6 +79,11 @@ def get_context_for_entry(context, entry_name):
 
         context.prev_url = find_prev(entries, context.index, context.count)
         context.next_url = find_next(entries, context.index, context.count)
+
+def get_ratings(entry):
+    labels = ["Creative Elements", "Aesthetic", "Geometric Patterns", "Pookkalam Rules"]
+    ratings = entry.get_ratings() or {}
+    return [{"label": label, "rating": ratings.get(label, 0)} for label in labels]
 
 def find_prev(entries, index, count):
     if index-1 >= 0:
