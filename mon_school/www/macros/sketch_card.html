@@ -7,7 +7,9 @@
   </div>
   <div class="sketch-footer">
     <div class="sketch-title">
-      {{sketch.title}}
+      <a class="button-links" href="sketches/{{sketch.sketch_id}}">
+        {{sketch.title | e}}
+      </a>
     </div>
     <div class="card-divider"></div>
     {% set owner = sketch.get_owner() %}
@@ -31,6 +33,6 @@
       {% endif %}
     </div>
   </div>
-  <a class="stretched-link" href="sketches/{{sketch.sketch_id}}"></a>
+  <!-- <a class="stretched-link" href="sketches/{{sketch.sketch_id}}"></a> -->
 </div>
 {% endmacro %}
