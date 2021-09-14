@@ -9,7 +9,8 @@
   "title",
   "subtitle",
   "start_date",
-  "end_date"
+  "end_date",
+  "is_active"
  ],
  "fields": [
   {
@@ -31,6 +32,12 @@
    "fieldname": "end_date",
    "fieldtype": "Date",
    "label": "End Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -38,9 +45,13 @@
   {
    "link_doctype": "Contest Participant",
    "link_fieldname": "contest"
+  },
+  {
+   "link_doctype": "Contest Entry",
+   "link_fieldname": "contest"
   }
  ],
- "modified": "2021-08-10 09:06:03.359317",
+ "modified": "2021-08-19 21:47:57.537704",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Contest",

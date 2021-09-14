@@ -1,0 +1,216 @@
+{% extends "templates/base.html" %}
+{% from "www/macros/livecode.html" import LiveCodeEditorLarge, LiveCodeEditorJS with context %}
+
+{% block title %}{{ sketch.title if not error else "Pookkalam" }}{% endblock %}
+{% block head_include %}
+
+  {% if not error %}
+  <meta name="description" content="Pookklam by {{sketch.get_owner_name() }}" />
+  <meta name="keywords" content="code-a-pookkalam" />
+  {% endif %}
+
+<link rel="stylesheet" href="/assets/mon_school/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="/assets/css/lms.css">
+
+<script src="/assets/mon_school/codemirror/lib/codemirror.js"></script>
+<script src="/assets/mon_school/codemirror/mode/python/python.js"></script>
+<script src="/assets/mon_school/codemirror/keymap/sublime.js"></script>
+
+<script src="/assets/mon_school/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/assets/mon_school/codemirror/addon/comment/comment.js"></script>
+
+{% endblock %}
+
+{% block content %}
+  <section class="top-section" style="padding: 1rem 0rem;">
+    {{ Breadcrumbs() }}
+    {{ Header() }}
+    {{ Body() }}
+  </section>
+{% endblock %}
+
+{% macro Breadcrumbs() %}
+  <div class='container pb-5'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}">{{ contest.title }}</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a href="/{{ contest.name }}/submissions">Submissions</a></li>
+      </ol>
+    </nav>
+{% endmacro %}
+
+{% macro Header() %}
+  {% if error == "not-logged-in" %}
+    <script type="text/javascript">
+      window.location.href = `/login?redirect-to=${window.location.pathname}`
+    </script>
+  {% elif not contest.is_active %}
+    <h1 class="sketch-title">Thanks for participating</h1>
+
+    {% if sketch.is_submitted %}
+
+    <p>Your submission is successfully accepted for the contest. Your submission id is {{sketch.name}}.</p>
+
+    <p>View and share your submission with others using the following URL:
+    </p>
+    {% set url = "https://mon.school/{contest.name}/submissions/{sketch.name}".format(contest=contest, sketch=sketch) %}
+    <p><a href="{{url}}">{{url}}</a></p>
+
+    {% else %}
+     <p>Submissions are closed now.</p>
+    {% endif %}
+
+  {% else %}
+    <div class="sketch-header pb-5">
+      {% if not sketch %}
+        <h1 class="sketch-title">Submit an Entry</h1>
+        <div>
+          <p>You have not joined the {{contest.title}} contest to make a submission. Please visit the contest home to join the contest.
+          </p>
+
+          <p>
+            <a class="btn btn-primary" href="/{{contest.name}}">Back to {{contest.title}} &rarr;</a>
+          </p>
+        </div>
+      {% elif sketch.is_submitted %}
+
+      <h1 class="sketch-title">Congratulations!</h1>
+
+      <p>You have sucessfully submitted your entry to the contest. No further edits are allowed now.</p>
+
+      <p>View and share your submission with others using the following URL:
+      </p>
+      {% set url = "https://mon.school/{contest.name}/submissions/{sketch.name}".format(contest=contest, sketch=sketch) %}
+      <p><a href="{{url}}">{{url}}</a></p>
+
+      {% else %}
+      <h1 class="sketch-title">Submit an Entry</h1>
+
+      <div style="margin-bottom: 10px;">
+        <button type="submit" id="sketch-save-draft" class="btn-save btn btn-primary">Save Draft</button>
+        <button type="submit" id="sketch-submit" class="btn-save btn btn-secondary">Submit</button>
+      </div>
+      <p>
+        Please note that you'll not be allowed to make changes to your entry after you submission.
+      </p>
+      <p>
+        Facing any issues with your draft? Please quote the following EntryID when you report the issue.<br>
+
+        EntryID: {{sketch.name}}
+      </p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro Body() %}
+{% if sketch and contest.is_active %}
+<div class="sketch-editor">
+  {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime="joy", image=sketch.svg) }}
+</div>
+{% endif %}
+{% endmacro %}
+
+{%- block script %}
+  {{ super() }}
+
+  {% if sketch %}
+  <script type="text/javascript">
+  var page_context = {{ page_context | tojson }};
+  </script>
+
+  {{ LiveCodeEditorJS() }}
+
+  <script type="text/javascript">
+    var sketch_name = {{ sketch.name | tojson }};
+
+    function saveDraft() {
+      var title = $("#sketch-title").val()
+      var code = livecodeEditors[0].codemirror.doc.getValue()
+
+      frappe.call('mon_school.mon_school.doctype.contest.contest.save_draft', {
+        contest: "{{contest.name}}",
+        code: code
+      })
+      .then(r => {
+        var msg = r.message;
+        if (!msg.ok) {
+          var error = msg.error || "Save failed."
+          frappe.msgprint({
+            "title": "Error",
+            "indicator": "red",
+            "message": error
+          });
+        }
+        else {
+          frappe.msgprint({
+            "title": "Notification",
+            "indicator": "green",
+            "message": "Your Pookalam has been saved as draft!"
+          });
+        }
+      })
+    }
+
+    function updateSketch(method, success_message) {
+      var title = $("#sketch-title").val()
+      var code = livecodeEditors[0].codemirror.doc.getValue()
+
+      frappe.call(method, {
+        contest: "{{contest.name}}",
+        code: code
+      })
+      .then(r => {
+        var msg = r.message;
+        if (!msg.ok) {
+          var error = msg.error || "Failed to submit."
+          frappe.msgprint({
+            "title": "Error",
+            "indicator": "red",
+            "message": error
+          });
+        }
+        else {
+          frappe.msgprint({
+            "title": "Notification",
+            "indicator": "green",
+            "message": success_message
+          });
+          setTimeout(() => window.location.reload(false), 2);
+        }
+      })
+    }
+    function saveEntry() {
+      updateSketch(
+        "mon_school.mon_school.doctype.contest.contest.save_entry",
+        "Your entry has been saved as draft.")
+    }
+
+    function submitEntry() {
+      frappe.confirm(`
+        <p>You will not be able to make any edits to your entry after submission.</p>
+        <p>Are you sure you want to proceed?</p>`,
+        () => {
+          // action to perform if Yes is selected
+          updateSketch(
+            "mon_school.mon_school.doctype.contest.contest.submit_entry",
+            "Your entry has been submitted to the contest.")
+        }, () => {
+          // action to perform if No is selected
+        })
+    }
+
+    function withdrawEntry() {
+      updateSketch(
+        "mon_school.mon_school.doctype.contest.contest.withdraw_entry",
+        "Your entry has been withdrawn from the contest. You can now make changes and re-submit.")
+    }
+
+    $(function() {
+      $("#sketch-submit").click(submitEntry);
+      $("#sketch-save-draft").click(saveEntry);
+      $("#sketch-withdraw ").click(withdrawEntry);
+    })
+  </script>
+  {% endif %}
+{%- endblock %}

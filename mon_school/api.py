@@ -59,3 +59,41 @@ def reindex_course(course_name):
     course.reindex_lessons()
     course.reindex_exercises()
     return {"ok": True}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_contest_entry_of_user(contest, email):
+    try:
+        contest_doc = frappe.get_doc("Contest", contest)
+    except frappe.DoesNotExistError:
+        _clear_messages()
+        return {"ok": False, "entry": None, "error": "contest-not-found"}
+
+    entry = contest_doc.get_user_submission(email)
+    if entry and not entry.is_submitted:
+        entry = None
+    if entry is None:
+        _clear_messages()
+
+    return {
+        "ok": True,
+        "entry": entry and entry.to_dict()
+    }
+
+def _clear_messages():
+    frappe.clear_messages()
+    frappe.local.response.pop('exc_type', None)
+
+@frappe.whitelist(allow_guest=True)
+def get_contest_entries(contest):
+    try:
+        contest_doc = frappe.get_doc("Contest", contest)
+    except frappe.DoesNotExistError:
+        _clear_messages()
+        return {"ok": False, "entry": None, "error": "contest-not-found"}
+
+    entries = contest_doc.get_submitted_entries()
+    return {
+        "ok": True,
+        "entries": [entry.to_dict() for entry in entries]
+    }

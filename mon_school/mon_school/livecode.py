@@ -83,8 +83,18 @@ def record_code_run(code, result, context=None):
 def livecode_to_svg(code, is_sketch=False):
     """Renders the code as svg.
     """
+    # XXX-Anand: Aug 2021
+    # hack to remove the grid from the generated images
+    setup_code = "show.__globals__['BG_SHOWN'] = 1\n\n"
+    code = setup_code + code
+
+    # replace tabs with spaces
+    code = code.replace("\t", "    ")
+
     result = execute(code, is_sketch=is_sketch)
     if result.get('status') != 'success':
+        print("Failed to convert sktech to svg:")
+        print("".join(result['output']))
         return None
 
     return _render_svg(result['shapes'])

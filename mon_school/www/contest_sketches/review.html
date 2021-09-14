@@ -1,0 +1,308 @@
+{% extends "templates/base.html" %}
+
+{% block title %}{{contest.name}} - Submitted Entries{% endblock %}
+{% block head_include %}
+	<meta name="description" content="{{ contest.name }} - submitted entries" />
+	<meta name="keywords" content="contest {{contest.name}}" />
+{% endblock %}
+
+{% block content %}
+<section class="top-section" style="padding: 1rem 0rem;">
+	<div class='container pb-5'>
+    <div class="sketch-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page"><a href="/{{contest.name}}">{{contest.title}}</a></li>
+        </ol>
+      </nav>
+      <h1 class="sketch-title">Review Submissions</h1>
+
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link {{'active' if tab=='bookmarks' }}" href="{{ changequery(tab='bookmarks', entry=None) }}">Your Bookmarks <span class="badge badge-primary" id="bookmark-count">{{bookmarks | length}}</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{'active' if tab=='all' }}" href="{{ changequery(tab='all', entry=None) }}">All Submissions</a>
+        </li>
+      </ul>
+      <div class='container'>
+      {% if entry %}
+        {{ ShowEntry(entry) }}
+      {% elif tab == "bookmarks" %}
+        {{ TabBookmarks() }}
+      {% else %}
+        {{ TabAll() }}
+      {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% macro ShowEntry(entry) %}
+
+<div class="sketch-header mt-5">
+  <h3 class="sketch-title">
+    {% if prev_url %}
+      <a href="{{ prev_url }}">&larr; Prev</a> |
+    {% endif %}
+    Entry {{index+1}} of {{count}}
+    {% if next_url %}
+      | <a href="{{ next_url }}">Next &rarr;</a>
+    {% endif %}
+  </h3>
+</div>
+
+<div class="p-2">Submission ID: {{entry.name}}</div>
+
+<div class="review-entry">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="review-column">
+        {{ PookkalamColumn() }}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="review-column">
+        {{ RatingsColumn() }}
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="review-column">
+        {{ CodeColumn() }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro PookkalamColumn() %}
+  <h4>The Pookkalam</h4>
+
+  <div>
+    <img src="{{entry.get_image_url(mode='m')}}"/>
+  </div>
+{% endmacro %}
+
+{% macro CodeColumn() %}
+<h4>The Code</h4>
+
+<div>
+  <pre>{{entry.code}}</pre>
+</div>
+{% endmacro %}
+
+{% macro RatingsColumn() %}
+  {% set ratings = entry.get_ratings() %}
+<h4>Ratings</h4>
+<div class="ratings mb-5">
+  <div id="ratings-form">
+  </div>
+  <button
+    type="button"
+    class="btn btn-primary"
+    id="update-ratings"
+    data-entry="{{entry.name}}">Update</button>
+  <span id="update-status"></span>
+</div>
+{% endmacro %}
+
+{% macro TabAll() %}
+    <div class="mt-5">
+      <p>Showing page {{page}} of {{num_pages}}</p>
+    </div>
+    <div class="row">
+      {% for sketch in entries %}
+        <div class="col-md-3">
+          <div class="sketch-teaser">
+            <div class="sketch-image">
+              <a href="{{ changequery(entry=sketch.name) }}">
+                <img src="{{sketch.get_image_url()}}" />
+              </a>
+            </div>
+            <div class="sketch-footer">
+              <div class="sketch-author">
+                {% set owner = sketch.get_owner() %}
+                <div class="pull-right">
+                  <svg class="icon icon-sm {{'liked' if sketch.name in likes}}"  style="width: 16px; height: 16px;">
+                    <use href="#icon-heart" class="like-icon" data-entry="{{sketch.name}}"></use>
+                  </svg>
+                </div>
+                <a href="/{{owner.username}}">{{owner.full_name | e}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {{ Paginate(page, num_pages) }}
+
+{% endmacro %}
+
+{% macro TabBookmarks() %}
+    <div class="row">
+      {% for sketch in bookmarks %}
+        <div class="col-md-3 sketch-container">
+          <div class="sketch-teaser">
+            <div class="sketch-image">
+              <a href="{{ changequery(entry=sketch.name)}}">
+                <img src="{{sketch.get_image_url()}}" />
+              </a>
+            </div>
+            <div class="sketch-footer">
+              <div class="sketch-author">
+                {% set owner = sketch.get_owner() %}
+                <div class="pull-right">
+                  <svg class="icon icon-sm {{'liked' if sketch.name in likes}}"  style="width: 16px; height: 16px;">
+                    <use href="#icon-heart" class="like-icon" data-entry="{{sketch.name}}"></use>
+                  </svg>
+                </div>
+                <a href="/{{owner.username}}">{{owner.full_name | e}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+{% endmacro %}
+
+
+{% macro Paginate(page, num_pages) %}
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item {{'disabled' if page==1 else ''}}">
+      <a class="page-link" href="{{ changequery(page=page-1) }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% for i in range(1, num_pages+1) %}
+      <li class="page-item {{'disabled' if i==page else ''}}">
+        <a class="page-link" href="{{ changequery(page=i) }}">{{i}}</a>
+      </li>
+    {% endfor %}
+    <li class="page-item {{'disabled' if page==num_pages else ''}}">
+      <a class="page-link" href="{{ changequery(page=page+1) }}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endmacro %}
+
+{%- block script %}
+{{ super() }}
+
+{{ include_script("controls.bundle.js") }}
+{{ include_script("desk.bundle.js") }}
+
+<script type="text/javascript">
+  var likes = {{ likes | tojson }};
+  var tab = "{{ tab }}";
+
+  function updateBookmarkCount() {
+    var n = Object.keys(likes).length;
+    $("#bookmark-count").html(n);
+  }
+
+  $(function() {
+    $(".like-icon").click(function() {
+      var method;
+      var action;
+      var entry = $(this).data("entry");
+      var _this = this;
+      $(this).parent().toggleClass("liked");
+      if ($(this).parent().hasClass("liked")) {
+        method = "mon_school.mon_school.doctype.contest.contest.add_bookmark";
+        action = "add";
+      }
+      else {
+        method = "mon_school.mon_school.doctype.contest.contest.delete_bookmark";
+        action = "delete";
+      }
+      frappe.call(method, {
+        "entry": entry
+      }).then((data) => {
+        if (action=="delete") {
+          if (tab == "bookmarks") {
+            $(this).closest(".sketch-container").remove();
+          }
+          delete likes[entry];
+        }
+        else {
+          likes[entry] = true;
+        }
+        updateBookmarkCount()
+      })
+    });
+
+    $("#update-ratings").click(function() {
+      var ratings = getRatings(); // list of objects
+      var ratingsObj = {};
+
+      ratings.forEach(r => ratingsObj[r.label] = r.rating);
+
+      $("#update-status").html("Updating...")
+
+      var entry = $(this).data("entry");
+      var method = "mon_school.mon_school.doctype.contest.contest.update_ratings"
+      frappe.call({
+        method: method,
+        args: {
+          "entry": entry,
+          "ratings": JSON.stringify(ratingsObj)
+        }
+      }).then((data) => {
+        console.log(data);
+        $("#update-status").html("done!")
+        setTimeout(() => $("#update-status").html(""), 5000)
+      });
+    });
+  });
+
+  var ratingInputs = [];
+
+  function showRatings(ratings) {
+    ratings.forEach((r) => {
+      var input = addRating("#ratings-form", r.label, r.rating);
+      ratingInputs.push(input);
+    });
+  }
+
+  function getRatings() {
+    return ratingInputs.map(r => {
+      return {
+        "label": r.df.label,
+        "rating": r.get_value()
+      }
+    })
+  }
+
+  function addRating(parent, label, value) {
+    df = {
+      fieldtype: "Rating",
+      fieldname: label,
+      label: label
+    }
+		let field = frappe.ui.form.make_control({
+			df: df,
+			parent: parent,
+			render_input: 1,
+		});
+    field.set_input(value);
+    return field;
+  }
+
+  {% if entry %}
+    $(function() {
+      var ratings = {{ ratings | tojson}};
+      showRatings(ratings);
+    })
+  {% endif %}
+</script>
+{%- endblock %}
+
+

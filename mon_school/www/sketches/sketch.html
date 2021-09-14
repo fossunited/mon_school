@@ -39,8 +39,8 @@
         </div>
       </div>
       {% else %}
-        <h1 class="sketch-title">{{sketch.title}}</h1>
-        <div class="sketch-owner-wrapper">By <span class="sketch-owner">{{sketch.get_owner_name()}}</span></div>
+        <h1 class="sketch-title">{{sketch.title | e}}</h1>
+        <div class="sketch-owner-wrapper">By <span class="sketch-owner">{{sketch.get_owner_name() | e}}</span></div>
       {% endif %}
     </div>
 
