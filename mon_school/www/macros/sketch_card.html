@@ -16,7 +16,7 @@
     <div>
       <span class="">
         {{ widgets.Avatar(member=owner, avatar_class="avatar-small") }}
-        <a class="button-links" href="/{{owner.username}}">
+        <a class="button-links" href="{{get_profile_url(owner.username)}}">
           <span class="course-instructor">
             {{ owner.full_name }}
           </span>
