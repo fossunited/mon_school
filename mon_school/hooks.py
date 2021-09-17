@@ -195,3 +195,5 @@ community_markdown_macro_renderers = {
 # Install custom page renderers
 from mon_school.mon_school.page_renderers import page_renderer as _page_renderer
 page_renderer = _page_renderer
+
+profile_url_prefix = "/"
