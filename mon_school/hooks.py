@@ -186,6 +186,13 @@ profile_tabs = [
 # 	"mon_school.mon_school.plugins.LiveCodeExtension"
 # ]
 
+website_route_rules = [
+  {"from_route": "/<contest>/submissions", "to_route": "contest_sketches/index"},
+  {"from_route": "/<contest>/review", "to_route": "contest_sketches/review"},
+  {"from_route": "/<contest>/submissions/edit", "to_route": "contest_sketches/edit"},
+  {"from_route": "/<contest>/submissions/<sketch>", "to_route": "contest_sketches/view"}
+]
+
 community_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
 	"Image": "mon_school.mon_school.plugins.image_renderer",
