@@ -1,12 +1,15 @@
 import frappe
 
 DOCTYPE_FIELDS = {
+    "LMS Course": {
+        "fields": ["title", "short_introduction", "description", "chapters"]
+    },
     "Lesson": {
         "fields": ["title", "body", "chapter", "include_in_preview", "index_"],
         "fields_to_skip_on_new": ["body"]
     },
     "Chapter": {
-        "fields": ["title", "description", "index_"],
+        "fields": ["course", "title", "description", "index_"],
     },
     "Exercise": {
         "fields": ["title", "description", "code", "answer", "course", "index_", "index_label"],
@@ -14,6 +17,7 @@ DOCTYPE_FIELDS = {
 }
 
 def ensure_admin():
+    print("ensure_admin", frappe.session.user)
     if "System Manager" not in frappe.get_roles():
         frappe.throw("Not permitted", frappe.PermissionError)
 
@@ -39,7 +43,7 @@ def save_document(doctype, name, doc):
         fields_to_skip_on_new = DOCTYPE_FIELDS[doctype].get("fields_to_skip_on_new")
         if fields_to_skip_on_new:
             data = dict(doc)
-            data.update({k: "" for k in fields_to_skip_on_new})
+            data.update({k: "-" for k in fields_to_skip_on_new})
             new_doc = frappe.get_doc(dict(data, doctype=doctype))
             new_doc.insert()
             frappe.rename_doc(doctype, new_doc.name, name, force=True)
