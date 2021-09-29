@@ -23,7 +23,7 @@ app_logo_url = APP_LOGO_URL
 
 # include js, css files in header of web template
 web_include_css = "mon_school.bundle.css"
-# web_include_js = "/assets/mon_school/js/mon_school.js"
+web_include_js = "mon_school.bundle.js"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "mon_school/public/scss/website"
