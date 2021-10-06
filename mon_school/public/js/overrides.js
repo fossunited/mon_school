@@ -1,7 +1,4 @@
 
-console.log("hello, monschool!")
-
-
 function override(path, callback) {
   const re = new RegExp(path);
   const match = window.location.pathname.match(re);
@@ -36,19 +33,20 @@ $(function() {
   }
 
   override("/courses/([^/]*)", (course) => {
-    $("#notify-me").hide();
+    if ($("#notify-me").length) {
+      $("#notify-me").hide();
 
-    var b = $("<button></button>")
-      .appendTo(".course-buttons")
-      .attr("id", "signup-for-early-access")
-      .html("Sign up for early acces")
-      .addClass("button wide-button is-default")
-      .click(function(e) {
-        e.preventDefault();
-        signup_for_early_access(course);
-      });
-
-    updateEarlyAccessButton();
+      var b = $("<button></button>")
+        .appendTo(".course-buttons")
+        .attr("id", "signup-for-early-access")
+        .html("Sign up for early acces")
+        .addClass("button wide-button is-default")
+        .click(function(e) {
+          e.preventDefault();
+          signup_for_early_access(course);
+       });
+      updateEarlyAccessButton();
+    }
   });
 
 
