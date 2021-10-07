@@ -52,7 +52,7 @@ $(function() {
 
   var signup_for_early_access = (course) => {
     if (frappe.session.user == "Guest") {
-      window.location.href = `/login?redirect-to=/courses/${course}`;
+      window.location.href = `/mon/signup-for-early-access?course=${course}`;
       return;
     }
 
