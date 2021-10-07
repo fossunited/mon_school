@@ -1,58 +1,65 @@
 import frappe
 
-DOCTYPE_FIELDS = {
-    "LMS Course": {
-        "fields": ["title", "short_introduction", "description", "chapters"]
-    },
-    "Lesson": {
-        "fields": ["title", "body", "chapter", "include_in_preview", "index_"],
-        "fields_to_skip_on_new": ["body"]
-    },
-    "Chapter": {
-        "fields": ["course", "title", "description", "index_"],
-    },
-    "Exercise": {
-        "fields": ["title", "description", "code", "answer", "course", "index_", "index_label"],
-    }
-}
+DOCTYPES = [
+    "LMS Course",
+    "Course Chapter",
+    "Course Lesson",
+    "Exercise"
+]
 
 def ensure_admin():
-    print("ensure_admin", frappe.session.user)
     if "System Manager" not in frappe.get_roles():
         frappe.throw("Not permitted", frappe.PermissionError)
 
+def get_course(doc):
+    """Returns the course name for given document of type Course, Chapter, Lesson or Exercise.
+    """
+    if doc.doctype == "LMS Course":
+        return doc.name
+    elif doc.doctype == "Course Chapter":
+        return doc.course
+    elif doc.doctype == "Exercise":
+        return doc.course
+    elif doc.doctype == "Course Lesson":
+        chapter = frappe.get_doc(doc.chapter)
+        return chapter.course
+    else:
+        return
+
+def can_edit(doctype, name, doc_data):
+    if "System Manager" in frappe.get_roles():
+        return False
+
+    if frappe.db.exists(doctype, name):
+        doc = frappe.get_doc(doctype, name)
+        course_name = get_course(doc)
+    else:
+        new_doc = frappe.get_doc(dict(doc_data, doctype=doctype))
+        course_name = get_course(new_doc)
+
+    if not course_name or not frappe.db.exists("LMS Course", course_name):
+        return False
+
+    course = frappe.get_doc("LMS Course", course_name)
+    return course.author == frappe.session.user
+
 @frappe.whitelist()
 def save_document(doctype, name, doc):
-    ensure_admin()
+    if not can_edit(doctype, name, doc):
+        frappe.throw("Not permitted", frappe.PermissionError)
 
-    if doctype not in DOCTYPE_FIELDS:
+    if doctype not in DOCTYPES:
         return {"ok": False, "error": f"Unsupport doctype: {doctype}"}
 
-    fields = DOCTYPE_FIELDS[doctype]['fields']
     if frappe.db.exists(doctype, name):
         old_doc = frappe.get_doc(doctype, name, as_dict=True)
-        old_values = [old_doc.get(k) for k in fields]
-        new_values = [doc.get(k) for k in fields]
-        if old_values == new_values:
-            return  {"ok": True, "status": "no-change"}
-
         old_doc.update(doc)
         old_doc.save()
         return  {"ok": True, "status": "updated"}
     else:
-        fields_to_skip_on_new = DOCTYPE_FIELDS[doctype].get("fields_to_skip_on_new")
-        if fields_to_skip_on_new:
-            data = dict(doc)
-            data.update({k: "-" for k in fields_to_skip_on_new})
-            new_doc = frappe.get_doc(dict(data, doctype=doctype))
-            new_doc.insert()
-            frappe.rename_doc(doctype, new_doc.name, name, force=True)
-            # try again now after creating a stub document
-            save_document(doctype, name, doc)
-        else:
-            new_doc = frappe.get_doc(dict(doc, doctype=doctype))
-            new_doc.insert()
-            frappe.rename_doc(doctype, new_doc.name, name, force=True)
+        new_doc = frappe.get_doc(dict(doc, doctype=doctype))
+        new_doc.insert()
+        frappe.rename_doc(doctype, new_doc.name, name, force=True)
         return {"ok": True, "status": "created"}
 
 @frappe.whitelist()
