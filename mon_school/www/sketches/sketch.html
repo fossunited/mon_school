@@ -3,10 +3,10 @@
 
 {% block title %}{{sketch.title}}{% endblock %}
 {% block head_include %}
-	<meta name="description" content="Sketch {{sketch.title}}" />
-	<meta name="keywords" content="sketch {{sketch.title}}" />
-	<style>
-	</style>
+<meta name="description" content="Sketch {{sketch.title}}" />
+<meta name="keywords" content="sketch {{sketch.title}}" />
+<style>
+</style>
 
 <link rel="stylesheet" href="/assets/mon_school/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="/assets/css/lms.css">
@@ -21,12 +21,12 @@
 
 {% block content %}
 <section class="top-section" style="padding: 1rem 0rem;">
-	<div class='container pb-5'>
-		<nav aria-label="breadcrumb">
-			<ol class="breadcrumb">
-				<li class="breadcrumb-item" aria-current="page"><a href="/sketches">Sketches</a></li>
-			</ol>
-		</nav>
+  <div class='container pb-5'>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page"><a href="/sketches">Sketches</a></li>
+      </ol>
+    </nav>
 
     <div class="sketch-header">
       {% if editable %}
@@ -39,50 +39,63 @@
         </div>
       </div>
       {% else %}
-        <h1 class="sketch-title">{{sketch.title | e}}</h1>
-        <div class="sketch-owner-wrapper">By <span class="sketch-owner">{{sketch.get_owner_name() | e}}</span></div>
+      <h1 class="sketch-title">{{sketch.title | e}}</h1>
+      <div class="sketch-owner-wrapper">By <span class="sketch-owner">{{sketch.get_owner_name() | e}}</span></div>
       {% endif %}
     </div>
 
-  {% if sketch.is_new() and not editable %}
+    {% if sketch.is_new() and not editable %}
     <div class="alert alert-warning">
       Please login to save this sketch.
     </div>
-  {% endif %}
+    {% endif %}
 
-
-  {% if sketch.runtime == "sketch" %}
+    {% if sketch.runtime == "sketch" %}
     <div class="alert alert-warning">
       This sketch was created using an old version of the library.
     </div>
-  {% endif %}
+    {% endif %}
 
-  <div class="sketch-editor">
-    {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime=sketch.runtime, image=sketch.svg) }}
+    <div class="sketch-editor">
+      {{LiveCodeEditorLarge(sketch.name, sketch.code, runtime=sketch.runtime, image=sketch.svg) }}
+    </div>
+
   </div>
+</section>
+
+{% if sketch.name %}
+<div class="container">
+  {% set doctype, docname = "LMS Sketch", sketch.name %}
+  {% set title = "Comments" %}
+  {% set cta_title = "New Comment" %}
+  {% set single_thread = True %}
+  {% include "frappe/templates/discussions/discussions_section.html" %}
+</div>
+{% endif %}
+
 {% endblock %}
 
 {%- block script %}
-  {{ super() }}
+{{ super() }}
 
-  <script type="text/javascript">
+<script type="text/javascript">
   var page_context = {{ page_context | tojson }};
-  </script>
+</script>
 
-  {{ LiveCodeEditorJS() }}
+{{ LiveCodeEditorJS() }}
 
-  <script type="text/javascript">
-    var sketch_name = {{ sketch.name | tojson }};
+<script type="text/javascript">
+  var sketch_name = {{ sketch.name | tojson }};
 
-    function saveSketch() {
-      var title = $("#sketch-title").val()
-      var code = livecodeEditors[0].codemirror.doc.getValue()
+  function saveSketch() {
+    var title = $("#sketch-title").val()
+    var code = livecodeEditors[0].codemirror.doc.getValue()
 
-      frappe.call('mon_school.mon_school.doctype.lms_sketch.lms_sketch.save_sketch', {
-        name: sketch_name,
-        title: title,
-        code: code
-      })
+    frappe.call('mon_school.mon_school.doctype.lms_sketch.lms_sketch.save_sketch', {
+      name: sketch_name,
+      title: title,
+      code: code
+    })
       .then(r => {
         var msg = r.message;
         if (!msg.ok) {
@@ -96,7 +109,7 @@
         else if (msg.status == "created") {
           var path = "/sketches/" + msg.id;
           var url = window.location.protocol + "//" + window.location.host + path
-          window.history.pushState({path: url}, '', url);
+          window.history.pushState({ path: url }, '', url);
           sketch_name = msg.name;
 
           frappe.msgprint({
@@ -113,12 +126,12 @@
           });
         }
       })
-    }
+  }
 
-    $(function() {
-      $("#sketch-save").click(function() {
-        saveSketch();
-      });
-    })
-  </script>
+  $(function () {
+    $("#sketch-save").click(function () {
+      saveSketch();
+    });
+  })
+</script>
 {%- endblock %}
