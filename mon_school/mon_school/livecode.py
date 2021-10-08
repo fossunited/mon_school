@@ -64,7 +64,6 @@ def record_code_run(code, result, context=None):
         doc = frappe.get_doc({
             "doctype": "Code Run",
             "code": code,
-            "result": json.dumps(result.as_dict(), indent="  "),
             "status": result.status.title(), # status is Success|Failed in the db
             "error": result.error_code,
             "course": course,
