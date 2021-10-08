@@ -163,7 +163,7 @@ class LMSSketch(Document):
             "LMS Sketch",
             filters=filters,
             fields='*',
-            order_by='modified desc',
+            order_by='creation desc',
             page_length=limit
         )
         return [frappe.get_doc(doctype='LMS Sketch', **doc) for doc in sketches]
