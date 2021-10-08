@@ -6,7 +6,11 @@ import json
 import html
 from urllib.parse import urlparse
 import websocket
+import sys
 from ..joy.build import get_livecode_files
+
+# increase recursion limit allow rendering of more complex sketches
+sys.setrecursionlimit(4000)
 
 @frappe.whitelist(allow_guest=True)
 def execute(code: str, is_sketch=False, context=None) -> LiveCodeResult:
