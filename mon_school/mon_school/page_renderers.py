@@ -54,7 +54,9 @@ class SketchImage(BaseRenderer):
         return Response(svg, content_type="image/svg+xml")
 
     def render_png(self, sketch):
-        headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}-{mode}.png"}
+        sketch_id = sketch.sketch_id
+        sketch_hash = sketch.get_hash()
+        headers = {"Location": f"{frappe.request.host_url}s/{sketch_id}-{sketch_hash}.png"}
         return Response("", status="302 Found", headers=headers)
 
 RE_SKETCH_SQUARE_IMAGE = re.compile(r"s/(.+)-([0-9a-f]+)-([smw]).png$")
