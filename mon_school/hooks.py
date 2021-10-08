@@ -182,9 +182,9 @@ profile_tabs = [
 	"mon_school.mon_school.plugins.SketchesTab"
 ]
 
-# community_lesson_page_extensions = [
-# 	"mon_school.mon_school.plugins.LiveCodeExtension"
-# ]
+community_lesson_page_extensions = [
+	"mon_school.mon_school.plugins.LiveCodeExtension"
+]
 
 website_route_rules = [
   {"from_route": "/<contest>/submissions", "to_route": "contest_sketches/index"},
