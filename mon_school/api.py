@@ -28,7 +28,7 @@ def get_course(doc):
 
 def can_edit(doctype, name, doc_data):
     if "System Manager" in frappe.get_roles():
-        return False
+        return True
 
     if frappe.db.exists(doctype, name):
         doc = frappe.get_doc(doctype, name)
