@@ -57,7 +57,7 @@
    "fieldname": "lesson",
    "fieldtype": "Link",
    "label": "Lesson",
-   "options": "Lesson"
+   "options": "Course Lesson"
   },
   {
    "fieldname": "batch",
@@ -121,7 +121,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-07-02 23:43:57.532744",
+ "modified": "2021-10-11 16:13:51.343470",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "Code Run",
