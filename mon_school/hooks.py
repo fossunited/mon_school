@@ -100,6 +100,12 @@ override_doctype_class = {
 # ---------------
 # Hook on document methods and events
 
+doc_events = {
+    "Discussion Reply": {
+        "on_update": "mon_school.mon_school.notifications.on_new_comment"
+    }
+}
+
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
