@@ -22,15 +22,20 @@
           </span>
         </a>
       </span>
-      <!-- below html would require changes based on if the user has liked the sketch or not -->
-      {% if show_likes %}
+
+      {% set metrics = sketch.get_metrics() %}
       <span class="course-student-count">
+        <a href="sketches/{{sketch.sketch_id}}#comments" class="mr-2 button-links">
+          <img class="icon-background" src="/assets/mon_school/icons/comment.svg" />
+          {{ metrics.get('comments', 0) }}
+        </a>
+        {#
         <span>
           <img class="icon-background" src="/assets/community/icons/like.svg" />
-          {{ likes }}
+          {{ 0 }}
         </span>
+        #}
       </span>
-      {% endif %}
     </div>
   </div>
   <!-- <a class="stretched-link" href="sketches/{{sketch.sketch_id}}"></a> -->
