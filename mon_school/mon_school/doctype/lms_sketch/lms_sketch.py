@@ -30,8 +30,6 @@ class LMSSketch(Document):
     def before_save(self):
         if getattr(self, "_skip_before_save", None):
             return
-        print("before_save", self.name)
-
         try:
             is_sketch = self.runtime == "sketch" # old version
             self.svg = livecode.livecode_to_svg(self.code, is_sketch=is_sketch)
@@ -46,6 +44,41 @@ class LMSSketch(Document):
         if getattr(self, "_skip_before_save", None):
             return
         frappe.enqueue_doc(self.doctype, self.name, method="generate_images")
+
+    def get_metrics(self):
+        filters = {
+            "reference_doctype": self.doctype,
+            "reference_docname": self.name
+        }
+        rows = frappe.db.get_all("Simple Metric", filters=filters, fields=["key", "value"])
+        return {row.key: row.value for row in rows}
+
+    def update_metrics(self):
+        comments = self.get_comment_count()
+        self._update_metric("comments", comments)
+
+    def _update_metric(self, key, value):
+        filters = {
+            "reference_doctype": self.doctype,
+            "reference_docname": self.name,
+            "key": key
+        }
+        try:
+            doc = frappe.get_last_doc("Simple Metric", filters)
+        except frappe.exceptions.DoesNotExistError:
+            doc = frappe.get_doc(dict(filters, doctype="Simple Metric", value=value))
+            doc.insert()
+        else:
+            doc.value = value
+            doc.save()
+
+    def get_comment_count(self):
+        filters = {
+            "reference_doctype": self.doctype,
+            "reference_docname": self.name
+        }
+        topic = frappe.db.get_value("Discussion Topic", filters, 'name')
+        return frappe.db.count("Discussion Reply", filters={"topic": topic})
 
     def render_svg(self):
         if self.svg:
