@@ -21,7 +21,8 @@ def get_context(context):
 
     if course.upcoming and not frappe.db.exists(data):
         doc = frappe.get_doc(data)
-        doc.insert()
+        doc.insert(ignore_permissions=True)
+        frappe.db.commit()
 
     frappe.local.flags.redirect_location = f"/courses/{course_name}"
     raise frappe.Redirect
