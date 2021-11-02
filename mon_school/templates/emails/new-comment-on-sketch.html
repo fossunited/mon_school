@@ -1,0 +1,17 @@
+{% extends "templates/emails/base.html" %}
+
+{% block content %}
+
+<a href="/{{comment_author.username}}">{{comment_author.full_name}}</a>
+commented on your sketch
+"<a href="{{site_url}}/sketches/{{sketch.sketch_id}}">{{sketch.title}}</a>".
+
+<div>
+<img src="{{site_url}}{{sketch.get_image_url('s')}}" alt="Sketch: {{sketch.title}}" width="150"/>
+</div>
+
+<blockquote>
+  {{comment}}
+</blockquote>
+
+{% endblock %}

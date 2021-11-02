@@ -1,0 +1,52 @@
+<style type="text/css">
+  p.email-text {
+      line-height: 150%;
+      color: #4C5A67;
+      color: #192734 !important;
+  }
+  a.btn {
+      padding: .5rem 1rem;
+      background-color: #1DBF5E;
+
+      display: inline-block;
+      font-weight: 500;
+      color: white;
+      text-align: center;
+      vertical-align: middle;
+      user-select: none;
+      border-radius: 6px;
+  }
+
+  blockquote::before, blockquote::after {
+    content: '\201C';
+    color: #4d91b3;
+  }
+
+  blockquote {
+    padding-left: 1em;
+    border-left: 0.2em solid #192734;
+    font-size: 1.4em;
+    line-height: 1.5em;
+    font-weight: 100;
+    margin: 1em 0;
+  }
+
+</style>
+
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 660px;" width="100%">
+  <tbody>
+    <tr>
+      <td style="padding-bottom: 24px;" valign="top">
+        <img src="{{site_url}}/assets/mon_school/images/mon-school-logo.png" width="128">
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <p class="email-text">
+          {% block content %}
+         {% endblock %}
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
