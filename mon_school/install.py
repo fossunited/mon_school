@@ -36,7 +36,7 @@ def add_footer_items():
     items = [
         {"label": "About", "url": "/about"},
         {"label": "Blog", "url": "/blog"},
-        {"label": "Github", "url": "https://github.com/fossunited/community"}
+        {"label": "Github", "url": "https://github.com/fossunited/mon_school"}
     ]
     doc = frappe.get_doc("Website Settings", None)
     doc.update({

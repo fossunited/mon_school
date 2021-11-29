@@ -1,8 +1,8 @@
 import frappe
 
-from community.lms.doctype.exercise.exercise import Exercise as _Exercise
-from community.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
-from community.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
+from school.lms.doctype.exercise.exercise import Exercise as _Exercise
+from school.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
+from school.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
 
 from . import livecode
 

@@ -3,7 +3,7 @@
 
 # import frappe
 from frappe.model.document import Document
-from community.lms.md import markdown_to_html
+from school.lms.md import markdown_to_html
 
 class ReviewNote(Document):
 	def render_html(self):

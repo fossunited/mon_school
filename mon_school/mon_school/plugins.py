@@ -1,5 +1,5 @@
 """The plugin module implements various plugins to extend the behaviour
-of community app.
+of the school app.
 
 The plugins provided by this module are:
 
@@ -7,8 +7,8 @@ The plugins provided by this module are:
     LiveCodeExtension - injecting livecode css/js into lesson page
 """
 import frappe
-from community.plugins import PageExtension, ProfileTab
-from community.widgets import Widgets
+from school.plugins import PageExtension, ProfileTab
+from school.widgets import Widgets
 from .doctype.lms_sketch.lms_sketch import LMSSketch as Sketch
 
 class SketchesTab(ProfileTab):

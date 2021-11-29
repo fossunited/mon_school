@@ -188,7 +188,7 @@ profile_tabs = [
 	"mon_school.mon_school.plugins.SketchesTab"
 ]
 
-community_lesson_page_extensions = [
+school_lesson_page_extensions = [
 	"mon_school.mon_school.plugins.LiveCodeExtension"
 ]
 
@@ -198,8 +198,7 @@ website_route_rules = [
   {"from_route": "/<contest>/submissions/edit", "to_route": "contest_sketches/edit"},
   {"from_route": "/<contest>/submissions/<sketch>", "to_route": "contest_sketches/view"}
 ]
-
-community_markdown_macro_renderers = {
+school_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
 	"Image": "mon_school.mon_school.plugins.image_renderer",
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
