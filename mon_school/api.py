@@ -4,7 +4,8 @@ DOCTYPES = [
     "LMS Course",
     "Course Chapter",
     "Course Lesson",
-    "Exercise"
+    "Exercise",
+    "Cohort Subgroup"
 ]
 
 def ensure_admin():
