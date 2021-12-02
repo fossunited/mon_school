@@ -1,5 +1,6 @@
 
 from joy import *
+import sys
 
 def show_bg():
     def hline(y, **kwargs):
@@ -47,6 +48,9 @@ def sendmsg(msgtype, **kwargs):
   """
   msg = dict(msgtype=msgtype, **kwargs)
   print("--MSG--", json.dumps(msg))
+  sys.stdout.flush()
+
+sys.stderr = sys.stdout
 
 # legacy mode: support legacy sketches
 is_sketch = os.getenv("SKETCH")
