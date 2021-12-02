@@ -4,8 +4,8 @@ from __future__ import annotations
 import frappe
 import json
 import html
+import requests
 from urllib.parse import urlparse
-import websocket
 import sys
 from ..joy.build import get_livecode_files
 
@@ -180,15 +180,13 @@ class LiveCode:
         protocol = "wss" if url.scheme == "https" else "ws"
         return protocol + "://" + url.netloc + "/livecode"
 
+    def get_livecode_exec_url(self):
+        return self.livecode_url.rstrip("/") + "/exec"
+
     def execute(self, code, is_sketch=False):
         result = LiveCodeResult()
-        try:
-            ws = self.get_websocket()
-        except (IOError, websocket.WebSocketException):
-            result.mark_failed("connection-failed")
-            return result
 
-        env = {}
+        env = {"FALCON_SOURCE_FILE": "start.py"}
         if is_sketch:
             env['SKETCH'] = "yes"
 
@@ -198,43 +196,19 @@ class LiveCode:
             "code": code,
             "env": env,
             "files": get_livecode_files(),
-            "command": ["python", "start.py"]
+            "raw_output": True
         }
-        exit_status = -1
-        try:
-            ws.send(json.dumps(msg))
-            messages = self._read_messages(ws)
+        response = requests.post(self.get_livecode_exec_url(), json=msg)
+        messages = [json.loads(line) for line in response.text.splitlines()]
 
-            for m in messages:
-                if m['msgtype'] == 'write':
-                    result.add_output(m['data'])
-                elif m['msgtype'] == 'shape':
-                    result.add_shape(m['shape'])
-                elif m['msgtype'] == 'exitstatus':
-                    exit_status = m['exitstatus']
-        except (IOError, websocket.WebSocketException):
-            result.mark_failed('connection-reset')
-
+        exit_status = int(response.headers.get("x-falcon-exit-status", 0))
+        for m in messages:
+            if m['msgtype'] == 'write':
+                result.add_output(m['data'])
+            elif m['msgtype'] == 'shape':
+                result.add_shape(m['shape'])
+            elif m['msgtype'] == 'exitstatus':
+                exit_status = m['exitstatus']
         if exit_status != 0:
             result.status = "failed"
         return result
-
-    def get_websocket(self):
-        ws = websocket.WebSocket()
-        ws.settimeout(self.timeout)
-        livecode_ws_url = self.get_livecode_ws_url()
-        ws.connect(livecode_ws_url)
-        return ws
-
-    def _read_messages(self, ws):
-        messages = []
-        try:
-            while True:
-                msg = ws.recv()
-                if not msg:
-                    break
-                messages.append(json.loads(msg))
-        except websocket.WebSocketTimeoutException as e:
-            print("Error:", e)
-            pass
-        return messages
