@@ -39,7 +39,8 @@ class CohortSubgroup(_CohortSubgroup):
     def get_exercise_counts(self):
         rows = frappe.get_all("Exercise Latest Submission",
             filters={"member_subgroup": self.name},
-            fields=["member_email", "count(name) as count"],
+            fields=["member_email", "count(*) as count"],
+            group_by="member_email",
             page_length=1000)
         return {row.member_email: row.count for row in rows}
 
@@ -47,7 +48,8 @@ class CohortSubgroup(_CohortSubgroup):
         emails = [s.name for s in students]
         rows = frappe.get_all("Code Run",
             filters={"owner": ["IN", emails]},
-            fields=["owner", "count(name) as count"],
+            fields=["owner", "count(*) as count"],
+            group_by="owner",
             page_length=1000)
         return {row.owner: row.count for row in rows}
 
@@ -55,6 +57,7 @@ class CohortSubgroup(_CohortSubgroup):
         emails = [s.name for s in students]
         rows = frappe.get_all("LMS Sketch",
             filters={"owner": ["IN", emails]},
-            fields=["owner", "count(name) as count"],
+            fields=["owner", "count(*) as count"],
+            group_by="owner",
             page_length=1000)
         return {row.owner: row.count for row in rows}
