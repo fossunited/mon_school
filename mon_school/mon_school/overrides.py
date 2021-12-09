@@ -37,4 +37,4 @@ class CohortSubgroup(_CohortSubgroup):
             fields=["user", "sum(score) as score"],
             group_by="user",
             page_length=1000)
-        return {row.member_email: row.count for row in rows}
+        return {row.user: row.score for row in rows}
