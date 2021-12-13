@@ -191,6 +191,14 @@
 
       $(livecode_element).find(".output-wrapper").hide();
     }
+
+    if (document.location.hash) {
+      var h = document.location.hash.replace("#", "");
+      var e = document.getElementById(h);
+      if (e) {
+        e.scrollIntoView();
+      }
+    }
   });
 </script>
 
