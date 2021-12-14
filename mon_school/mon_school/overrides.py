@@ -1,5 +1,5 @@
 import frappe
-
+from collections import Counter
 from school.lms.doctype.exercise.exercise import Exercise as _Exercise
 from school.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
 from school.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
@@ -32,6 +32,17 @@ class Cohort(_Cohort):
             "LMS Batch Membership",
             filters=filters,
             fieldname="count(*) as count")
+
+    def get_students_by_subgroup(self):
+        """Returns a dictonary mapping from subgroup to the number of students in that subgroup.
+        """
+        filters = {"cohort": self.name}
+        rows = frappe.db.get_all(
+            "LMS Batch Membership",
+            filters=filters,
+            fields=["subgroup", "count(*) as count"],
+            group_by="subgroup")
+        return {row.subgroup: row.count for row in rows}
 
     def get_exercises_in_course(self):
         """Returns all the exercises in the course as a dict with exercise name as the key and other details as value.
@@ -85,6 +96,28 @@ class Cohort(_Cohort):
             }
             d.append(entry)
         return d
+
+    def get_subgroup_leaderboard_by_exercises(self, num_exercises):
+        """Sorts the subgroups by the percentage of students who solved more than num_exercises.
+        """
+        rows = frappe.get_all(
+            "Exercise Latest Submission",
+            fields=["member_email", "member_subgroup", "count(*) as count"],
+            group_by="1, 2",
+            page_length=10000)
+        entries = [row.member_subgroup for row in rows if row.count >= num_exercises]
+        num_students = self.get_students_by_subgroup()
+
+        subgroup_titles = {sg.name: sg.title for sg in self.get_subgroups()}
+
+        result = [dict(subgroup=subgroup, count=count) for subgroup, count in Counter(entries)]
+        for d in result:
+            d['num_students'] = num_students[d['subgroup']]
+            d['percent'] = 100*d['count']/d['num_students']
+            d['title'] = subgroup_titles[d['subgroup']]
+
+        return sorted(result, key=lambda d: d['percent'], reverse=True)
+
 
 class CohortSubgroup(_CohortSubgroup):
     def get_students_with_score(self):
