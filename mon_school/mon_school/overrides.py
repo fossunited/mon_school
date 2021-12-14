@@ -110,7 +110,7 @@ class Cohort(_Cohort):
 
         subgroups = {sg.name: sg for sg in self.get_subgroups()}
 
-        result = [dict(subgroup=subgroup, count=count) for subgroup, count in Counter(entries)]
+        result = [dict(subgroup=subgroup, count=count) for subgroup, count in Counter(entries).items()]
         for d in result:
             d['num_students'] = num_students[d['subgroup']]
             d['percent'] = 100*d['count']/d['num_students']
