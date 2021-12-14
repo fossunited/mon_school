@@ -94,6 +94,7 @@ override_doctype_class = {
 	"Exercise": "mon_school.mon_school.overrides.Exercise",
 	"Exercise Submission": "mon_school.mon_school.overrides.ExerciseSubmission",
 	"LMS Batch Membership": "mon_school.mon_school.overrides.LMSBatchMembership",
+	"Cohort": "mon_school.mon_school.overrides.Cohort",
 	"Cohort Subgroup": "mon_school.mon_school.overrides.CohortSubgroup",
 }
 
