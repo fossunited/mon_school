@@ -108,13 +108,14 @@ class Cohort(_Cohort):
         entries = [row.member_subgroup for row in rows if row.count >= num_exercises]
         num_students = self.get_students_by_subgroup()
 
-        subgroup_titles = {sg.name: sg.title for sg in self.get_subgroups()}
+        subgroups = {sg.name: sg for sg in self.get_subgroups()}
 
         result = [dict(subgroup=subgroup, count=count) for subgroup, count in Counter(entries)]
         for d in result:
             d['num_students'] = num_students[d['subgroup']]
             d['percent'] = 100*d['count']/d['num_students']
-            d['title'] = subgroup_titles[d['subgroup']]
+            d['title'] = subgroups[d['subgroup']].title
+            d['url'] = subgroups[d['subgroup']].get_url()
 
         return sorted(result, key=lambda d: d['percent'], reverse=True)
 
