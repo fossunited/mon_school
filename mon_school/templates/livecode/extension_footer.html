@@ -199,6 +199,11 @@
         e.scrollIntoView();
       }
     }
+
+    $(".widget").each(function(i, e) {
+      var t = JSON.parse($(e).data('template'));
+      $(e).html(t);
+    });
   });
 </script>
 

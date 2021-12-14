@@ -10,6 +10,8 @@ import frappe
 from school.plugins import PageExtension, ProfileTab
 from school.widgets import Widgets
 from .doctype.lms_sketch.lms_sketch import LMSSketch as Sketch
+import json
+import html
 
 class SketchesTab(ProfileTab):
     def get_title(self):
@@ -75,3 +77,14 @@ def youtube_video_renderer(video_id):
         allowfullscreen>
     </iframe>
     """
+
+
+def widget_renderer(widget_id):
+    """Renders an interactive widget.
+
+    A widget is written as a web template.
+    """
+    doc = frappe.get_doc("Web Template", widget_id)
+    t = html.escape(json.dumps(doc.template))
+    return f"<div class='widget' data-template='{t}'></div>"
+
