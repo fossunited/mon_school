@@ -102,6 +102,7 @@ class Cohort(_Cohort):
         """
         rows = frappe.get_all(
             "Exercise Latest Submission",
+            filters={"cohort": self.name},
             fields=["member_email", "member_subgroup", "count(*) as count"],
             group_by="1, 2",
             page_length=10000)
