@@ -199,6 +199,11 @@ website_route_rules = [
   {"from_route": "/<contest>/submissions/edit", "to_route": "contest_sketches/edit"},
   {"from_route": "/<contest>/submissions/<sketch>", "to_route": "contest_sketches/view"}
 ]
+
+update_website_context = [
+    'mon_school.mon_school.context.update_website_context',
+]
+
 school_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
 	"Image": "mon_school.mon_school.plugins.image_renderer",
