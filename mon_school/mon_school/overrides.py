@@ -133,6 +133,7 @@ class CohortSubgroup(_CohortSubgroup):
     def get_student_progress(self, email):
         from .student_progress import StudentProgress
         p = StudentProgress(self.get_cohort().course, email)
+        return p.get_progress()
 
     def get_scores(self):
         rows = frappe.get_all("Student Score Activity",
