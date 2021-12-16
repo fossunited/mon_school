@@ -186,7 +186,7 @@ class LMSSketch(Document):
         converter.convert_image(svg, w=w, h=h, output_filename=str(path))
 
     @staticmethod
-    def get_recent_sketches(limit=100, owner=None):
+    def get_recent_sketches(start=0, limit=100, owner=None):
         """Returns the recent sketches.
         """
         filters = {}
@@ -197,9 +197,16 @@ class LMSSketch(Document):
             filters=filters,
             fields='*',
             order_by='creation desc',
-            page_length=limit
+            start=start,
+            page_length=limit,
         )
         return [frappe.get_doc(doctype='LMS Sketch', **doc) for doc in sketches]
+
+    @staticmethod
+    def get_total_count():
+        """Returns the total number of sketches
+        """
+        return frappe.db.count("LMS Sketch")
 
     # def __repr__(self):
     #     return f"<LMSSketch {self.name}>"

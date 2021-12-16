@@ -22,6 +22,33 @@
       {{ sketch_card(sketch, False, widgets) }}
       {% endfor %}
     </div>
+    <div class="mt-5">
+      {{ Paginate(page, num_pages) }}
+    </div>
   </div>
 </div>
 {% endblock %}
+
+{% macro Paginate(page, num_pages) %}
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    <li class="page-item {{'disabled' if page==1 else ''}}">
+      <a class="page-link" href="/sketches?page={{page-1}}" aria-label="Previous">
+        <span aria-hidden="true">&lsaquo; Previous</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% for i in range(page_range_start, page_range_end) %}
+      <li class="page-item {{'disabled' if i==page else ''}}">
+        <a class="page-link" href="/sketches?page={{i}}">{{i}}</a>
+      </li>
+    {% endfor %}
+    <li class="page-item {{'disabled' if page==num_pages else ''}}">
+      <a class="page-link" href="/sketches?page={{page+1}}" aria-label="Next">
+        <span aria-hidden="true">Next &rsaquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endmacro %}
