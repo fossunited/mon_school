@@ -39,11 +39,11 @@
         <span class="course-student-count mx-1">
           <button class="button-links btn btn-link d-inline m-0 p-0 text-decoration-none">
             {% if frappe.user and sketch.is_liked_by(frappe.session.user) %}
-            <img class="icon-background like-icon" data-liked data-sketch-name="{{ sketch.name }}" src="/assets/mon_school/icons/red-like.svg" />
+            <img class="icon-background like-icon" data-sketch-name="{{ sketch.name }}" src="/assets/mon_school/icons/red-like.svg" />
             {% else %}
             <img class="icon-background like-icon" data-sketch-name="{{ sketch.name }}" src="/assets/school/icons/like.svg" />
             {% endif %}
-            <span id="like-count">{{ metrics.get('likes', 0) }}</span>
+            {{ metrics.get('likes', 0) }}
           </button>
         </span>
         {% endif %}

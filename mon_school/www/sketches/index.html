@@ -63,11 +63,7 @@
       })
       .then(r => {
         if (r.ok) {
-          // update the count and toggle whether the sketch is liked by current user or not
-          var likedByUser = element.getAttribute("data-liked");
-          if (likedByUser) {
-
-          }
+          window.location.reload();
         } else {
           var error = r.error;
           // log to console for now
