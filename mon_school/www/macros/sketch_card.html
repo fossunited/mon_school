@@ -13,29 +13,41 @@
     </div>
     <div class="card-divider"></div>
     {% set owner = sketch.get_owner() %}
-    <div>
-      <span class="">
-        {{ widgets.Avatar(member=owner, avatar_class="avatar-small") }}
-        <a class="button-links" href="{{get_profile_url(owner.username)}}">
-          <span class="course-instructor">
-            {{ owner.full_name }}
-          </span>
-        </a>
-      </span>
+    <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-start mw-60" style="max-width: 60%;">
+        <div class="mr-1">
+          {{ widgets.Avatar(member=owner, avatar_class="avatar-small") }}
+        </div>
+        <div class="text-wrap">
+          <a class="button-links" href="{{get_profile_url(owner.username)}}">
+            <span class="sketch-creator">
+              {{ owner.full_name }}
+            </span>
+          </a>
+        </div>
+      </div>
 
       {% set metrics = sketch.get_metrics() %}
-      <span class="course-student-count">
-        <a href="sketches/{{sketch.sketch_id}}#comments" class="mr-2 button-links">
-          <img class="icon-background" src="/assets/mon_school/icons/comment.svg" />
-          {{ metrics.get('comments', 0) }}
-        </a>
-        {#
-        <span>
-          <img class="icon-background" src="/assets/school/icons/like.svg" />
-          {{ 0 }}
+      <div>
+        <span class="course-student-count mx-1">
+          <a href="sketches/{{sketch.sketch_id}}#comments" class="button-links">
+            <img class="icon-background" src="/assets/mon_school/icons/comment.svg" />
+            {{ metrics.get('comments', 0) }}
+          </a>
         </span>
-        #}
-      </span>
+        {% if show_likes %}
+        <span class="course-student-count mx-1">
+          <button class="button-links btn btn-link d-inline m-0 p-0 text-decoration-none">
+            {% if frappe.user and sketch.is_liked_by(frappe.session.user) %}
+            <img class="icon-background like-icon" data-liked data-sketch-name="{{ sketch.name }}" src="/assets/mon_school/icons/red-like.svg" />
+            {% else %}
+            <img class="icon-background like-icon" data-sketch-name="{{ sketch.name }}" src="/assets/school/icons/like.svg" />
+            {% endif %}
+            <span id="like-count">{{ metrics.get('likes', 0) }}</span>
+          </button>
+        </span>
+        {% endif %}
+      </div>
     </div>
   </div>
   <!-- <a class="stretched-link" href="sketches/{{sketch.sketch_id}}"></a> -->

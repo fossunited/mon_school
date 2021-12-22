@@ -19,7 +19,7 @@
     <div class="card-divider-dark"></div>
     <div class="sketch-list">
       {% for sketch in sketches %}
-      {{ sketch_card(sketch, False, widgets) }}
+      {{ sketch_card(sketch, True, widgets) }}
       {% endfor %}
     </div>
     <div class="mt-5">
@@ -52,3 +52,34 @@
   </ul>
 </nav>
 {% endmacro %}
+
+{% block script %}
+
+  <script type="text/javascript">
+    function toggleLike(element) {
+      var sketchName = element.getAttribute("data-sketch-name");
+      frappe.call("mon_school.mon_school.doctype.lms_sketch_like.lms_sketch_like.toggle_like_sketch", {
+        sketch_name: sketchName,
+      })
+      .then(r => {
+        if (r.ok) {
+          // update the count and toggle whether the sketch is liked by current user or not
+          var likedByUser = element.getAttribute("data-liked");
+          if (likedByUser) {
+
+          }
+        } else {
+          var error = r.error;
+          // log to console for now
+          console.error(error);
+        }
+      });
+    }
+
+    var likeIconElements = document.getElementsByClassName("like-icon");
+    for (element of likeIconElements) {
+      element.addEventListener("click", (e) => { toggleLike(e.target) });
+    }
+  </script>
+
+{% endblock %}

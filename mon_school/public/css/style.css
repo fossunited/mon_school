@@ -46,3 +46,9 @@
 .sketch-title {
 	margin-bottom: 16px;
 }
+
+.sketch-creator {
+	font-size: 12px;
+	line-height: 135%;
+	color: var(--text-color-dark);
+}

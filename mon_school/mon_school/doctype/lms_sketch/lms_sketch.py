@@ -57,6 +57,9 @@ class LMSSketch(Document):
         comments = self.get_comment_count()
         self._update_metric("comments", comments)
 
+        likes = self.get_like_count()
+        self._update_metric("likes", likes)
+
     def _update_metric(self, key, value):
         filters = {
             "reference_doctype": self.doctype,
@@ -79,6 +82,11 @@ class LMSSketch(Document):
         }
         topic = frappe.db.get_value("Discussion Topic", filters, 'name')
         return frappe.db.count("Discussion Reply", filters={"topic": topic})
+
+    def get_like_count(self):
+        """Returns the number of likes this sketch has received
+        """
+        return frappe.db.count("LMS Sketch Like", filters={"sketch": self.name})
 
     def render_svg(self):
         if self.svg:
@@ -108,6 +116,18 @@ class LMSSketch(Document):
         For example, the skech_id will be "123" for sketch with name "SKETCH-123".
         """
         return self.name.replace("SKETCH-", "")
+
+    def is_liked_by(self, user_name):
+        """Returns whether a user has liked a sketch or not (True/False)
+
+        user_name is value of the "name" field (primary key column) of
+        the user
+        """
+        return frappe.db.exists({
+            "doctype": "LMS Sketch Like",
+            "sketch": self.name,
+            "user": user_name,
+        })
 
     def get_hash(self):
         """Returns the md5 hash of the code to use for caching.
