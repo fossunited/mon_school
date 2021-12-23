@@ -57,6 +57,15 @@
 
   <script type="text/javascript">
     function toggleLike($btn) {
+      if (!frappe.user_id && (!frappe.user || !frappe.user.name)) {
+        // show alert for unauthenticated user
+        frappe.show_alert({
+          message: "Please login to like a sketch",
+          indicator: "yellow",
+        }, 5);
+        return;
+      }
+
       var sketchName = $btn.attr("data-sketch-name");
       var action = $btn.hasClass("not-liked") ? "like" : "unlike";
 
