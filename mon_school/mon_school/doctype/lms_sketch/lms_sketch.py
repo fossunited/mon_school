@@ -70,10 +70,10 @@ class LMSSketch(Document):
             doc = frappe.get_last_doc("Simple Metric", filters)
         except frappe.exceptions.DoesNotExistError:
             doc = frappe.get_doc(dict(filters, doctype="Simple Metric", value=value))
-            doc.insert()
+            doc.insert(ignore_permissions=True)
         else:
             doc.value = value
-            doc.save()
+            doc.save(ignore_permissions=True)
 
     def get_comment_count(self):
         filters = {
