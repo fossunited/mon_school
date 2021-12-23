@@ -1,4 +1,6 @@
 {
+ "_comments": "[]",
+ "_liked_by": "[]",
  "actions": [],
  "allow_rename": 1,
  "creation": "2021-12-20 14:55:43.713974",
@@ -16,7 +18,8 @@
    "in_list_view": 1,
    "label": "Sketch",
    "options": "LMS Sketch",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "user",
@@ -24,12 +27,13 @@
    "in_list_view": 1,
    "label": "User",
    "options": "User",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2021-12-21 11:25:45.500838",
+ "modified": "2021-12-23 17:25:43.881353",
  "modified_by": "Administrator",
  "module": "Mon School",
  "name": "LMS Sketch Like",
