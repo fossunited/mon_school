@@ -10,6 +10,10 @@ class LMSSketchLike(Document):
         sketch = self.get_sketch()
         sketch.update_metrics()
 
+    def after_delete(self):
+        sketch = self.get_sketch()
+        sketch.update_metrics()
+
     def get_sketch(self):
         return frappe.get_doc("LMS Sketch", self.sketch)
 
@@ -24,20 +28,27 @@ def on_doctype_update():
 
 
 @frappe.whitelist()
-def toggle_like_sketch(sketch_name):
+def toggle_sketch_like(sketch_name, action):
     user = frappe.session.user
-    sketch = frappe.get_doc("LMS Sketch", sketch_name)
 
-    if sketch.is_liked_by(user):
-        frappe.db.delete("LMS Sketch Like", {"user": user, "sketch": sketch_name})
-        # TODO (nikochiko): after_delete is not working, so we need
-        # this update_metrics here, fix after_delete and move it there
-        sketch.update_metrics()
-    else:
+    if action == "unlike":
+        frappe.get_last_doc(
+            "LMS Sketch Like",
+            filters={
+                "user": user,
+                "sketch": sketch_name,
+            },
+        ).delete(ignore_permissions=True)
+        frappe.response["ok"] = True
+
+    elif action == "like":
         frappe.get_doc({
             "doctype": "LMS Sketch Like",
             "user": user,
             "sketch": sketch_name,
         }).insert(ignore_permissions=True)
+        frappe.response["ok"] = True
 
-    frappe.response["ok"] = True
+    else:
+        frappe.response["ok"] = False
+        frappe.response["error"] = f"Unknown action: {action}"

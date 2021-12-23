@@ -56,10 +56,19 @@
 {% block script %}
 
   <script type="text/javascript">
-    function toggleLike(element) {
-      var sketchName = element.getAttribute("data-sketch-name");
-      frappe.call("mon_school.mon_school.doctype.lms_sketch_like.lms_sketch_like.toggle_like_sketch", {
-        sketch_name: sketchName,
+    function toggleLike($btn) {
+      var sketchName = $btn.attr("data-sketch-name");
+      var action = $btn.hasClass("not-liked") ? "like" : "unlike";
+
+      // disable click
+      $btn.css("pointer-events", "none");
+
+      frappe.call({
+        method: "mon_school.mon_school.doctype.lms_sketch_like.lms_sketch_like.toggle_sketch_like",
+        args: {
+          sketch_name: sketchName,
+          action: action,
+        },
       })
       .then(r => {
         if (r.ok) {
@@ -72,10 +81,12 @@
       });
     }
 
-    var likeIconElements = document.getElementsByClassName("like-icon");
-    for (element of likeIconElements) {
-      element.addEventListener("click", (e) => { toggleLike(e.target) });
-    }
+    $(document).ready(function(){
+      $(".like-button").click(function(){
+        toggleLike($(this));
+      })
+    });
+
   </script>
 
 {% endblock %}

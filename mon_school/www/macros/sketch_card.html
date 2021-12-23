@@ -37,14 +37,17 @@
         </span>
         {% if show_likes %}
         <span class="course-student-count mx-1">
-          <button class="button-links btn btn-link d-inline m-0 p-0 text-decoration-none">
-            {% if frappe.user and sketch.is_liked_by(frappe.session.user) %}
-            <img class="icon-background like-icon" data-sketch-name="{{ sketch.name }}" src="/assets/mon_school/icons/red-like.svg" />
-            {% else %}
-            <img class="icon-background like-icon" data-sketch-name="{{ sketch.name }}" src="/assets/school/icons/like.svg" />
-            {% endif %}
+          {% if frappe.user and sketch.is_liked_by(frappe.session.user) %}
+          <button class="button-links like-button liked btn btn-link d-inline m-0 p-0 text-decoration-none" data-sketch-name="{{ sketch.name }}">
+            <img class="icon-background like-icon" src="/assets/mon_school/icons/red-like.svg" />
             {{ metrics.get('likes', 0) }}
           </button>
+          {% else %}
+          <button class="button-links like-button not-liked btn btn-link d-inline m-0 p-0 text-decoration-none" data-sketch-name="{{ sketch.name }}">
+            <img class="icon-background like-icon" src="/assets/school/icons/like.svg" />
+            {{ metrics.get('likes', 0) }}
+          </button>
+          {% endif %}
         </span>
         {% endif %}
       </div>
