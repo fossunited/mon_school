@@ -60,15 +60,13 @@
       var sketchName = $btn.attr("data-sketch-name");
       var action = $btn.hasClass("not-liked") ? "like" : "unlike";
 
-      // disable click
-      $btn.css("pointer-events", "none");
-
       frappe.call({
         method: "mon_school.mon_school.doctype.lms_sketch_like.lms_sketch_like.toggle_sketch_like",
         args: {
           sketch_name: sketchName,
           action: action,
         },
+        btn: $btn, // disables button until a response is received
       })
       .then(r => {
         if (r.ok) {
