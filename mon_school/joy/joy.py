@@ -10,17 +10,17 @@ An example of using joy:
 
     >>> from joy import *
     >>>
-    >>> c = circle(x=100, y=100, radius=50)
+    >>> c = circle(x=100, y=100, r=50)
     >>> show(c)
 
-The `cicle` function creates a new circle and the `show` function
-displys it.
+The `circle` function creates a new circle and the `show` function
+displays it.
 
 PRINCIPLES
 
-Joy follows functional programming approach for it's interface. Each
+Joy follows functional programming approach for its interface. Each
 function/class gives a shape and those shapes can be transformed and
-combined using other utililty functions.
+combined using other utility functions.
 
 By design, there is no global state in the library.
 
@@ -84,7 +84,7 @@ The `Scale` transformation scales a shape.
 
 HIGER ORDER TRANSFORMATIONS
 
-Joy supports a transorm called `repeat` to apply a transformation multiple times
+Joy supports a transform called `repeat` to apply a transformation multiple times
 and combining all the resulting shapes.
 
     >>> flower = rectangle() | repeat(18, rotate(10))
@@ -100,7 +100,7 @@ import itertools
 import random as random_module
 import string
 
-__version__ = "0.2.3"
+__version__ = "0.3.1"
 __author__ = "Anand Chitipothu <anand@fossunited.org>"
 
 SQRT2 = 2**0.5
@@ -116,10 +116,10 @@ shape_seq = shape_sequence()
 class Shape:
     """Shape is the base class for all shapes in Joy.
 
-    A Shape is an SVG node and supports converting it self into svg text.
+    A Shape is an SVG node and supports converting itself into svg text.
 
     Typically, users do not interact with this class directly, but use it
-    through it's subclasses.
+    through its subclasses.
     """
     def __init__(self, tag, children=None, transform=None, **attrs):
         """Creates a new shape.
@@ -156,6 +156,11 @@ class Shape:
     def clone(self):
         shape = object.__new__(self.__class__)
         shape.__dict__.update(self.__dict__)
+
+        # don't share attrs on clone
+        # also remove the id as the new nodes gets a new id
+        shape.attrs = dict(self.attrs)
+        shape.attrs.pop("id", None)
         return shape
 
     def get_attrs(self):
@@ -339,17 +344,17 @@ class Ellipse(Shape):
 
     Examples:
 
-    Draw a ellipse with center at origin and width of 200 and height of 100:
+    Draw an ellipse with center at origin and width of 200 and height of 100:
 
         >>> r = Ellipse()
         >>> show(r)
 
-    Draw a ellipse having a width of 100 and a height of 50.
+    Draw an ellipse having a width of 100 and a height of 50.
 
         >>> r = Ellipse(width=100, height=50)
         >>> show(r)
 
-    Draw a ellipse centered at (100, 100) and with a width
+    Draw an ellipse centered at (100, 100) and with a width
     of 200 and height of 100.
 
         >>> r = Ellipse(center=Point(x=100, y=100), width=200, height=100)
@@ -537,7 +542,7 @@ class TransformationList(Transformation):
 
     def as_str(self):
         # Reversing the transformations as SVG applies them in the
-        # reverse order (the right most is appled first)
+        # reverse order (the rightmost is appled first)
         return " ".join(t.as_str() for t in self.transformations[::-1])
 
 class Translate(Transformation):
@@ -577,7 +582,7 @@ class Rotate(Transformation):
             The angle to rotate the shape in degrees.
 
         anchor:
-            The andhor point around which the rotation is performed.
+            The anchor point around which the rotation is performed.
 
     Examples:
 
@@ -586,8 +591,8 @@ class Rotate(Transformation):
         >>> shape = Rectangle() | Rotate(angle=45)
         >>> show(shape)
 
-    Rotate a rectangle around it's top-left corner and
-    combine with it self.
+    Rotate a rectangle around its top-left corner and
+    combine with itself.
 
         >>> r1 = Rectangle()
         >>> r2 = r1 | Rotate(angle=45, anchor=(r.point[0]))
@@ -635,7 +640,7 @@ class Repeat(Transformation):
             angle of each rotation, which will be 360/n.
 
         transformation:
-            The transfomation to apply repeatedly.
+            The transformation to apply repeatedly.
 
     Examples:
 
@@ -717,7 +722,7 @@ class Cycle(Transformation):
         >>> e = scale(Circle(), sx=1, sy=0.5)
         >>> show(e | Cycle())
 
-    Create a spiral with shirnking squares:
+    Create a spiral with shrinking squares:
 
         >>> shape = Rectangle(width=300, height=300) | cycle(n=72, s=0.92)
         >>> show(shape)
@@ -813,21 +818,21 @@ def rectangle(x=0, y=0, w=200, h=100, **kwargs):
     return Rectangle(center=Point(x=x, y=y), width=w, height=h, **kwargs)
 
 def ellipse(x=0, y=0, w=200, h=100, **kwargs):
-    """Creates a ellipse with center at (x, y), a width of w and a height of h.
+    """Creates an ellipse with center at (x, y), a width of w and a height of h.
 
     Examples:
 
-    Draw a ellipse.
+    Draw an ellipse.
 
         r = ellipse()
         show(r)
 
-    Draw a ellipse with width of 100 and height of 50.
+    Draw an ellipse with a width of 100 and height of 50.
 
         r = ellipse(w=100, h=50)
         show(r)
 
-    Draw a ellipse with center at (10, 20), a width of 100 and a height of 50.
+    Draw an ellipse with center at (10, 20), a width of 100 and a height of 50.
 
         r = ellipse(x=10, y=20, w=100, h=50)
         show(r)
