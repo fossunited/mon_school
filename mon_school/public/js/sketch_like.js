@@ -2,7 +2,9 @@ var notLikedLikeIconSrc = "/assets/school/icons/like.svg";
 var likedLikeIconSrc = "/assets/mon_school/icons/red-like.svg";
 
 function toggleLike($btn) {
-  if (!frappe.user_id && (!frappe.user || !frappe.user.name)) {
+  if (!frappe.user_id || (frappe.user && !frappe.user.name)) {
+    console.log("unauthenticated user");
+
     // show alert for unauthenticated user
     frappe.show_alert({
       message: "Please login to like a sketch",
