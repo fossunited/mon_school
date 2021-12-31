@@ -52,3 +52,7 @@
 	line-height: 135%;
 	color: var(--text-color-dark);
 }
+
+.sketch-like-wrapper {
+  margin-bottom: 16px;
+}
