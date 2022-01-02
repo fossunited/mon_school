@@ -130,6 +130,26 @@ class CohortSubgroup(_CohortSubgroup):
             s.score = scores.get(s.name, 0)
         return sorted(students, key=lambda s: s.score, reverse=True)
 
+    def get_students_with_exercise_counts(self):
+        students = self.get_students()
+        counts = self.get_exercise_counts()
+
+        for s in students:
+            s.exercise_count = counts.get(s.name, 0)
+        return sorted(students, key=lambda s: s.exercise_count, reverse=True)
+
+    def get_exercise_counts(self):
+        q = """
+            SELECT e.member_email as email, count(*) as count
+            FROM `tabExercise Latest Submission` as e
+            JOIN `tabLMS Batch Membership`  as m ON m.name = e.member
+            WHERE m.subgroup = %(subgroup)s
+            GROUP BY 1
+            ORDER BY 2 desc
+        """
+        rows = frappe.db.sql(q, values={"subgroup": self.name})
+        return {email: count for email, count in rows}
+
     def get_student_progress(self, email):
         from .student_progress import StudentProgress
         p = StudentProgress(self.get_cohort().course, email)
