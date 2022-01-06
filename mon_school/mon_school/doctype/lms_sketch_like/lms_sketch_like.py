@@ -15,7 +15,7 @@ class LMSSketchLike(Document):
         sketch.update_metrics()
 
     def get_sketch(self):
-        return frappe.get_doc("LMS Sketch", self.sketch)
+        return frappe.get_doc("LMS Sketch", self.sketch, for_update=True)
 
 
 def on_doctype_update():
