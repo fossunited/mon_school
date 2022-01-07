@@ -27,6 +27,11 @@ def on_doctype_update():
 def toggle_sketch_like(sketch_name, action):
     user = frappe.session.user
 
+    if user == "Guest":
+        frappe.response["ok"] = False
+        frappe.response["error"] = "Unauthenticated user"
+        return
+
     if action == "unlike":
         frappe.get_last_doc(
             "LMS Sketch Like",
