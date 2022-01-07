@@ -1,15 +1,19 @@
 var notLikedLikeIconSrc = "/assets/school/icons/like.svg";
 var likedLikeIconSrc = "/assets/mon_school/icons/red-like.svg";
 
-function toggleLike($btn) {
-  if (!frappe.session.user || frappe.session.user == 'Guest') {
-    console.log("unauthenticated user");
-
+function showLoginToLikeAlert() {
     // show alert for unauthenticated user
     frappe.show_alert({
       message: "Please login to like a sketch",
       indicator: "yellow",
     }, 5);
+}
+
+function toggleLike($btn) {
+  if (!frappe.session.user || frappe.session.user == 'Guest') {
+    console.log("unauthenticated user");
+
+    showLoginToLikeAlert();
     return;
   }
 
@@ -44,7 +48,7 @@ function toggleLike($btn) {
       // log to console for now
       console.error(error);
     }
-  });
+  })
 }
 
 $(document).ready(function(){
