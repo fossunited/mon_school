@@ -19,7 +19,7 @@
     <div class="card-divider-dark"></div>
     <div class="sketch-list">
       {% for sketch in sketches %}
-      {{ sketch_card(sketch, False, widgets) }}
+      {{ sketch_card(sketch, True, widgets) }}
       {% endfor %}
     </div>
     <div class="mt-5">
@@ -52,3 +52,9 @@
   </ul>
 </nav>
 {% endmacro %}
+
+{% block script %}
+
+{{ include_script('sketch_like.bundle.js') }}
+
+{% endblock %}
