@@ -7,16 +7,6 @@ def get_context(context):
         frappe.local.flags.redirect_location = "/login?redirect-to=/account/subdomain"
         raise frappe.Redirect
 
-    if frappe.request.method == "POST":
-        try:
-            save_subdomain(frappe.form_dict.get("ip"))
-        except frappe.exceptions.ValidationError as e:
-            context.message = str(e)
-            context.message_type = "danger"
-        else:
-            context.message = "Successfully updated the IP address of your subdomain."
-            context.message_type = "success"
-
     context.subdomain = get_subdomain()
 
 def get_subdomain():
@@ -33,6 +23,7 @@ def get_subdomain():
             "ip": ""
         })
 
+@frappe.whitelist()
 def save_subdomain(ip):
     doctype = "Mon School User Subdomain"
     name = frappe.db.exists(doctype, {"user": frappe.session.user})
@@ -50,3 +41,5 @@ def save_subdomain(ip):
             "ip": ip
         })
         doc.insert(ignore_permissions=True)
+    frappe.msgprint("Successfully updated the IP address of your subdomain.")
+    return {"ok": True}
