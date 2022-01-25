@@ -210,6 +210,7 @@ school_markdown_macro_renderers = {
 	"Image": "mon_school.mon_school.plugins.image_renderer",
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
 	"Widget": "mon_school.mon_school.plugins.widget_renderer",
+	"Task": "mon_school.mon_school.plugins.task_renderer",
 }
 
 # Install custom page renderers
