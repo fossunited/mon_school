@@ -19,15 +19,39 @@
       <div class="alert alert-{{message_type}}">{{message}}</div>
     {% endif %}
 
-    <form method="POST">
+    <form>
       <div class="form-group">
         <label for="ip">IP Address</label>
         <input class="form-control" type="text" name="ip" id="ip" value="{{frappe.form_dict.get('ip') or subdomain.ip}}">
       </div>
-      <button type="submit" class="btn btn-primary">Save</button>
+      <button type="button" id="save-button" class="btn btn-primary">Save</button>
     </form>
 
   </div>
 </div>
 
 {% endblock %}
+
+{%- block script %}
+{{ super() }}
+
+<script type="text/javascript">
+  $(function() {
+    function save_ip(ip) {
+      frappe.call('mon_school.www.account.subdomain.save_subdomain', {
+        ip: ip,
+      })
+      .then(r => {
+        //console.log(r);
+      });
+    }
+
+    $("#save-button").click(function() {
+      var ip = $("#ip").val();
+      save_ip(ip);
+    })
+  });
+
+</script>
+
+{%- endblock %}
