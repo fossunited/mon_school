@@ -7,3 +7,28 @@
 <script src="/assets/mon_school/codemirror/addon/edit/matchbrackets.js"></script>
 <script src="/assets/mon_school/codemirror/addon/comment/comment.js"></script>
 
+<script type="text/javascript">
+  // Hack to specify load hooks to be executed on page load.
+  // Traditionally, this is done using jquery as $(function() {...}).
+  // Since jquery is only included at the and of the page, it is not possible
+  // to include snippets to run on load in the middle of the page, which is usually
+  // the case when we are embedding custom scripts for tasks or exercises.
+  // This stores all the load hooks and executes all of them when run_load_hooks is
+  // called from them footer.
+  //
+  // USAGE:
+  //    monschool.onload(function() {
+  //        console.log("hello, world!");
+  //    })
+  var monschool = {
+    load_hooks: [],
+    onload: function(fn) {
+      this.load_hooks.push(fn);
+    },
+    run_load_hooks: function() {
+      for (var i=0; i<this.load_hooks.length; i++) {
+        this.load_hooks[i]();
+      }
+    }
+  }
+</script>

@@ -1,0 +1,25 @@
+<div class="card">
+  <div class="task card-body">
+    <h3 class="task-title card-title">Task: {{task.title}} <span class="task-status"></span></h3>
+
+    <div class="task-description">{{task.description}}</div>
+
+    <form class="task-form" style="margin-top: 1em;">
+        {% for input in task.inputs %}
+          <div class="form-group">
+            <label for="task-{{task.slug}}-{{input.id}}">{{input.label}}</label>
+            <input type="text" id="task-{{task.slug}}-{{input.id}}" class="form-control" />
+          </div>
+        {% endfor %}
+
+      <div class="task-controls">
+      <button type="button" class="btn btn-secondary">{{task.button_label}}</button>
+      </div>
+    </form>
+  </div>
+  {% if task.javascript %}
+  <script type="text/javascript">
+    {{ task.javascript }}
+  </script>
+  {% endif %}
+</div>
