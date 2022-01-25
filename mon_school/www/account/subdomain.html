@@ -1,0 +1,33 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div class="common-page-style" style="background: white;">
+  <div class="container">
+
+    <h1>Subdomain</h1>
+
+    <p>
+      Mon School provides a subdomain for every user, which you can map to your cloud server.
+    </p>
+    <p>
+      Your subdomain is <strong>{{subdomain.subdomain}}.monschool.net</strong>.<br>
+    </p>
+    <p>You can update the IP address mapped to your domain by using the form below.
+      Please note that it may take upto 30 minutes for the DNS changes to take effect.</p>
+
+    {% if message %}
+      <div class="alert alert-{{message_type}}">{{message}}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="ip">IP Address</label>
+        <input class="form-control" type="text" name="ip" id="ip" value="{{frappe.form_dict.get('ip') or subdomain.ip}}">
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
