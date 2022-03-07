@@ -189,7 +189,8 @@ function setupExample(element) {
 
     parseOptions() {
       var lang = this.findLanguage();
-      var id = $(this.element).data("id") || "default";
+      var id = $(this.element).data("id") || $(this.element).attr("id") || "default";
+
       var hasOptions = $(`#livecode-options-${id}`).length > 0;
       var options =  hasOptions ? $(`#livecode-options-${id}`).data() : {};
 

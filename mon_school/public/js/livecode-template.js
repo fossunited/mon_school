@@ -16,7 +16,9 @@ window.livecode.template = `
     </div>
 
     <div class="controls">
-      <div class="run-wrapper" style="display: inline;">
+    <span class="run-args-label hidden">Arguments: &nbsp;</span>
+    <input type="text" class="run-args hidden" name="args" value="" placeholder=""/>
+    <div class="run-wrapper">
         <button class="run button">Run Code</button>
         <span class="run-status"></span>
       </div>
