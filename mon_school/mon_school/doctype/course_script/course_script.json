@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:course",
+ "creation": "2022-03-07 15:35:14.468989",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "course",
+  "javascript",
+  "css"
+ ],
+ "fields": [
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Course",
+   "options": "LMS Course",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "javascript",
+   "fieldtype": "Code",
+   "label": "Javascript"
+  },
+  {
+   "fieldname": "css",
+   "fieldtype": "Code",
+   "label": "CSS"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-03-07 15:35:14.468989",
+ "modified_by": "Administrator",
+ "module": "Mon School",
+ "name": "Course Script",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
