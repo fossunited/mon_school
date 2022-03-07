@@ -1,2 +1,3 @@
 
-//import './livecode';
+import './livecode';
+import './livecode-template';

@@ -18,13 +18,17 @@
 
 </script>
 
-
 {{ include_script("livecode-joy.bundle.js") }}
+{{ include_script("livecode.bundle.js") }}
 
 <script type="text/javascript">
   $(function() {
     if (page_context.course == "the-joy-of-programming") {
       setupJoy();
+    }
+    else {
+      livecode.base_url = "{{ livecode_url }}";
+      livecode.setup();
     }
   });
 </script>
@@ -59,7 +63,7 @@
   }
 
   .livecode-editor .controls {
-    padding: 16px 4px;
+    padding: 2px 4px 16px 4px;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
