@@ -28,6 +28,7 @@ class LiveCodeExtension(PageExtension):
     def render_header(self):
         livecode_url = frappe.get_value("LMS Settings", None, "livecode_url")
         context = {
+            **self.context,
             "livecode_url": livecode_url
         }
         return frappe.render_template(
@@ -37,6 +38,7 @@ class LiveCodeExtension(PageExtension):
     def render_footer(self):
         livecode_url = frappe.get_value("LMS Settings", None, "livecode_url")
         context = {
+            **self.context,
             "livecode_url": livecode_url
         }
         return frappe.render_template(

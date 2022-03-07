@@ -33,6 +33,16 @@
   });
 </script>
 
+{% set course_scripts = frappe.get_all("Course Script", filters={"course": course.name}, fields="*") %}
+{% if course_scripts %}
+  <script type="text/javascript">
+    {{ course_scripts[0].javascript }}
+  </script>
+  <style type="text/css">
+    {{ course_scripts[0].css }}
+  </style>
+{% endif %}
+
 <style type="text/css">
   .svg-image {
     border: 5px solid #ddd;
