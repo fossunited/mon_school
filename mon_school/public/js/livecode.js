@@ -100,7 +100,7 @@ function setupExample(element) {
 
     setLabel(label) {
       $(this.editor).find(".labels")
-        .show()
+        .removeClass("hidden")
         .html(label);
     },
 

@@ -43,6 +43,14 @@
   </style>
 {% endif %}
 
+<script type="text/javascript">
+// Fix the style of the additonal buttons added
+$(function() {
+  console.log("fix buttons");
+  $(".livecode-editor").find(".run").addClass("button");
+});
+</script>
+
 <style type="text/css">
   .svg-image {
     border: 5px solid #ddd;
@@ -155,5 +163,12 @@
     background: var(--primary);
     color: white;
     font-weight: bold;
+  }
+  .livecode-editor .labels {
+    padding: 3px 6px;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    color: inherit;
   }
 </style>

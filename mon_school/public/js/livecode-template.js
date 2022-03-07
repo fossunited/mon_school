@@ -1,13 +1,8 @@
 window.livecode.template = `
 <div class="livecode-editor">
-  <!-- <div class="controls">
-    <button class="run">Run 2</button>
-    <div class="labels hidden"></div>
-    <span class="run-args-label hidden">Arguments: </span><input type="text" class="run-args hidden" name="args" value="" placeholder="arguments"/>
-  </div>
-  -->
-
   <div class="filenames" id="file-tabs">
+
+  <div class="pull-right labels hidden"></div>
   </div>
 
   <div class="code-editor">
