@@ -64,10 +64,20 @@ def image_renderer(argument):
 
         {{ Image("image-flag-of-germany") }}
     """
-    exercise = frappe.get_doc("Exercise", argument)
-    context = dict(exercise=exercise)
-    return frappe.render_template("templates/image.html", context)
-
+    course = frappe.form_dict.get("course")
+    # legacy
+    if course == "the-joy-of-programming":
+        exercise = frappe.get_doc("Exercise", argument)
+        context = dict(exercise=exercise)
+        return frappe.render_template("templates/image.html", context)
+    else:
+        filename = argument
+        name = f"{course}/{filename}"
+        if frappe.db.exists("Course Image", name):
+            doc = frappe.get_doc("Course Image", name)
+            return f'<img src="{doc.image}" />'
+        else:
+            return f'<div class="alert alert-danger">Unable to find image: {filename}<div>'
 
 def youtube_video_renderer(video_id):
     return f"""
