@@ -3,7 +3,7 @@
 import frappe
 from frappe import _
 from frappe.utils import escape_html, random_string
-from school.lms.doctype.lms_batch_membership.lms_batch_membership import create_membership
+from lms.lms.doctype.lms_batch_membership.lms_batch_membership import create_membership
 import json
 
 def sign_up(email, full_name):

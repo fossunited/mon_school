@@ -57,7 +57,7 @@ $(function() {
     }
 
     frappe.call({
-      method: "school.lms.doctype.lms_course_interest.lms_course_interest.capture_interest",
+      method: "lms.lms.doctype.lms_course_interest.lms_course_interest.capture_interest",
       args: {
         "course": course
       },

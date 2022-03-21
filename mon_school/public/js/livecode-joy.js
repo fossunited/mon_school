@@ -94,7 +94,7 @@ function setupJoy() {
       var name = $(e).data("name");
       let code = editor.codemirror.doc.getValue();
 
-      frappe.call("school.lms.api.submit_solution", {
+      frappe.call("lms.lms.api.submit_solution", {
         "exercise": name,
         "code": code
       }).then(r => {
