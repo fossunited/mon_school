@@ -7,8 +7,8 @@ The plugins provided by this module are:
     LiveCodeExtension - injecting livecode css/js into lesson page
 """
 import frappe
-from school.plugins import PageExtension, ProfileTab
-from school.widgets import Widgets
+from lms.plugins import PageExtension, ProfileTab
+from lms.widgets import Widgets
 from .doctype.lms_sketch.lms_sketch import LMSSketch as Sketch
 import json
 import html
