@@ -34,7 +34,7 @@ def get_context(context):
 
 def get_course(course_name):
     if not course_name:
-        return frappe.get_last_doc("LMS Course", filters={"is_published": 1})
+        return frappe.get_last_doc("LMS Course", filters={"published": 1})
     else:
         return frappe.get_doc("LMS Course", course_name)
 
