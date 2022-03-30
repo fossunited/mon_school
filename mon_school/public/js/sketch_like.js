@@ -1,4 +1,4 @@
-var notLikedLikeIconSrc = "/assets/school/icons/like.svg";
+var notLikedLikeIconSrc = "/assets/lms/icons/like.svg";
 var likedLikeIconSrc = "/assets/mon_school/icons/red-like.svg";
 
 function showLoginToLikeAlert() {
