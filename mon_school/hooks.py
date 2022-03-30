@@ -190,7 +190,7 @@ profile_tabs = [
 	"mon_school.mon_school.plugins.SketchesTab"
 ]
 
-school_lesson_page_extensions = [
+lms_lesson_page_extensions = [
 	"mon_school.mon_school.plugins.LiveCodeExtension"
 ]
 
@@ -205,7 +205,7 @@ update_website_context = [
     'mon_school.mon_school.context.update_website_context',
 ]
 
-school_markdown_macro_renderers = {
+lms_markdown_macro_renderers = {
 	"Exercise": "mon_school.mon_school.plugins.exercise_renderer",
 	"Image": "mon_school.mon_school.plugins.image_renderer",
 	"YouTubeVideo": "mon_school.mon_school.plugins.youtube_video_renderer",
