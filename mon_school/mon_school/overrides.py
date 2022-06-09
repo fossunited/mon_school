@@ -5,6 +5,9 @@ from lms.lms.doctype.exercise_submission.exercise_submission import ExerciseSubm
 from lms.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
 from lms.lms.doctype.cohort.cohort import Cohort as _Cohort
 from lms.lms.doctype.cohort_subgroup.cohort_subgroup import CohortSubgroup as _CohortSubgroup
+from frappe.website.utils import is_signup_disabled
+from frappe.utils import escape_html, random_string
+from frappe import _
 
 from . import livecode
 
@@ -162,3 +165,44 @@ class CohortSubgroup(_CohortSubgroup):
             group_by="user",
             page_length=1000)
         return {row.user: row.score for row in rows}
+
+
+@frappe.whitelist(allow_guest=True)
+def sign_up(email, full_name, college):
+    if is_signup_disabled():
+        frappe.throw(_('Sign Up is disabled'), title='Not Allowed')
+
+    user = frappe.db.get("User", {"email": email})
+    if user:
+        if user.enabled:
+            return 0, _("Already Registered")
+        else:
+            return 0, _("Registered but disabled")
+    else:
+        if frappe.db.get_creation_count('User', 60) > 500:
+            frappe.respond_as_web_page(_('Temporarily Disabled'),
+                _('Too many users signed up recently, so the registration is disabled. Please try back in an hour'),
+                http_status_code=429)
+    user = frappe.get_doc({
+        "doctype": "User",
+        "email": email,
+        "first_name": escape_html(full_name),
+        "college": escape_html(college),
+        "country": "",
+        "enabled": 1,
+        "new_password": random_string(10),
+        "user_type": "Website User"
+    })
+    user.flags.ignore_permissions = True
+    user.flags.ignore_password_policy = True
+    user.insert()
+
+    # set default signup role as per Portal Settings
+    default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+    if default_role:
+        user.add_roles(default_role)
+
+    if user.flags.email_sent:
+        return 1, _("Please check your email for verification")
+    else:
+        return 2, _("Please ask your administrator to verify your sign-up")
