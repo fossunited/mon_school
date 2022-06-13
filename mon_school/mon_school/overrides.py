@@ -187,7 +187,7 @@ def sign_up(email, full_name, college):
         "doctype": "User",
         "email": email,
         "first_name": escape_html(full_name),
-        "college": escape_html(college),
+        "college": college,
         "country": "",
         "enabled": 1,
         "new_password": random_string(10),
