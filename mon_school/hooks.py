@@ -201,6 +201,8 @@ website_route_rules = [
   {"from_route": "/<contest>/submissions/<sketch>", "to_route": "contest_sketches/view"}
 ]
 
+signup_form_template = "mon_school/templates/signup_form.html"
+
 update_website_context = [
     'mon_school.mon_school.context.update_website_context',
 ]
