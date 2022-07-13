@@ -18,6 +18,11 @@
 
 .sketch-image {
 	text-align: center;
+  padding: 1rem;
+}
+
+.sketch-image img {
+  border-radius: var(--border-radius-md);
 }
 
 .sketch-footer {
