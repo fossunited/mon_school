@@ -1,5 +1,5 @@
 {% macro sketch_card(sketch, show_likes, widgets) %}
-<div class="common-card-style sketch-teaser">
+<div class="common-card-style sketch-card">
   <div class="sketch-image">
     <a href="/sketches/{{sketch.sketch_id}}">
       <img src="{{sketch.get_image_url()}}" />
@@ -11,10 +11,9 @@
         {{sketch.title | e}}
       </a>
     </div>
-    <div class="card-divider"></div>
     {% set owner = sketch.get_owner() %}
     <div class="d-flex justify-content-between">
-      <div class="d-flex justify-content-start mw-60" style="max-width: 60%;">
+      <div class="d-flex justify-content-start align-items-center mw-60" style="max-width: 60%;">
         <div class="mr-1">
           {{ widgets.Avatar(member=owner, avatar_class="avatar-small") }}
         </div>
