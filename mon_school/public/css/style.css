@@ -11,13 +11,17 @@
 	height: 200px;
 }
 
+.sketch-card {
+  flex-direction: column;
+  overflow: auto;
+}
+
 .sketch-image {
-	padding: 0.5rem;
 	text-align: center;
 }
 
 .sketch-footer {
-	margin: 1rem 1.5rem 1rem;
+	margin: 1rem;
 }
 
 .sketch-page-header {
@@ -58,13 +62,28 @@
 }
 
 
-.heading { 
-    background:#eee;padding:10px;clear:both;color:#212529;border:1px solid #ddd;
+.heading {
+  background:#eee;
+  padding:10px;
+  clear:both;
+  color:#212529;
+  border:1px solid #ddd;
 }
+
 .sketch-header h1{
-    font-size:1.5em;margin-bottom:0;
+   font-size:1.5em;
+  margin-bottom:0;
 }
-.sketch-header{margin-bottom:1em}
-.sketch-card .sketch-title a{font-weight:700;color:inherit}
-.hidden{display:none}
+
+.sketch-header{
+  margin-bottom:1em
+}
+
+.sketch-title .button-links {
+  color: var(--gray-900);
+}
+
+.hidden{
+  display:none
+}
 
