@@ -13,6 +13,7 @@ import tempfile
 import os
 from frappe.model.document import Document
 from ... import livecode
+from frappe import _
 
 DEFAULT_IMAGE = """
 <svg viewBox="0 0 300 300" width="300" xmlns="http://www.w3.org/2000/svg">
@@ -233,6 +234,8 @@ class LMSSketch(Document):
 
 @frappe.whitelist()
 def save_sketch(name, title, code):
+    if not title:
+        frappe.throw(_("Sketch Title is mandatory."))
     if not name or name == "new":
         doc = frappe.new_doc('LMS Sketch')
         doc.title = title
@@ -262,7 +265,6 @@ def save_sketch(name, title, code):
 
 @frappe.whitelist()
 def generate_images(doc):
-    print("generate_images", doc)
     data = json.loads(doc)
     sketch = frappe.get_doc(data['doctype'], data['name'])
     sketch.before_save() # regenerate svg
@@ -271,7 +273,6 @@ def generate_images(doc):
 
 @frappe.whitelist()
 def generate_images_with_svgexport(doc):
-    print("generate_images", doc)
     data = json.loads(doc)
     sketch = frappe.get_doc(data['doctype'], data['name'])
     sketch.before_save() # regenerate svg
@@ -286,7 +287,6 @@ class ImageConverter:
 
 class CairoImageConverter(ImageConverter):
     def convert_image(self, svg, w, h, output_filename):
-        print("generating", output_filename, "using cariosvg")
         png = cairosvg.svg2png(svg, output_width=w, output_height=h)
         path = Path(output_filename)
         path.write_bytes(png)
@@ -296,7 +296,6 @@ class CLIConverter(ImageConverter):
         raise NotImplementedError()
 
     def convert_image(self, svg, w, h, output_filename):
-        print("generating", output_filename, "using", self.__class__.__name__)
         with tempfile.TemporaryDirectory() as tmp:
             input_path = Path(tmp) / "input.svg"
             input_path.write_text(svg)

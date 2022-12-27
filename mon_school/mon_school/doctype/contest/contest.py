@@ -37,7 +37,7 @@ class Contest(Document):
         email = email or frappe.session.user
         try:
             return frappe.get_doc(
-                "Contest Entry", 
+                "Contest Entry",
                 {"contest": self.name, "owner": email})
         except frappe.DoesNotExistError:
             return None
