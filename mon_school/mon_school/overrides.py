@@ -1,6 +1,6 @@
 import frappe
 from collections import Counter
-from lms.lms.doctype.exercise.exercise import Exercise as _Exercise
+from lms.lms.doctype.lms_exercise.lms_exercise import Exercise as _Exercise
 from lms.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
 from lms.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
 from lms.lms.doctype.cohort.cohort import Cohort as _Cohort
