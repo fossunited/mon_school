@@ -46,7 +46,7 @@ class LiveCodeExtension(PageExtension):
             context)
 
 def exercise_renderer(argument):
-    exercise = frappe.get_doc("Exercise", argument)
+    exercise = frappe.get_doc("LMS Exercise", argument)
     context = dict(exercise=exercise)
     return frappe.render_template("templates/exercise.html", context)
 
@@ -67,7 +67,7 @@ def image_renderer(argument):
     course = frappe.form_dict.get("course")
     # legacy
     if course == "the-joy-of-programming":
-        exercise = frappe.get_doc("Exercise", argument)
+        exercise = frappe.get_doc("LMS Exercise", argument)
         context = dict(exercise=exercise)
         return frappe.render_template("templates/image.html", context)
     else:
