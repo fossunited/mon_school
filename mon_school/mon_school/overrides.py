@@ -11,7 +11,7 @@ from frappe import _
 
 from . import livecode
 
-class Exercise(_Exercise):
+class LMSExercise(_Exercise):
     def before_save(self):
         self.image = livecode.livecode_to_svg(self.answer)
 
@@ -50,7 +50,7 @@ class Cohort(_Cohort):
     def get_exercises_in_course(self):
         """Returns all the exercises in the course as a dict with exercise name as the key and other details as value.
         """
-        d = frappe.get_all("Exercise",
+        d = frappe.get_all("LMS Exercise",
                 filters={"course": self.course},
                 fields=["name", "title", "index_label"],
                 page_length=1000)

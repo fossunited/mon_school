@@ -15,7 +15,7 @@ class StudentProgress:
         lessons = self.course.get_lessons()
         lesson_dict = {lesson.name: lesson for lesson in lessons}
 
-        exercises = frappe.get_all("Exercise", filters={"course": self.course.name}, fields=["name", "lesson", "index_label"])
+        exercises = frappe.get_all("LMS Exercise", filters={"course": self.course.name}, fields=["name", "lesson", "index_label"])
         submissions = frappe.get_all("Exercise Latest Submission",
             filters={"course": self.course.name, "member_email": self.email},
             fields=["*"])

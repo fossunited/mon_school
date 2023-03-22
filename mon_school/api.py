@@ -4,7 +4,7 @@ DOCTYPES = [
     "LMS Course",
     "Course Chapter",
     "Course Lesson",
-    "Exercise",
+    "LMS Exercise",
     "Cohort Subgroup"
 ]
 
@@ -19,7 +19,7 @@ def get_course(doc):
         return doc.name
     elif doc.doctype == "Course Chapter":
         return doc.course
-    elif doc.doctype == "Exercise":
+    elif doc.doctype == "LMS Exercise":
         return doc.course
     elif doc.doctype == "Course Lesson":
         chapter = frappe.get_doc(doc.chapter)

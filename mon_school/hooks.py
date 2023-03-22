@@ -91,7 +91,7 @@ after_install = "mon_school.install.after_install"
 # }
 
 override_doctype_class = {
-	"Exercise": "mon_school.mon_school.overrides.Exercise",
+	"LMS Exercise": "mon_school.mon_school.overrides.LMSExercise",
 	"Exercise Submission": "mon_school.mon_school.overrides.ExerciseSubmission",
 	"LMS Batch Membership": "mon_school.mon_school.overrides.LMSBatchMembership",
 	"Cohort": "mon_school.mon_school.overrides.Cohort",

@@ -61,7 +61,7 @@ class StudentBatchReport:
             self.exercises_by_lesson[e.lesson].append(e)
 
     def get_exercises(self, course_name):
-        return frappe.get_all("Exercise", {
+        return frappe.get_all("LMS Exercise", {
             "course": course_name,
             "lesson": ["!=", ""]},
             ["name", "title", "description", "image", "lesson", "index_label"],
