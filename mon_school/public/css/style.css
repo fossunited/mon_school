@@ -21,8 +21,10 @@
   padding: 1rem;
 }
 
-.sketch-image img {
+.sketch-image svg {
   border-radius: var(--border-radius-md);
+  width: 250px;
+  height: 300px;
 }
 
 .sketch-footer {
