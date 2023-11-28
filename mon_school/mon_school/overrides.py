@@ -2,7 +2,7 @@ import frappe
 from collections import Counter
 from lms.lms.doctype.lms_exercise.lms_exercise import LMSExercise as _Exercise
 from lms.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
-from lms.lms.doctype.lms_enrollment.lms_enrollment import LMSBatchMembership as _LMSBatchMembership
+from lms.lms.doctype.lms_enrollment.lms_enrollment import LMSEnrollment as _LMSEnrollment
 from lms.lms.doctype.cohort.cohort import Cohort as _Cohort
 from lms.lms.doctype.cohort_subgroup.cohort_subgroup import CohortSubgroup as _CohortSubgroup
 from frappe.website.utils import is_signup_disabled
@@ -19,7 +19,7 @@ class ExerciseSubmission(_ExerciseSubmission):
     def before_save(self):
         self.image = livecode.livecode_to_svg(self.solution)
 
-class LMSBatchMembership(_LMSBatchMembership):
+class LMSEnrollment(_LMSEnrollment):
     def validate_membership_in_different_batch_same_course(self):
         if self.member_type == "Mentor":
             return
@@ -32,7 +32,7 @@ class Cohort(_Cohort):
         if subgroup_name:
             filters["subgroup"] = subgroup_name
         return frappe.db.get_value(
-            "LMS Batch Membership",
+            "LMS Enrollment",
             filters=filters,
             fieldname="count(*) as count")
 
@@ -41,7 +41,7 @@ class Cohort(_Cohort):
         """
         filters = {"cohort": self.name}
         rows = frappe.db.get_all(
-            "LMS Batch Membership",
+            "LMS Enrollment",
             filters=filters,
             fields=["subgroup", "count(*) as count"],
             group_by="subgroup")
@@ -145,7 +145,7 @@ class CohortSubgroup(_CohortSubgroup):
         q = """
             SELECT e.member_email as email, count(*) as count
             FROM `tabExercise Latest Submission` as e
-            JOIN `tabLMS Batch Membership`  as m ON m.name = e.member
+            JOIN `tabLMS Enrollment`  as m ON m.name = e.member
             WHERE m.subgroup = %(subgroup)s
             GROUP BY 1
             ORDER BY 2 desc
