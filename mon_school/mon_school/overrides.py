@@ -2,7 +2,7 @@ import frappe
 from collections import Counter
 from lms.lms.doctype.lms_exercise.lms_exercise import LMSExercise as _Exercise
 from lms.lms.doctype.exercise_submission.exercise_submission import ExerciseSubmission as _ExerciseSubmission
-from lms.lms.doctype.lms_batch_membership.lms_batch_membership import LMSBatchMembership as _LMSBatchMembership
+from lms.lms.doctype.lms_enrollment.lms_enrollment import LMSBatchMembership as _LMSBatchMembership
 from lms.lms.doctype.cohort.cohort import Cohort as _Cohort
 from lms.lms.doctype.cohort_subgroup.cohort_subgroup import CohortSubgroup as _CohortSubgroup
 from frappe.website.utils import is_signup_disabled
