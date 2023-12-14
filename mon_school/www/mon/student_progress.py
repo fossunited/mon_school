@@ -2,6 +2,8 @@ from mon_school.mon_school.plugins import LiveCodeExtension
 import frappe
 from collections import defaultdict, Counter
 from mon_school.mon_school.plugins import LiveCodeExtension
+from lms.lms.utils import get_lessons
+
 
 def get_context(context):
     context.no_cache = 1
@@ -55,7 +57,7 @@ class StudentBatchReport:
 
         self.exercises_dict = {e.name: e for e in self.get_exercises(course.name)}
         self.solutions = {s.exercise: s for s in self.submissions}
-        self.lessons = self.course.get_lessons()
+        self.lessons = get_lessons(self.course)
         self.exercises_by_lesson = defaultdict(list)
         for e in self.exercises:
             self.exercises_by_lesson[e.lesson].append(e)

@@ -1,5 +1,7 @@
 import frappe
 from collections import defaultdict, Counter
+from lms.lms.utils import get_lessons
+
 
 def get_context(context):
     context.no_cache = 1
@@ -63,7 +65,7 @@ class BatchReport:
         self.students = course.get_students(batch.name)
         self.students_map = {s.email: s for s in self.students}
 
-        self.lessons = self.course.get_lessons()
+        self.lessons = get_lessons(self.course)
 
     def get_exercises(self, course_name):
         return frappe.get_all("LMS Exercise", {"course": course_name, "lesson": ["!=", ""]}, ["name", "title", "lesson", "index_label"], order_by="index_label")

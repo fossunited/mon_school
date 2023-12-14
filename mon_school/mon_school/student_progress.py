@@ -1,5 +1,6 @@
 import sys
 import frappe
+from lms.lms.utils import get_lessons
 
 class StudentProgress:
     """Progress of a student.
@@ -12,7 +13,7 @@ class StudentProgress:
         self.course = course
 
     def get_progress(self):
-        lessons = self.course.get_lessons()
+        lessons = get_lessons(self.course)
         lesson_dict = {lesson.name: lesson for lesson in lessons}
 
         exercises = frappe.get_all("LMS Exercise", filters={"course": self.course.name}, fields=["name", "lesson", "index_label"])
