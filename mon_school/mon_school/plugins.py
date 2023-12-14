@@ -100,3 +100,12 @@ def widget_renderer(widget_id):
     t = html.escape(json.dumps(doc.template))
     return f"<div class='widget' data-template='{t}'></div>"
 
+
+def task_renderer(argument):
+    """Renders a task.
+    """
+    task = frappe.get_doc("Course Task", argument)
+    user = frappe.get_cached_doc("User", frappe.session.user)
+    context = dict(task=task, user=user)
+    return frappe.render_template("templates/task.html", context)
+

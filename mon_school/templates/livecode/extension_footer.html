@@ -31,6 +31,10 @@
       livecode.setup();
     }
   });
+
+  $(function() {
+    monschool.run_load_hooks();
+  });
 </script>
 
 {% set course_scripts = frappe.get_all("Course Script", filters={"course": course.name}, fields="*") %}
